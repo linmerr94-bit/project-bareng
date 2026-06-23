@@ -1,0 +1,619 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway Simulator - VOLTA</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            padding: 24px 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .progress-indicator {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+        }
+        
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .progress-item.active {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .progress-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .progress-item.active .progress-icon {
+            background: white;
+            color: #6366f1;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 28px;
+            margin: 40px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.1);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .payment-option {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #334155;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-option:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .payment-option.active {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .payment-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .payment-icon {
+            font-size: 28px;
+            color: #6366f1;
+            width: 44px;
+            text-align: center;
+        }
+        
+        .payment-method-name {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .payment-method-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        
+        .va-details {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-left: 3px solid #6366f1;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+        
+        .va-label {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .va-number {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 16px;
+            color: #10b981;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        
+        .qris-section {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 10px;
+            margin-top: 12px;
+        }
+        
+        .qris-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .qris-code {
+            width: 100%;
+            max-width: 280px;
+            height: 280px;
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 10px;
+            color: #1a202c;
+            word-break: break-all;
+            overflow: hidden;
+        }
+        
+        .order-items {
+            margin-bottom: 24px;
+        }
+        
+        .order-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            border-radius: 6px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .order-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .order-item-details {
+            flex: 1;
+        }
+        
+        .order-item-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+        
+        .order-item-qty {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .order-item-price {
+            font-weight: 600;
+            color: #10b981;
+            font-size: 14px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            font-size: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            color: #94a3b8;
+        }
+        
+        .summary-value {
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid #334155;
+        }
+        
+        .summary-total-label {
+            color: #f1f5f9;
+        }
+        
+        .summary-total-value {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-pay {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: #0f172a;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-pay:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-top: 20px;
+        }
+        
+        .info-box strong {
+            color: #f1f5f9;
+        }
+        
+        .timer {
+            font-weight: 600;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== HEADER ==================== -->
+    <div class="header">
+        <div class="container">
+            <div class="header-title">
+                <i class="fas fa-credit-card"></i>
+                Payment Gateway Simulator
+            </div>
+            
+            <div class="progress-indicator">
+                <div class="progress-item">
+                    <div class="progress-icon">✓</div>
+                    <span>Checkout</span>
+                </div>
+                <span style="color: rgba(255, 255, 255, 0.3);">→</span>
+                
+                <div class="progress-item active">
+                    <div class="progress-icon">2</div>
+                    <span>Pembayaran</span>
+                </div>
+                <span style="color: rgba(255, 255, 255, 0.3);">→</span>
+                
+                <div class="progress-item">
+                    <div class="progress-icon">3</div>
+                    <span>Invoice</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="container">
+        <div class="main-grid">
+            <!-- ==================== LEFT: PAYMENT METHODS ==================== -->
+            <div>
+                <!-- ==================== ORDER INFO ==================== -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-info-circle"></i>
+                        Informasi Pesanan
+                    </div>
+                    
+                    <div style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #f1f5f9;">Kode Pesanan:</strong><br>
+                            <span style="color: #10b981; font-family: monospace; font-weight: 600;">{{ order_code }}</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #f1f5f9;">Dari Toko:</strong><br>
+                            {{ brand_name }} Purwokerto
+                        </div>
+                        <div>
+                            <strong style="color: #f1f5f9;">Alamat Pengiriman:</strong><br>
+                            {{ shipping_address }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ==================== PAYMENT OPTIONS ==================== -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-title">
+                        <i class="fas fa-wallet"></i>
+                        Pilih Metode Pembayaran
+                    </div>
+                    
+                    <!-- Bank Transfer VA -->
+                    <div class="payment-option active" onclick="selectPayment(this, 'bank_transfer')">
+                        <div class="payment-header">
+                            <div class="payment-icon"><i class="fas fa-building"></i></div>
+                            <div>
+                                <div class="payment-method-name">Transfer Bank (Virtual Account)</div>
+                            </div>
+                        </div>
+                        <div class="payment-method-desc">Pembayaran via Virtual Account Mandiri / BCA (Gratis Biaya Admin)</div>
+                        
+                        <div class="va-details">
+                            <div class="va-label">Nomor Virtual Account Mandiri</div>
+                            <div class="va-number">888{{ order.order_id|stringformat:"06d" }}</div>
+                            <button class="copy-btn" onclick="copyToClipboard('888{{ order.order_id|stringformat:"06d" }}'); event.stopPropagation();">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                        
+                        <div class="va-details" style="margin-top: 12px;">
+                            <div class="va-label">Nomor Virtual Account BCA</div>
+                            <div class="va-number">777{{ order.order_id|stringformat:"06d" }}</div>
+                            <button class="copy-btn" onclick="copyToClipboard('777{{ order.order_id|stringformat:"06d" }}'); event.stopPropagation();">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- QRIS -->
+                    <div class="payment-option" onclick="selectPayment(this, 'qris')">
+                        <div class="payment-header">
+                            <div class="payment-icon"><i class="fas fa-qrcode"></i></div>
+                            <div>
+                                <div class="payment-method-name">QRIS (Scan & Bayar)</div>
+                            </div>
+                        </div>
+                        <div class="payment-method-desc">Scan QR Code dengan aplikasi e-wallet pilihan Anda</div>
+                        
+                        <div class="qris-section">
+                            <div class="qris-label">QR Code Pembayaran</div>
+                            <div class="qris-code">
+                                {{ qris_code }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- E-Wallet -->
+                    <div class="payment-option" onclick="selectPayment(this, 'e_wallet')">
+                        <div class="payment-header">
+                            <div class="payment-icon"><i class="fas fa-mobile-alt"></i></div>
+                            <div>
+                                <div class="payment-method-name">E-Wallet (GCash, OVO, Dana)</div>
+                            </div>
+                        </div>
+                        <div class="payment-method-desc">Pembayaran instant via aplikasi e-wallet kesayangan Anda</div>
+                        
+                        <div class="va-details">
+                            <div class="va-label">Nomor Rekening VOLTA</div>
+                            <div class="va-number">+62 812-3456-{{ order.order_id|stringformat:"04d" }}</div>
+                            <button class="copy-btn" onclick="copyToClipboard('+62 812-3456-{{ order.order_id|stringformat:"04d" }}'); event.stopPropagation();">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Info Box -->
+                <div class="info-box">
+                    <strong>⏱️ Catatan Simulator:</strong><br>
+                    Klik tombol <strong>"Simulasikan Bayar Sukses"</strong> untuk mensimulasikan pembayaran berhasil. Dalam sistem produksi, pembayaran akan diproses oleh gateway pembayaran sebenarnya (Midtrans, Stripe, dll).
+                </div>
+            </div>
+            
+            <!-- ==================== RIGHT: ORDER SUMMARY ==================== -->
+            <div>
+                <div class="summary-card">
+                    <div class="card-title" style="margin-bottom: 16px; font-size: 16px;">
+                        <i class="fas fa-receipt"></i>
+                        Ringkasan
+                    </div>
+                    
+                    <div class="order-items">
+                        {% for item in order_items %}
+                            <div class="order-item">
+                                {% if item.product_id.image %}
+                                    <div class="order-item-image">
+                                        <img src="{{ item.product_id.image.url }}" alt="{{ item.product_id.product_name }}">
+                                    </div>
+                                {% else %}
+                                    <div class="order-item-image" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-box" style="color: white; font-size: 24px;"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="order-item-details">
+                                    <div class="order-item-name">{{ item.product_id.product_name }}</div>
+                                    <div class="order-item-qty">Qty: {{ item.qty }}</div>
+                                </div>
+                                
+                                <div style="text-align: right;">
+                                    <div class="order-item-price">
+                                        Rp {{ item.price|floatformat:0|add:"0"|stringformat:"d" }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value">{{ total_amount_formatted }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Ongkir</span>
+                        <span class="summary-value">Gratis</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Asuransi</span>
+                        <span class="summary-value">Gratis</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span class="summary-total-label">Total</span>
+                        <span class="summary-total-value">{{ total_amount_formatted }}</span>
+                    </div>
+                    
+                    <!-- Tombol Simulasikan Bayar Sukses -->
+                    <form method="POST" id="paymentForm">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-pay">
+                            <i class="fas fa-check-circle"></i>
+                            Simulasikan Bayar Sukses
+                        </button>
+                    </form>
+                    
+                    <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #86efac;">
+                        <i class="fas fa-shield-alt"></i> Transaksi simulasi ini aman dan tidak akan mengeluarkan uang riil.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectPayment(element, method) {
+            document.querySelectorAll('.payment-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✓ Nomor berhasil disalin ke clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>

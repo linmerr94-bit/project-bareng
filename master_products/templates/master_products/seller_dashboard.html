@@ -1,0 +1,598 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - VOLTA E-Commerce</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --volta-dark: #0f172a;
+            --volta-darker: #0a0f1a;
+            --volta-card: #1e293b;
+            --volta-border: #334155;
+            --volta-primary: #6366f1;
+            --volta-purple: #8b5cf6;
+            --volta-success: #10b981;
+            --volta-warning: #f59e0b;
+            --volta-danger: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--volta-dark);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* ==================== NAVBAR ==================== */
+        .navbar {
+            background: linear-gradient(135deg, var(--volta-dark) 0%, var(--volta-darker) 100%);
+            border-bottom: 2px solid var(--volta-border);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--volta-primary) 0%, var(--volta-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar-brand i {
+            color: var(--volta-primary);
+            margin-right: 0.5rem;
+        }
+        
+        .nav-link {
+            color: #cbd5e1 !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--volta-primary) !important;
+        }
+        
+        .btn-logout {
+            background: linear-gradient(135deg, var(--volta-danger) 0%, #c2185b 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
+            color: white;
+        }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            background: linear-gradient(180deg, var(--volta-card) 0%, var(--volta-darker) 100%);
+            border-right: 2px solid var(--volta-border);
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+        
+        .sidebar .nav-link {
+            color: #94a3b8;
+            padding: 0.75rem 1.5rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(99, 102, 241, 0.1);
+            border-left-color: var(--volta-primary);
+            color: var(--volta-primary);
+        }
+        
+        .sidebar .nav-link i {
+            width: 1.5rem;
+            text-align: center;
+        }
+        
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            background-color: var(--volta-dark);
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--volta-border);
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        
+        /* ==================== CARDS ==================== */
+        .stat-card {
+            background: linear-gradient(135deg, var(--volta-card) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--volta-primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .stat-icon.primary {
+            color: var(--volta-primary);
+        }
+        
+        .stat-icon.success {
+            color: var(--volta-success);
+        }
+        
+        .stat-icon.warning {
+            color: var(--volta-warning);
+        }
+        
+        /* ==================== TABLES ==================== */
+        .table-card {
+            background: linear-gradient(135deg, var(--volta-card) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--volta-border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .table-header h5 {
+            margin: 0;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .table-header i {
+            color: var(--volta-primary);
+            font-size: 1.25rem;
+        }
+        
+        .table {
+            color: #cbd5e1;
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background-color: rgba(99, 102, 241, 0.05);
+            border-color: var(--volta-border);
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .table tbody td {
+            border-color: var(--volta-border);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-pending {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--volta-warning);
+        }
+        
+        .badge-active {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--volta-success);
+        }
+        
+        .badge-confirmed {
+            background-color: rgba(99, 102, 241, 0.2);
+            color: var(--volta-primary);
+        }
+        
+        /* ==================== BUTTONS ==================== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--volta-primary) 0%, var(--volta-purple) 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--volta-primary);
+            color: var(--volta-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--volta-primary);
+            border-color: var(--volta-primary);
+            color: white;
+        }
+        
+        /* ==================== EMPTY STATE ==================== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: #475569;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-message {
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid var(--volta-border);
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stat-card {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <!-- Brand Logo -->
+            <a class="navbar-brand" href="{% url 'master_products:product_list' %}">
+                <i class="fas fa-bolt"></i>VOLTA
+            </a>
+            
+            <!-- Navbar Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link" style="cursor: default;">
+                            <i class="fas fa-store"></i> {{ seller_brand.brand_name }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'master_products:product_list' %}">
+                            <i class="fas fa-home"></i> Toko
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-logout btn-sm" href="{% url 'master_products:logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="container-fluid">
+        <div class="row g-0">
+            <!-- SIDEBAR -->
+            <div class="col-lg-2 sidebar d-none d-lg-block">
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="{% url 'master_products:seller_dashboard' %}">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="{% url 'master_products:add_product' %}">
+                        <i class="fas fa-plus-circle"></i> Tambah Produk
+                    </a>
+                    <hr style="border-color: var(--volta-border); margin: 1rem 0;">
+                    <a class="nav-link" href="{% url 'master_products:product_list' %}">
+                        <i class="fas fa-store"></i> Kunjungi Toko
+                    </a>
+                    <a class="nav-link" href="{% url 'master_products:logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- MAIN CONTENT -->
+            <div class="col-lg-10 main-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-bar" style="color: var(--volta-primary);"></i> Dashboard Penjual
+                    </h1>
+                    <p class="page-subtitle">Kelola toko dan pesanan Anda dari sini</p>
+                </div>
+                
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Statistics Row -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <div class="stat-label">Total Produk</div>
+                            <div class="stat-value">{{ total_products }}</div>
+                            <small class="text-muted">produk aktif</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-label">Total Pesanan</div>
+                            <div class="stat-value">{{ total_orders }}</div>
+                            <small class="text-muted">pesanan masuk</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-label">Rating Brand</div>
+                            <div class="stat-value">{{ seller_brand.rating|floatformat:1 }}/5</div>
+                            <small class="text-muted">dari customer</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Orders Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <i class="fas fa-list"></i>
+                        <h5>Pesanan Terbaru</h5>
+                    </div>
+                    
+                    {% if recent_orders %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Kode Order</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Tanggal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_orders %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'master_products:order_detail' order.order_id %}" 
+                                                   style="color: var(--volta-primary); text-decoration: none;">
+                                                    {{ order.order_code }}
+                                                </a>
+                                            </td>
+                                            <td>{{ order.user_id.username }}</td>
+                                            <td>
+                                                <strong>Rp{{ order.total_amount|floatformat:0 }}</strong>
+                                            </td>
+                                            <td>
+                                                {% if order.status == 'pending' %}
+                                                    <span class="badge badge-pending">Menunggu</span>
+                                                {% elif order.status == 'confirmed' %}
+                                                    <span class="badge badge-confirmed">Dikonfirmasi</span>
+                                                {% elif order.status == 'delivered' %}
+                                                    <span class="badge badge-active">Terkirim</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ order.order_date|date:"d M Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <p class="empty-message">Belum ada pesanan masuk</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Products Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <i class="fas fa-boxes"></i>
+                        <h5>Produk Terbaru</h5>
+                        <a href="{% url 'master_products:add_product' %}" class="btn btn-primary btn-sm ms-auto">
+                            <i class="fas fa-plus"></i> Tambah Produk
+                        </a>
+                    </div>
+                    
+                    {% if products %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Produk</th>
+                                        <th>Kategori</th>
+                                        <th>Harga</th>
+                                        <th>Stok</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'master_products:product_detail' product.slug %}" 
+                                                   style="color: var(--volta-primary); text-decoration: none;">
+                                                    {{ product.product_name|truncatewords:5 }}
+                                                </a>
+                                            </td>
+                                            <td>{{ product.category_id.category_name }}</td>
+                                            <td>
+                                                <strong>Rp{{ product.price|floatformat:0 }}</strong>
+                                            </td>
+                                            <td>
+                                                {% if product.stock > 0 %}
+                                                    <span style="color: var(--volta-success);">{{ product.stock }} unit</span>
+                                                {% else %}
+                                                    <span style="color: var(--volta-danger);">Stok Habis</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if product.is_active %}
+                                                    <span class="badge badge-active">Aktif</span>
+                                                {% else %}
+                                                    <span class="badge badge-pending">Non-Aktif</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{% url 'master_products:product_detail' product.slug %}" 
+                                                       class="btn btn-outline-primary btn-sm" title="Lihat produk">
+                                                        <i class="fas fa-eye"></i> Lihat
+                                                    </a>
+                                                    <a href="{% url 'master_products:edit_product' product.product_id %}" 
+                                                       class="btn btn-outline-warning btn-sm" title="Edit produk">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </a>
+                                                    <form method="POST" action="{% url 'master_products:delete_product' product.product_id %}" 
+                                                          style="display: inline; margin: 0;" 
+                                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk &quot;{{ product.product_name }}&quot;? Tindakan ini tidak bisa dibatalkan.');">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus produk">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <p class="empty-message">Anda belum menambahkan produk apapun</p>
+                            <a href="{% url 'master_products:add_product' %}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Tambah Produk Sekarang
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

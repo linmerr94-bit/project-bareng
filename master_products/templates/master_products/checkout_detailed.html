@@ -1,0 +1,714 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - VOLTA E-Commerce Purwokerto</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .checkout-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checkout-progress {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+            padding: 20px 0;
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        
+        .progress-step.active {
+            color: #6366f1;
+            font-weight: 600;
+        }
+        
+        .progress-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+        
+        .progress-step.active .progress-icon {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+        
+        .progress-arrow {
+            color: #334155;
+            margin: 0 8px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            margin: 40px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.1);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 14px;
+        }
+        
+        .form-label .required {
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: #64748b;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .delivery-method {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .delivery-method:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .delivery-method input[type="radio"] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #6366f1;
+        }
+        
+        .delivery-method.selected {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .delivery-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+            color: #6366f1;
+        }
+        
+        .delivery-info {
+            flex: 1;
+        }
+        
+        .delivery-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+        
+        .delivery-desc {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .delivery-price {
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .product-group {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .brand-name {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .brand-location {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .product-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-details {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .product-specs {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        
+        .product-price-qty {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .price-qty {
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+        
+        .product-subtotal {
+            font-weight: 600;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .summary-item:last-of-type {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            color: #94a3b8;
+        }
+        
+        .summary-value {
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #334155;
+        }
+        
+        .summary-total-label {
+            color: #f1f5f9;
+        }
+        
+        .summary-total-value {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-checkout {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 24px;
+        }
+        
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-checkout:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #86efac;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== HEADER ==================== -->
+    <div class="header">
+        <div class="container">
+            <div class="checkout-title">
+                <i class="fas fa-shopping-bag"></i>
+                Checkout
+            </div>
+            
+            <div class="checkout-progress">
+                <div class="progress-step active">
+                    <div class="progress-icon">1</div>
+                    <span>Checkout</span>
+                </div>
+                <div class="progress-arrow"><i class="fas fa-chevron-right"></i></div>
+                
+                <div class="progress-step">
+                    <div class="progress-icon">2</div>
+                    <span>Payment</span>
+                </div>
+                <div class="progress-arrow"><i class="fas fa-chevron-right"></i></div>
+                
+                <div class="progress-step">
+                    <div class="progress-icon">3</div>
+                    <span>Invoice</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="container">
+        <div class="main-content">
+            <!-- ==================== LEFT PANEL ==================== -->
+            <div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="{% if message.tags %}{{ message.tags }}{% endif %}-message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- ==================== SECTION: DELIVERY ADDRESS ==================== -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Alamat Pengiriman
+                    </div>
+                    
+                    <form method="POST" id="checkoutForm">
+                        {% csrf_token %}
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nama Penerima <span class="required">*</span></label>
+                                <input type="text" name="receiver_name" class="form-input" placeholder="Nama lengkap penerima" value="{{ user_name }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nomor Telepon <span class="required">*</span></label>
+                                <input type="tel" name="phone" class="form-input" placeholder="08xxxxxxxxx" value="{{ user_phone }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group full">
+                            <label class="form-label">Alamat Lengkap <span class="required">*</span></label>
+                            <textarea name="shipping_address" class="form-textarea" placeholder="Jalan, No. Rumah, Kelurahan, Kecamatan, Kota, Provinsi" required></textarea>
+                        </div>
+                        
+                        <!-- ==================== SECTION: DELIVERY METHOD ==================== -->
+                        <div class="section-card" style="margin-top: 30px;">
+                            <div class="section-title">
+                                <i class="fas fa-truck"></i>
+                                Pilih Metode Pengiriman
+                            </div>
+                            
+                            <label class="delivery-method selected">
+                                <input type="radio" name="delivery_method" value="volta_sameday" checked>
+                                <div class="delivery-icon"><i class="fas fa-bolt"></i></div>
+                                <div class="delivery-info">
+                                    <div class="delivery-name">VOLTA Kurir Kilat (Same-Day)</div>
+                                    <div class="delivery-desc">Pengiriman hari yang sama untuk wilayah Purwokerto & sekitarnya</div>
+                                </div>
+                                <div class="delivery-price">Gratis</div>
+                            </label>
+                            
+                            <label class="delivery-method">
+                                <input type="radio" name="delivery_method" value="volta_express">
+                                <div class="delivery-icon"><i class="fas fa-paper-plane"></i></div>
+                                <div class="delivery-info">
+                                    <div class="delivery-name">VOLTA Express (1-2 Hari)</div>
+                                    <div class="delivery-desc">Pengiriman ke seluruh Indonesia dalam 1-2 hari kerja</div>
+                                </div>
+                                <div class="delivery-price">Rp 15.000</div>
+                            </label>
+                            
+                            <label class="delivery-method">
+                                <input type="radio" name="delivery_method" value="pickup_store">
+                                <div class="delivery-icon"><i class="fas fa-store"></i></div>
+                                <div class="delivery-info">
+                                    <div class="delivery-name">Ambil Sendiri di Toko</div>
+                                    <div class="delivery-desc">Ambil pesanan di toko fisik VOLTA Purwokerto di Jl. Gajah Mada No. 42</div>
+                                </div>
+                                <div class="delivery-price">Gratis</div>
+                            </label>
+                        </div>
+                        
+                        <!-- ==================== SECTION: PAYMENT METHOD ==================== -->
+                        <div class="section-card" style="margin-top: 30px;">
+                            <div class="section-title">
+                                <i class="fas fa-credit-card"></i>
+                                Metode Pembayaran
+                            </div>
+                            
+                            <label class="delivery-method selected">
+                                <input type="radio" name="payment_method" value="bank_transfer" checked>
+                                <div class="delivery-icon"><i class="fas fa-building"></i></div>
+                                <div class="delivery-info">
+                                    <div class="delivery-name">Transfer Bank (Virtual Account)</div>
+                                    <div class="delivery-desc">Pembayaran via Mandiri VA / BCA VA (gratis biaya admin)</div>
+                                </div>
+                            </label>
+                            
+                            <label class="delivery-method">
+                                <input type="radio" name="payment_method" value="e_wallet">
+                                <div class="delivery-icon"><i class="fas fa-mobile-alt"></i></div>
+                                <div class="delivery-info">
+                                    <div class="delivery-name">E-Wallet (GCash, Dana, OVO)</div>
+                                    <div class="delivery-desc">Pembayaran digital instant ke rekening toko</div>
+                                </div>
+                            </label>
+                            
+                            <label class="delivery-method">
+                                <input type="radio" name="payment_method" value="cash_on_delivery">
+                                <div class="delivery-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                <div class="delivery-info">
+                                    <div class="delivery-name">Bayar di Tempat (COD)</div>
+                                    <div class="delivery-desc">Bayar langsung saat barang tiba (tambahan biaya Rp 10.000)</div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <!-- ==================== SECTION: ORDER SUMMARY BY BRAND ==================== -->
+                        <div class="section-card" style="margin-top: 30px;">
+                            <div class="section-title">
+                                <i class="fas fa-list"></i>
+                                Ringkasan Pesanan
+                            </div>
+                            
+                            {% for item in cart_items %}
+                                {% if forloop.first or item.product_id.brand_id.brand_id != prev_brand_id %}
+                                    {% if not forloop.first %}</div>{% endif %}
+                                    <div class="product-group">
+                                        <div class="brand-header">
+                                            <div class="brand-icon">
+                                                {{ item.product_id.brand_id.brand_name|first|upper }}
+                                            </div>
+                                            <div>
+                                                <div class="brand-name">{{ item.product_id.brand_id.brand_name }}</div>
+                                                <div class="brand-location"><i class="fas fa-map-pin"></i> Purwokerto</div>
+                                            </div>
+                                        </div>
+                                {% endif %}
+                                
+                                <div class="product-item">
+                                    {% if item.product_id.image %}
+                                        <div class="product-image">
+                                            <img src="{{ item.product_id.image.url }}" alt="{{ item.product_id.product_name }}">
+                                        </div>
+                                    {% else %}
+                                        <div class="product-image" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-box" style="color: white; font-size: 32px;"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="product-details">
+                                        <div class="product-name">{{ item.product_id.product_name }}</div>
+                                        <div class="product-specs">
+                                            Stok: {{ item.product_id.stock }} unit tersedia
+                                        </div>
+                                        <div class="product-price-qty">
+                                            <div class="price-qty">
+                                                Rp {{ item.price|floatformat:0|add:"0"|stringformat:"d" }} × {{ item.qty }}
+                                            </div>
+                                            <div class="product-subtotal">
+                                                Rp {{ item.subtotal|floatformat:0|add:"0"|stringformat:"d" }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {% if forloop.last %}</div>{% endif %}
+                                {% set prev_brand_id = item.product_id.brand_id.brand_id %}
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Button -->
+                        <button type="submit" class="btn-checkout">
+                            <i class="fas fa-lock"></i> Lanjut ke Pembayaran
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- ==================== RIGHT PANEL: SUMMARY ==================== -->
+            <div>
+                <div class="summary-box">
+                    <div class="summary-title">
+                        <i class="fas fa-receipt"></i>
+                        Ringkasan Pembayaran
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Subtotal ({{ total_items }} item)</span>
+                        <span class="summary-value">Rp {{ total_price|floatformat:0|add:"0"|stringformat:"d" }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Biaya Pengiriman</span>
+                        <span class="summary-value">Gratis</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Asuransi Pengiriman</span>
+                        <span class="summary-value">Gratis</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span class="summary-total-label">Total Pembayaran</span>
+                        <span class="summary-total-value">{{ total_price_formatted }}</span>
+                    </div>
+                    
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; padding: 16px; margin-top: 20px; font-size: 13px; color: #cbd5e1;">
+                        <div style="margin-bottom: 8px;"><strong style="color: #f1f5f9;">ℹ️ Informasi Penting:</strong></div>
+                        <ul style="margin-left: 20px;">
+                            <li>✓ Semua produk dijamin keaslian dari toko VOLTA Purwokerto</li>
+                            <li>✓ Gratis ongkos kirim untuk area Purwokerto & sekitarnya</li>
+                            <li>✓ Garansi uang kembali 100% jika produk tidak sesuai</li>
+                            <li>✓ Pelanggan baru dapatkan diskon khusus</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Handle delivery method selection styling
+        document.querySelectorAll('.delivery-method input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.delivery-method').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                this.parentElement.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>

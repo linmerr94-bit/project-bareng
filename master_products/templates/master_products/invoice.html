@@ -1,0 +1,589 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Pembayaran - VOLTA E-Commerce</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            padding: 24px 0;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .success-badge {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: #0f172a;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .main-content {
+            margin: 40px 0;
+        }
+        
+        .invoice-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #334155;
+        }
+        
+        .invoice-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+        
+        .logo-desc {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .invoice-status {
+            text-align: right;
+        }
+        
+        .status-badge {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #10b981;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .invoice-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-top: 12px;
+        }
+        
+        .invoice-code {
+            font-family: 'Courier New', monospace;
+            color: #10b981;
+            font-size: 18px;
+        }
+        
+        .invoice-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .invoice-body {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+        
+        .invoice-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .invoice-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        
+        .invoice-section-content {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .section-label {
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        
+        .section-value {
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #334155;
+            margin: 30px 0;
+        }
+        
+        .items-table {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 80px 100px 120px;
+            gap: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 100px 120px;
+            gap: 16px;
+            padding: 16px;
+            border-bottom: 1px solid #334155;
+            font-size: 14px;
+            align-items: center;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .product-name {
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+        
+        .product-sku {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        
+        .table-qty,
+        .table-price,
+        .table-total {
+            text-align: right;
+            color: #cbd5e1;
+        }
+        
+        .table-total {
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .summary-section {
+            margin-bottom: 30px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            color: #94a3b8;
+        }
+        
+        .summary-value {
+            color: #f1f5f9;
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            font-size: 18px;
+            font-weight: 700;
+            border-top: 2px solid #334155;
+            border-bottom: 2px solid #334155;
+            margin-top: 16px;
+        }
+        
+        .summary-total-label {
+            color: #f1f5f9;
+        }
+        
+        .summary-total-value {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .payment-info {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .payment-info-title {
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .payment-info-content {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+        
+        .info-item {
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            color: #94a3b8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            color: #f1f5f9;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        
+        .footer-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #334155;
+            text-align: center;
+        }
+        
+        .thank-you {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+        
+        .footer-text {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: #0f172a;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            color: #f1f5f9;
+            border: 1px solid #475569;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #475569 0%, #334155 100%);
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .header {
+                background: white;
+                color: #0f172a;
+            }
+            .action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== HEADER ==================== -->
+    <div class="header">
+        <div class="container">
+            <div class="header-title">
+                <i class="fas fa-check-circle"></i>
+                Pembayaran Berhasil!
+            </div>
+            <div class="success-badge">
+                <i class="fas fa-check"></i>
+                Transaksi Lunas - Pesanan Sedang Dikemas
+            </div>
+        </div>
+    </div>
+    
+    <!-- ==================== INVOICE ==================== -->
+    <div class="container">
+        <div class="main-content">
+            <div class="invoice-card">
+                <!-- Invoice Header -->
+                <div class="invoice-header">
+                    <div class="invoice-logo">
+                        <div class="logo-icon">V</div>
+                        <div class="logo-text">
+                            <div class="logo-name">VOLTA E-Commerce</div>
+                            <div class="logo-desc">Purwokerto Trade Center</div>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-status">
+                        <div class="status-badge">
+                            <i class="fas fa-check-circle"></i>
+                            Lunas
+                        </div>
+                        <div class="invoice-number">INVOICE</div>
+                        <div class="invoice-code">#{{ order_code }}</div>
+                    </div>
+                </div>
+                
+                <!-- Invoice Body -->
+                <div class="invoice-body">
+                    <!-- Informasi Pembeli -->
+                    <div class="invoice-section">
+                        <div class="invoice-section-title">
+                            <i class="fas fa-user"></i> Informasi Pembeli
+                        </div>
+                        <div class="invoice-section-content">
+                            <div style="margin-bottom: 16px;">
+                                <div class="section-label">NAMA PENERIMA</div>
+                                <div class="section-value">{{ receiver_name }}</div>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <div class="section-label">NOMOR TELEPON</div>
+                                <div class="section-value">{{ phone }}</div>
+                            </div>
+                            <div>
+                                <div class="section-label">ALAMAT PENGIRIMAN</div>
+                                <div class="section-value" style="line-height: 1.6;">{{ shipping_address }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informasi Pesanan -->
+                    <div class="invoice-section">
+                        <div class="invoice-section-title">
+                            <i class="fas fa-receipt"></i> Informasi Pesanan
+                        </div>
+                        <div class="invoice-section-content">
+                            <div style="margin-bottom: 16px;">
+                                <div class="section-label">TANGGAL TRANSAKSI</div>
+                                <div class="section-value">{{ order_date|date:"d F Y - H:i" }}</div>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <div class="section-label">METODE PEMBAYARAN</div>
+                                <div class="section-value">{{ payment_method_display }}</div>
+                            </div>
+                            <div>
+                                <div class="section-label">DARI TOKO</div>
+                                <div class="section-value">{{ brand_name }} Purwokerto</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <!-- Items Table -->
+                <div class="items-table">
+                    <div class="table-header">
+                        <div>PRODUK</div>
+                        <div>QTY</div>
+                        <div>HARGA</div>
+                        <div>TOTAL</div>
+                    </div>
+                    
+                    {% for item in order_items %}
+                        <div class="table-row">
+                            <div>
+                                <div class="product-name">{{ item.product_id.product_name }}</div>
+                                <div class="product-sku">SKU: {{ item.product_id.product_id }}</div>
+                            </div>
+                            <div class="table-qty">{{ item.qty }}</div>
+                            <div class="table-price">
+                                Rp {{ item.price|floatformat:0|add:"0"|stringformat:"d" }}
+                            </div>
+                            <div class="table-total">
+                                Rp {% widthratio item.price item.qty 1|add:"0"|stringformat:"d" %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="divider"></div>
+                
+                <!-- Summary -->
+                <div class="summary-section">
+                    <div class="summary-row">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value">{{ total_amount_formatted }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Ongkir</span>
+                        <span class="summary-value">Gratis</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Asuransi</span>
+                        <span class="summary-value">Gratis</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span class="summary-total-label">TOTAL PEMBAYARAN</span>
+                        <span class="summary-total-value">{{ total_amount_formatted }}</span>
+                    </div>
+                </div>
+                
+                <!-- Payment Info -->
+                <div class="payment-info">
+                    <div class="payment-info-title">
+                        <i class="fas fa-info-circle"></i>
+                        Status Pesanan
+                    </div>
+                    <div class="payment-info-content">
+                        <div class="info-item">
+                            <div class="info-label">Status Pembayaran</div>
+                            <div class="info-value">✓ LUNAS</div>
+                        </div>
+                        <div class="info-item" style="margin-bottom: 0;">
+                            <div class="info-label">Status Pesanan</div>
+                            <div class="info-value">🔄 Sedang Dikemas oleh Toko</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <!-- Footer -->
+                <div class="footer-section">
+                    <div class="thank-you">
+                        Terima Kasih atas Pembelian Anda! 🎉
+                    </div>
+                    <div class="footer-text">
+                        Pesanan Anda sedang diproses oleh toko VOLTA. Anda akan menerima notifikasi via email dan SMS<br>
+                        mengenai perkembangan pengiriman pesanan Anda.
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="window.print()">
+                            <i class="fas fa-print"></i>
+                            Cetak Invoice
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/'">
+                            <i class="fas fa-home"></i>
+                            Kembali ke Beranda
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

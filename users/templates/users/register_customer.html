@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - VOLTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-overlay {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        }
+        
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: #4f46e5;
+        }
+        
+        .btn-submit {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .icon-wrapper {
+            color: #6366f1;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div class="min-h-screen flex">
+        <!-- Kolom Kiri - Visual Panel -->
+        <div class="hidden lg:flex lg:w-1/2 gradient-overlay flex-col items-center justify-center p-12 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-10 left-10 w-20 h-20 bg-indigo-500 rounded-full opacity-10"></div>
+            <div class="absolute bottom-20 right-10 w-32 h-32 bg-indigo-400 rounded-full opacity-10"></div>
+            <div class="absolute top-1/2 right-1/4 w-40 h-40 bg-indigo-600 rounded-full opacity-5"></div>
+            
+            <!-- Content -->
+            <div class="relative z-10 text-center">
+                <div class="icon-wrapper flex justify-center">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                
+                <h1 class="text-white text-4xl font-bold mb-4">VOLTA</h1>
+                
+                <div class="w-12 h-1 bg-gradient-to-r from-indigo-500 to-indigo-600 mx-auto mb-6"></div>
+                
+                <h2 class="text-white text-2xl font-semibold mb-6">Bergabung dengan VOLTA</h2>
+                
+                <p class="text-slate-300 text-lg mb-8 leading-relaxed max-w-md">
+                    Platform e-commerce terpercaya untuk pelanggan retail dan grosir yang mencari produk berkualitas dengan harga kompetitif.
+                </p>
+                
+                <div class="space-y-4 text-slate-300">
+                    <div class="flex items-center justify-center gap-3">
+                        <i class="fas fa-check-circle text-indigo-400"></i>
+                        <span>Belanja Mudah & Aman</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-3">
+                        <i class="fas fa-check-circle text-indigo-400"></i>
+                        <span>Produk Terlengkap</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-3">
+                        <i class="fas fa-check-circle text-indigo-400"></i>
+                        <span>Harga Terbaik Retail & Grosir</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-3">
+                        <i class="fas fa-check-circle text-indigo-400"></i>
+                        <span>Pengiriman Cepat & Terpercaya</span>
+                    </div>
+                </div>
+                
+                <div class="mt-12 pt-8 border-t border-slate-700">
+                    <p class="text-slate-400 text-sm">
+                        Dapatkan diskon eksklusif untuk member baru!
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Kolom Kanan - Form Panel -->
+        <div class="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12">
+            <div class="w-full max-w-md">
+                <!-- Header -->
+                <div class="mb-8 text-center lg:hidden">
+                    <div class="flex justify-center mb-4">
+                        <i class="fas fa-bolt text-indigo-600" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-slate-900">VOLTA</h1>
+                </div>
+                
+                <div class="mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Daftar Akun</h2>
+                    <p class="text-slate-600">Buat akun VOLTA Anda sekarang</p>
+                </div>
+                
+                <!-- Form -->
+                <form method="POST" action="{% url 'register_customer' %}" class="space-y-5">
+                    {% csrf_token %}
+                    
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fas fa-user text-indigo-600 mr-2"></i>
+                            Nama Lengkap
+                        </label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            required 
+                            placeholder="Masukkan nama lengkap Anda"
+                            class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none placeholder-slate-400"
+                        >
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fas fa-envelope text-indigo-600 mr-2"></i>
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            placeholder="Masukkan alamat email Anda"
+                            class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none placeholder-slate-400"
+                        >
+                    </div>
+                    
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fas fa-lock text-indigo-600 mr-2"></i>
+                            Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            placeholder="Buat password yang kuat"
+                            class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none placeholder-slate-400"
+                        >
+                        <p class="text-xs text-slate-500 mt-1">
+                            Minimal 8 karakter, kombinasi huruf besar, huruf kecil, dan angka
+                        </p>
+                    </div>
+                    
+                    <!-- Konfirmasi Password -->
+                    <div>
+                        <label for="confirm_password" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fas fa-check-double text-indigo-600 mr-2"></i>
+                            Konfirmasi Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            required 
+                            placeholder="Ulangi password Anda"
+                            class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none placeholder-slate-400"
+                        >
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="btn-submit w-full py-3 text-white font-bold rounded-lg mt-6 flex items-center justify-center gap-2"
+                    >
+                        <i class="fas fa-user-plus"></i>
+                        Daftar Akun
+                    </button>
+                </form>
+                
+                <!-- Divider -->
+                <div class="flex items-center gap-4 my-6">
+                    <div class="flex-1 h-px bg-slate-300"></div>
+                    <span class="text-slate-500 text-sm">atau</span>
+                    <div class="flex-1 h-px bg-slate-300"></div>
+                </div>
+                
+                <!-- Login Link -->
+                <div class="text-center">
+                    <p class="text-slate-700">
+                        Sudah punya akun? 
+                        <a href="{% url 'login' %}" class="text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
+                            Masuk di sini
+                        </a>
+                    </p>
+                </div>
+                
+                <!-- Terms & Conditions -->
+                <div class="mt-8 pt-6 border-t border-slate-200">
+                    <p class="text-xs text-slate-600 text-center">
+                        Dengan mendaftar, Anda menyetujui 
+                        <a href="#" class="text-indigo-600 hover:underline">Syarat & Ketentuan</a> 
+                        dan 
+                        <a href="#" class="text-indigo-600 hover:underline">Kebijakan Privasi</a> 
+                        VOLTA.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Validation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            
+            form.addEventListener('submit', function(e) {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                // Check if password meets minimum requirements
+                if (password.length < 8) {
+                    e.preventDefault();
+                    alert('Password harus minimal 8 karakter');
+                    return;
+                }
+                
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Password dan Konfirmasi Password tidak sama');
+                    return;
+                }
+                
+                // Check if password has mixed case and numbers
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumbers = /[0-9]/.test(password);
+                
+                if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+                    e.preventDefault();
+                    alert('Password harus mengandung huruf besar, huruf kecil, dan angka');
+                    return;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

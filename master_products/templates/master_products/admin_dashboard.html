@@ -1,0 +1,783 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Platform Dashboard - VOLTA E-Commerce</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    
+    <style>
+        :root {
+            --volta-dark: #0f172a;
+            --volta-darker: #0a0f1a;
+            --volta-card: #1e293b;
+            --volta-border: #334155;
+            --volta-primary: #6366f1;
+            --volta-purple: #8b5cf6;
+            --volta-success: #10b981;
+            --volta-warning: #f59e0b;
+            --volta-danger: #ef4444;
+            --volta-info: #0ea5e9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--volta-dark);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* ==================== NAVBAR ==================== */
+        .navbar {
+            background: linear-gradient(135deg, var(--volta-dark) 0%, var(--volta-darker) 100%);
+            border-bottom: 2px solid var(--volta-border);
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--volta-primary) 0%, var(--volta-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar-brand i {
+            color: var(--volta-primary);
+            margin-right: 0.5rem;
+        }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, var(--volta-warning) 0%, #d97706 100%);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-logout {
+            background: linear-gradient(135deg, var(--volta-danger) 0%, #c2185b 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
+            color: white;
+        }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            background: linear-gradient(180deg, var(--volta-card) 0%, var(--volta-darker) 100%);
+            border-right: 2px solid var(--volta-border);
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+        
+        .sidebar .nav-link {
+            color: #94a3b8;
+            padding: 0.75rem 1.5rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(99, 102, 241, 0.1);
+            border-left-color: var(--volta-primary);
+            color: var(--volta-primary);
+        }
+        
+        .sidebar .nav-link i {
+            width: 1.5rem;
+            text-align: center;
+        }
+        
+        .sidebar-title {
+            padding: 0 1.5rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            background-color: var(--volta-dark);
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--volta-border);
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .page-title i {
+            color: var(--volta-primary);
+            font-size: 2.5rem;
+        }
+        
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        
+        /* ==================== STAT CARDS ==================== */
+        .stat-card {
+            background: linear-gradient(135deg, var(--volta-card) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--volta-primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        
+        .stat-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+        
+        .stat-icon.primary {
+            color: var(--volta-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .stat-icon.success {
+            color: var(--volta-success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .stat-icon.warning {
+            color: var(--volta-warning);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        
+        .stat-icon.danger {
+            color: var(--volta-danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .stat-icon.info {
+            color: var(--volta-info);
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        /* ==================== TABLES ==================== */
+        .table-card {
+            background: linear-gradient(135deg, var(--volta-card) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--volta-border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .table-header h5 {
+            margin: 0;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .table-header i {
+            color: var(--volta-primary);
+            font-size: 1.5rem;
+        }
+        
+        .table {
+            color: #cbd5e1;
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background-color: rgba(99, 102, 241, 0.05);
+            border-color: var(--volta-border);
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+        }
+        
+        .table tbody td {
+            border-color: var(--volta-border);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--volta-border);
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        
+        /* ==================== BADGES ==================== */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .badge-pending {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--volta-warning);
+        }
+        
+        .badge-approved {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--volta-success);
+        }
+        
+        .badge-rejected {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--volta-danger);
+        }
+        
+        /* ==================== BUTTONS ==================== */
+        .btn-approve {
+            background: linear-gradient(135deg, var(--volta-success) 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .btn-approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-reject {
+            background: linear-gradient(135deg, var(--volta-danger) 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-action-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        /* ==================== EMPTY STATE ==================== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: #475569;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-message {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid var(--volta-border);
+                min-height: auto;
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stat-card {
+                text-align: center;
+            }
+            
+            .table {
+                font-size: 0.875rem;
+            }
+            
+            .btn-approve, .btn-reject {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <!-- Brand Logo -->
+            <a class="navbar-brand" href="{% url 'master_products:admin_platform_dashboard' %}">
+                <i class="fas fa-shield-alt"></i>VOLTA ADMIN
+            </a>
+            
+            <!-- Navbar Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="admin-badge">
+                            <i class="fas fa-crown"></i>ADMINISTRATOR
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link" style="cursor: default;">
+                            {{ request.user.username }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">
+                            <i class="fas fa-cog"></i> Django Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-logout btn-sm" href="{% url 'master_products:logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="container-fluid">
+        <div class="row g-0">
+            <!-- SIDEBAR -->
+            <div class="col-lg-2 sidebar d-none d-lg-block">
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="{% url 'master_products:admin_platform_dashboard' %}">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    
+                    <div class="sidebar-title">Manajemen</div>
+                    <a class="nav-link" href="#approvals">
+                        <i class="fas fa-check-circle"></i> Persetujuan Brand
+                    </a>
+                    <a class="nav-link" href="/admin/auth/user/" target="_blank">
+                        <i class="fas fa-users"></i> Manajemen User
+                    </a>
+                    <a class="nav-link" href="/admin/master_products/order/" target="_blank">
+                        <i class="fas fa-shopping-bag"></i> Transaksi
+                    </a>
+                    
+                    <hr style="border-color: var(--volta-border); margin: 1rem 0;">
+                    
+                    <div class="sidebar-title">Akses Cepat</div>
+                    <a class="nav-link" href="{% url 'master_products:product_list' %}">
+                        <i class="fas fa-store"></i> Toko
+                    </a>
+                    <a class="nav-link" href="/admin/" target="_blank">
+                        <i class="fas fa-database"></i> Django Admin
+                    </a>
+                    <a class="nav-link" href="{% url 'master_products:logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- MAIN CONTENT -->
+            <div class="col-lg-10 main-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-bar"></i> Admin Platform Dashboard
+                    </h1>
+                    <p class="page-subtitle">Kelola platform, brand, dan transaksi VOLTA E-Commerce</p>
+                </div>
+                
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if 'error' in message.tags %}danger{% elif 'warning' in message.tags %}warning{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message|safe }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Statistics Row -->
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="stat-label">Total Brand</div>
+                            <div class="stat-value">{{ total_brands }}</div>
+                            <small class="text-muted">terdaftar</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-label">Menunggu Persetujuan</div>
+                            <div class="stat-value">{{ pending_brands }}</div>
+                            <small class="text-muted">brand pending</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-label">Total Customer</div>
+                            <div class="stat-value">{{ total_customers }}</div>
+                            <small class="text-muted">aktif</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value" style="font-size: 1.5rem;">{{ total_revenue_formatted }}</div>
+                            <small class="text-muted">dari order confirmed</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-label">Transaksi Bulan Ini</div>
+                            <div class="stat-value">{{ total_transactions_month }}</div>
+                            <small class="text-muted">orders</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pending Brands Table -->
+                <div class="table-card" id="approvals">
+                    <div class="table-header">
+                        <i class="fas fa-list-check"></i>
+                        <h5>Persetujuan Pendaftaran Brand Baru</h5>
+                        {% if pending_brands_list|length > 0 %}
+                            <span class="badge badge-pending ms-2">{{ pending_brands_list|length }} Pending</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if pending_brands_list %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Brand</th>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>NIB/KTP</th>
+                                        <th>Tanggal Daftar</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for brand in pending_brands_list %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ brand.brand_name }}</strong>
+                                                {% if brand.description %}
+                                                    <br>
+                                                    <small class="text-muted">{{ brand.description|truncatewords:10 }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ brand.user_id.username }}
+                                            </td>
+                                            <td>
+                                                <a href="mailto:{{ brand.user_id.email }}" style="color: var(--volta-primary); text-decoration: none;">
+                                                    {{ brand.user_id.email }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {% if brand.nib_or_ktp %}
+                                                    <code style="color: #94a3b8; background: rgba(99, 102, 241, 0.1); padding: 0.2rem 0.4rem; border-radius: 3px;">
+                                                        {{ brand.nib_or_ktp }}
+                                                    </code>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ brand.created_at|date:"d M Y" }}
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-pending">{{ brand.get_status_display }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-action-group">
+                                                    <form method="POST" action="{% url 'master_products:approve_seller' brand.brand_id %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-approve" onclick="return confirm('Setujui brand ini?')">
+                                                            <i class="fas fa-check"></i> Setujui
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" action="{% url 'master_products:reject_seller' brand.brand_id %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-reject" onclick="return confirm('Tolak brand ini?')">
+                                                            <i class="fas fa-times"></i> Tolak
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <p class="empty-message">Tidak ada brand menunggu persetujuan</p>
+                            <small class="text-muted">Semua pengajuan brand sudah diproses</small>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Approved Brands Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h5>Daftar Brand yang Sudah Aktif</h5>
+                        <span class="badge badge-approved ms-2">{{ approved_brands_list|length }}+ Aktif</span>
+                    </div>
+                    
+                    {% if approved_brands_list %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Brand</th>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Rating</th>
+                                        <th>Status</th>
+                                        <th>Disetujui Oleh</th>
+                                        <th>Tanggal Persetujuan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for brand in approved_brands_list %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ brand.brand_name }}</strong>
+                                                {% if brand.description %}
+                                                    <br>
+                                                    <small class="text-muted">{{ brand.description|truncatewords:8 }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ brand.user_id.username }}
+                                            </td>
+                                            <td>
+                                                <a href="mailto:{{ brand.user_id.email }}" style="color: var(--volta-primary); text-decoration: none;">
+                                                    {{ brand.user_id.email }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span style="color: var(--volta-warning);">
+                                                    <i class="fas fa-star"></i> {{ brand.rating|floatformat:1 }}/5
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-approved">{{ brand.get_status_display }}</span>
+                                            </td>
+                                            <td>
+                                                {% if brand.approved_by %}
+                                                    <small>{{ brand.approved_by.username }}</small>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if brand.approved_at %}
+                                                    {{ brand.approved_at|date:"d M Y" }}
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <p class="empty-message">Belum ada brand yang disetujui</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    
+    <script>
+        // Initialize DataTables untuk responsive tables
+        document.addEventListener('DOMContentLoaded', function() {
+            if ($.fn.dataTable) {
+                $('table').DataTable({
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+                    },
+                    pageLength: 10,
+                    order: [[4, 'desc']]
+                });
+            }
+        });
+    </script>
+</body>
+</html>

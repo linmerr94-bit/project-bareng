@@ -1,0 +1,488 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfirmasi Pembayaran - VOLTA E-Commerce</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-bottom: 2px solid #334155;
+            padding: 16px 0;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-top: 2px solid #334155;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        
+        .card-payment {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .card-payment:hover {
+            border-color: #6366f1;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.15);
+        }
+        
+        .payment-methods-display {
+            background: linear-gradient(135deg, #1a3a2f 0%, #0f2520 100%);
+            border: 2px solid #2d5a52;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .method-icon {
+            font-size: 28px;
+            color: #a7f3d0;
+            margin-bottom: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .order-item-display {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .item-image {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #f1f5f9;
+        }
+        
+        .item-qty-price {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 14px 28px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-confirm:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-back {
+            background: transparent;
+            border: 2px solid #334155;
+            color: #94a3b8;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-back:hover {
+            background: #334155;
+            color: #cbd5e1;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #1e3a2f 0%, #0f2520 100%);
+            border: 2px solid #2d5a52;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #a7f3d0;
+        }
+        
+        .info-box i {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 15px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .summary-label {
+            color: #94a3b8;
+        }
+        
+        .summary-value {
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #334155;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .summary-total-label {
+            color: #f1f5f9;
+        }
+        
+        .summary-total-value {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                    <i class="fas fa-credit-card"></i> VOLTA
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8 text-sm">
+            <span class="text-gray-400">
+                <i class="fas fa-home"></i>
+                <a href="{% url 'master_products:product_list' %}" class="text-indigo-400 hover:text-indigo-300">Beranda</a>
+                <span class="mx-2">→</span>
+                <span class="text-indigo-500 font-semibold">Konfirmasi Pembayaran</span>
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- LEFT SECTION: PAYMENT FORM -->
+            <div class="lg:col-span-2">
+                <!-- SECTION: ORDER ITEMS -->
+                <div class="card-payment">
+                    <div style="font-size: 22px; font-weight: 700; margin-bottom: 24px; color: #f1f5f9; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-list" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                        Ringkasan Pesanan
+                    </div>
+
+                    <div class="space-y-4">
+                        {% for item in order_items %}
+                            <div class="order-item-display">
+                                {% if item.product_id.image %}
+                                    <div class="item-image">
+                                        <img src="{{ item.product_id.image.url }}" alt="{{ item.product_id.product_name }}">
+                                    </div>
+                                {% else %}
+                                    <div class="item-image">
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-700">
+                                            <i class="fas fa-image text-gray-500 text-2xl"></i>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="item-details">
+                                    <div class="item-name">{{ item.product_id.product_name }}</div>
+                                    <div style="font-size: 14px; color: #94a3b8; margin-bottom: 8px;">
+                                        <i class="fas fa-tag"></i> {{ item.product_id.brand_id.brand_name }}
+                                    </div>
+                                    <div class="item-qty-price">
+                                        <span style="background: #334155; padding: 4px 10px; border-radius: 4px; color: #cbd5e1;">
+                                            <i class="fas fa-times"></i> {{ item.qty }} item
+                                        </span>
+                                        <span style="font-weight: 600; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 16px;">
+                                            Rp {{ item.price|floatformat:0 }}/item
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <div style="font-size: 20px; font-weight: bold; color: #6366f1;">
+                                        Rp {{ item.price|add:0|mul:item.qty|floatformat:0 }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- SECTION: PAYMENT DETAILS -->
+                <div class="card-payment">
+                    <div style="font-size: 22px; font-weight: 700; margin-bottom: 24px; color: #f1f5f9; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-info-circle" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                        Detail Pembayaran
+                    </div>
+
+                    <!-- Payment Method Info -->
+                    <div class="payment-methods-display">
+                        <div class="method-icon">
+                            {% if order.payment_method == 'bank_transfer' %}
+                                <i class="fas fa-university"></i>
+                            {% elif order.payment_method == 'e_wallet' %}
+                                <i class="fas fa-wallet"></i>
+                            {% elif order.payment_method == 'credit_card' %}
+                                <i class="fas fa-credit-card"></i>
+                            {% else %}
+                                <i class="fas fa-hand-holding-usd"></i>
+                            {% endif %}
+                        </div>
+                        <div style="font-weight: 600; font-size: 16px; color: #a7f3d0; margin-bottom: 6px;">
+                            Metode Pembayaran: {{ payment_method_display }}
+                        </div>
+                        <div style="font-size: 14px; color: #a7f3d0;">
+                            {% if order.payment_method == 'bank_transfer' %}
+                                Transfer ke rekening bank VOLTA (BRI, BCA, Mandiri)
+                            {% elif order.payment_method == 'e_wallet' %}
+                                GCash, PayMaya, OVO, DANA, LinkAja
+                            {% elif order.payment_method == 'credit_card' %}
+                                Visa, Mastercard, American Express
+                            {% else %}
+                                Bayar langsung kepada kurir saat barang tiba
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Delivery Info -->
+                    <div class="form-group">
+                        <label class="form-label">Nama Penerima</label>
+                        <input type="text" class="form-input" value="{{ receiver_name }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nomor Telepon</label>
+                        <input type="tel" class="form-input" value="{{ phone }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Alamat Pengiriman</label>
+                        <textarea class="form-input" rows="4" readonly>{{ shipping_address }}</textarea>
+                    </div>
+
+                    <!-- DUMMY PAYMENT NOTICE -->
+                    <div class="info-box">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Pembayaran Dummy:</strong> Ini adalah simulasi pembayaran untuk demonstrasi. 
+                            Ketika Anda klik "Konfirmasi & Lanjutkan", order Anda akan diterima dan status akan berubah menjadi "Confirmed".
+                        </div>
+                    </div>
+
+                    <!-- CONFIRM PAYMENT FORM -->
+                    <form method="POST" id="paymentForm">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-confirm" id="confirmBtn">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="confirmText">Konfirmasi & Lanjutkan</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RIGHT SECTION: SUMMARY -->
+            <div>
+                <div class="summary-box">
+                    <div class="text-lg font-bold mb-6 text-indigo-400">
+                        <i class="fas fa-receipt"></i> Ringkasan Pembayaran
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Kode Order:</span>
+                        <span class="summary-value" style="font-family: monospace; background: #334155; padding: 4px 8px; border-radius: 4px;">{{ order_code }}</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Metode:</span>
+                        <span class="summary-value">{{ payment_method_display }}</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Jumlah Item:</span>
+                        <span class="summary-value">{{ order_items|length }} produk</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Ongkos Kirim:</span>
+                        <span class="summary-value">Rp 50.000</span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span class="summary-total-label">Total Pembayaran:</span>
+                        <span class="summary-total-value">{{ total_amount_formatted }}</span>
+                    </div>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #334155; text-center;">
+                        <i class="fas fa-shield-alt text-green-500" style="font-size: 24px; margin-bottom: 12px; display: block;"></i>
+                        <div style="font-size: 12px; color: #94a3b8;">Transaksi Aman & Terpercaya</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="font-bold text-indigo-400 mb-4">
+                        <i class="fas fa-shopping-cart"></i> VOLTA
+                    </h3>
+                    <p class="text-gray-400 text-sm">Platform e-commerce B2B2C terpercaya</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-300 mb-4">Tentang Kami</h4>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li><a href="#" class="hover:text-indigo-400">Tentang VOLTA</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Karir</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-300 mb-4">Bantuan</h4>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li><a href="#" class="hover:text-indigo-400">Hubungi Kami</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">FAQ</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-300 mb-4">Ikuti Kami</h4>
+                    <div class="flex gap-4 text-xl text-gray-400">
+                        <a href="#" class="hover:text-indigo-400"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="hover:text-indigo-400"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-indigo-400"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 VOLTA E-Commerce. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form validation
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            const confirmBtn = document.getElementById('confirmBtn');
+            const confirmText = document.getElementById('confirmText');
+            
+            confirmBtn.disabled = true;
+            confirmText.innerHTML = '<span style="display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: white; animation: spin 0.8s linear infinite; margin-right: 8px;"></span>Memproses Pembayaran...';
+        });
+    </script>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>

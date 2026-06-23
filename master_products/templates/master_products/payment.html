@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - VOLTA E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white">
+    <!-- ==================== HEADER ==================== -->
+    <header class="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-indigo-500/30 py-4">
+        <div class="max-w-7xl mx-auto px-4">
+            <h1 class="text-2xl font-bold text-indigo-400">
+                <i class="fas fa-credit-card mr-2"></i>VOLTA - Pembayaran
+            </h1>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if message.tags %}bg-{{ message.tags }}-500/20 border border-{{ message.tags }}-500{% else %}bg-blue-500/20 border border-blue-500{% endif %}">
+                    <p class="text-sm">{{ message|safe }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- ==================== LEFT SIDE: PAYMENT METHOD ==================== -->
+            <div class="lg:col-span-2">
+                <!-- Order Info Card -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6">
+                    <h2 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-receipt mr-2"></i>Detail Order
+                    </h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-slate-400">Kode Order:</p>
+                            <p class="font-semibold text-indigo-400">{{ order_code }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400">Status Pembayaran:</p>
+                            <p class="font-semibold">
+                                {% if order.payment_status == 'paid' %}
+                                    <span class="text-green-400">✓ Dibayar</span>
+                                {% elif order.payment_status == 'pending' %}
+                                    <span class="text-yellow-400">⏳ Menunggu Pembayaran</span>
+                                {% else %}
+                                    <span class="text-red-400">✗ Gagal</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-700">
+                        <p class="text-slate-400 text-sm mb-2">Dikirim ke:</p>
+                        <p class="font-medium">{{ receiver_name }}</p>
+                        <p class="text-sm text-slate-400">{{ shipping_address }}</p>
+                        <p class="text-sm text-slate-400">{{ phone }}</p>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6">
+                    <h2 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-box mr-2"></i>Item Pesanan
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        {% for item in order_items %}
+                            <div class="flex justify-between items-center pb-3 {% if not forloop.last %}border-b border-slate-700{% endif %}">
+                                <div>
+                                    <p class="font-medium">{{ item.product_id.product_name }}</p>
+                                    <p class="text-sm text-slate-400">{{ item.qty }} unit × Rp{{ item.price:,.0f }}</p>
+                                </div>
+                                <p class="font-semibold text-indigo-400">Rp{{ item.price|add:0|mul:item.qty|floatformat:0 }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Payment Instructions -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6">
+                    <h2 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-info-circle mr-2"></i>Instruksi Pembayaran
+                    </h2>
+                    
+                    <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
+                        <p class="text-sm mb-3">
+                            <strong>Metode Pembayaran:</strong> {{ payment_method_display }}
+                        </p>
+                        <p class="text-xs text-blue-300">
+                            📝 Ini adalah simulator pembayaran. Dalam sistem production, Anda akan diarahkan ke gateway pembayaran resmi (Midtrans, Stripe, dll).
+                        </p>
+                    </div>
+
+                    <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-sm">
+                        <p class="text-green-300 mb-2">
+                            <strong><i class="fas fa-check-circle mr-2"></i>Instruksi:</strong>
+                        </p>
+                        <ol class="list-decimal list-inside space-y-1 text-slate-300 text-xs">
+                            <li>Verifikasi detail order di atas</li>
+                            <li>Klik tombol "Simulasikan Pembayaran" di bawah</li>
+                            <li>Pembayaran akan langsung diproses (simulator)</li>
+                            <li>Anda akan menerima konfirmasi order</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Payment Form (Simulator) -->
+                <form method="POST" class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    {% csrf_token %}
+                    
+                    <h2 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-wallet mr-2"></i>Konfirmasi Pembayaran
+                    </h2>
+
+                    <div class="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                        <p class="text-sm text-yellow-300">
+                            ⚠️ <strong>SIMULATOR MODE:</strong> Klik tombol di bawah untuk mensimulasikan pembayaran sukses. 
+                            Data tidak akan dikirim ke payment gateway mana pun.
+                        </p>
+                    </div>
+
+                    <button 
+                        type="submit"
+                        class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2"
+                    >
+                        <i class="fas fa-check-circle"></i> Simulasikan Pembayaran
+                    </button>
+
+                    <p class="text-center text-xs text-slate-400 mt-4">
+                        Klik tombol di atas untuk menyelesaikan simulasi pembayaran
+                    </p>
+                </form>
+            </div>
+
+            <!-- ==================== RIGHT SIDE: SUMMARY ==================== -->
+            <div>
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 sticky top-8">
+                    <h3 class="text-lg font-bold mb-6 text-indigo-400">
+                        <i class="fas fa-calculator mr-2"></i>Ringkasan Pembayaran
+                    </h3>
+
+                    <!-- Item Count -->
+                    <div class="mb-4 pb-4 border-b border-slate-700">
+                        <p class="text-slate-400 text-sm">Total Item Pesanan</p>
+                        <p class="text-2xl font-bold">{{ order_items|length }} Produk</p>
+                    </div>
+
+                    <!-- Breakdown -->
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Subtotal:</span>
+                            <span>{{ total_amount_formatted }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Pajak:</span>
+                            <span>Rp0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Ongkir:</span>
+                            <span>Rp0 (Gratis)</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-lg p-4 mb-6 border border-indigo-500/30">
+                        <p class="text-slate-400 text-sm mb-1">Total Pembayaran</p>
+                        <p class="text-3xl font-bold text-indigo-400">{{ total_amount_formatted }}</p>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div class="bg-slate-700 rounded-lg p-4 text-center">
+                        <p class="text-xs text-slate-400 mb-2">Status Saat Ini</p>
+                        <div class="flex justify-center">
+                            {% if order.payment_status == 'pending' %}
+                                <span class="inline-block bg-yellow-500/20 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full">
+                                    ⏳ MENUNGGU PEMBAYARAN
+                                </span>
+                            {% elif order.payment_status == 'paid' %}
+                                <span class="inline-block bg-green-500/20 text-green-400 text-xs font-bold px-3 py-1 rounded-full">
+                                    ✓ PEMBAYARAN BERHASIL
+                                </span>
+                            {% else %}
+                                <span class="inline-block bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1 rounded-full">
+                                    ✗ PEMBAYARAN GAGAL
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Help -->
+                    <div class="mt-6 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-xs text-blue-300">
+                        <p><strong>Butuh bantuan?</strong></p>
+                        <p class="mt-1">Hubungi customer service kami di support@volta.id</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-gradient-to-r from-slate-900 to-slate-800 border-t border-slate-700 mt-16 py-6">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-400 text-sm">
+            <p>&copy; 2024 VOLTA E-Commerce Platform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

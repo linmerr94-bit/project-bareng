@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VOLTA Platform B2B2C Elektronik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* ==================== ANIMATED BACKGROUND ==================== */
+        .animated-bg-left {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-bg-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .animated-bg-left::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        /* ==================== GLASSMORPHISM EFFECTS ==================== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        /* ==================== INPUT STYLING ==================== */
+        .input-field {
+            background: white;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #cbd5e1;
+        }
+
+        .input-icon {
+            color: #6366f1;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus ~ .input-icon,
+        .input-field:not(:placeholder-shown) ~ .input-icon {
+            color: #4f46e5;
+            transform: scale(1.1);
+        }
+
+        /* ==================== BUTTON STYLING ==================== */
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #6366f1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #6366f1;
+            background: #f8fafc;
+        }
+
+        .btn-outline {
+            border: 2px solid white;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        /* ==================== CHECKBOX STYLING ==================== */
+        .checkbox-custom {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .checkbox-custom:checked {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-color: #6366f1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 11-1.06-1.06l7.25-7.25a.75.75 0 011.06 0Z'/%3E%3C/svg%3E");
+            background-size: 80%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .checkbox-custom:hover {
+            border-color: #6366f1;
+        }
+
+        /* ==================== MESSAGES/ALERTS ==================== */
+        .alert-container {
+            animation: slideInDown 0.4s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-left: 4px solid #ef4444;
+            color: #7f1d1d;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+            color: #78350f;
+        }
+
+        /* ==================== DIVIDER ==================== */
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .divider span {
+            position: relative;
+            background: white;
+            padding: 0 1rem;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        /* ==================== LINK STYLING ==================== */
+        a {
+            color: #6366f1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .left-panel {
+                display: none;
+            }
+            
+            .right-panel {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="min-h-screen flex">
+
+        <!-- ==================== LEFT PANEL (BRANDING) ==================== -->
+        <div class="left-panel hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 relative text-white animated-bg-left flex flex-col items-center justify-center px-8">
+            <div class="relative z-10 text-center max-w-md">
+                <!-- Logo -->
+                <div class="flex justify-center mb-8">
+                    <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-3xl flex items-center justify-center transform hover:scale-110 transition-transform shadow-2xl">
+                        <i class="fas fa-bolt text-white text-5xl"></i>
+                    </div>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="text-5xl font-bold mb-4 leading-tight">
+                    VOLTA
+                </h1>
+                <h2 class="text-2xl font-semibold mb-6 bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">
+                    B2B2C Ecosystem
+                </h2>
+
+                <!-- Description -->
+                <p class="text-lg text-gray-300 leading-relaxed mb-12">
+                    Platform distribusi elektronik terpadu yang menghubungkan Brand Resmi, Mitra Grosir, dan Konsumen Retail dalam satu ekosistem yang powerful.
+                </p>
+
+                <!-- Features -->
+                <div class="space-y-4 mb-12">
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-handshake text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-indigo-300">Kolaborasi Mulus</p>
+                            <p class="text-sm text-gray-400">Hubungkan buyer, seller, dan distributor</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-indigo-300">Pertumbuhan Bisnis</p>
+                            <p class="text-sm text-gray-400">Tingkatkan penjualan dengan analytics real-time</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-lock text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-indigo-300">Keamanan Terjamin</p>
+                            <p class="text-sm text-gray-400">Sistem enkripsi enterprise-grade</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <a href="#" class="btn-outline inline-flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-lg">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Pelajari Lebih Lanjut</span>
+                </a>
+
+                <!-- Stats -->
+                <div class="mt-16 pt-8 border-t border-slate-700">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-3xl font-bold text-indigo-400">5000+</p>
+                            <p class="text-xs text-gray-400">Pengguna Aktif</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-bold text-indigo-400">2000+</p>
+                            <p class="text-xs text-gray-400">Produk Tersedia</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-bold text-indigo-400">99.9%</p>
+                            <p class="text-xs text-gray-400">Uptime SLA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== RIGHT PANEL (LOGIN FORM) ==================== -->
+        <div class="right-panel w-full lg:w-1/2 bg-gray-50 flex flex-col items-center justify-center px-4 py-12 lg:py-0">
+            <div class="w-full max-w-md animate-in">
+
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <!-- Mobile Logo -->
+                    <div class="lg:hidden flex justify-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-bolt text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Selamat Datang</h2>
+                    <p class="text-gray-600">Masuk menggunakan akun Anda</p>
+                </div>
+
+                <!-- Messages/Alerts (Django) -->
+                {% if messages %}
+                <div class="alert-container mb-6 space-y-2">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg flex items-start space-x-3 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% else %}alert-success{% endif %}">
+                        <i class="fas fa-{% if message.tags == 'error' %}times-circle{% elif message.tags == 'warning' %}exclamation-circle{% else %}check-circle{% endif %} mt-0.5 flex-shrink-0"></i>
+                        <span class="text-sm font-medium flex-1">{{ message }}</span>
+                        <button onclick="this.parentElement.remove()" class="text-lg leading-none opacity-70 hover:opacity-100">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- LOGIN FORM -->
+                <div class="glass-card p-8 rounded-2xl mb-6">
+                    <form method="POST" action="#" class="space-y-5">
+                        {% csrf_token %}
+
+                        <!-- Username/Email Input -->
+                        <div class="relative">
+                            <label for="username" class="block text-sm font-semibold text-slate-700 mb-2">
+                                <i class="fas fa-user mr-2 text-indigo-600"></i>Username atau Email
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="text" 
+                                    id="username"
+                                    name="username" 
+                                    placeholder="Masukkan username atau email"
+                                    class="input-field w-full pl-4 pr-12 py-3 text-slate-900"
+                                    required
+                                    autofocus
+                                >
+                                <i class="fas fa-user input-icon absolute right-4 top-1/2 transform -translate-y-1/2"></i>
+                            </div>
+                            {% if form.username.errors %}
+                            <p class="text-red-600 text-sm mt-1 flex items-center space-x-1">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>{{ form.username.errors.0 }}</span>
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Input -->
+                        <div>
+                            <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-indigo-600"></i>Password
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="password" 
+                                    id="password"
+                                    name="password" 
+                                    placeholder="Masukkan password Anda"
+                                    class="input-field w-full pl-4 pr-12 py-3 text-slate-900"
+                                    required
+                                >
+                                <button 
+                                    type="button" 
+                                    onclick="togglePasswordVisibility()"
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
+                                >
+                                    <i class="fas fa-eye" id="password-icon"></i>
+                                </button>
+                            </div>
+                            {% if form.password.errors %}
+                            <p class="text-red-600 text-sm mt-1 flex items-center space-x-1">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>{{ form.password.errors.0 }}</span>
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="flex items-center justify-between pt-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    name="remember_me" 
+                                    class="checkbox-custom"
+                                >
+                                <span class="text-sm text-gray-700 font-medium">Ingat Saya</span>
+                            </label>
+                            <a href="#" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
+                                Lupa Password?
+                            </a>
+                        </div>
+
+                        <!-- Non-Field Errors -->
+                        {% if form.non_field_errors %}
+                        <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p class="text-red-800 text-sm font-medium flex items-center space-x-2">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Login gagal. Periksa username dan password Anda.</span>
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Sign In Button -->
+                        <button 
+                            type="submit" 
+                            class="btn-primary w-full text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center space-x-2 mt-6"
+                        >
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Masuk ke VOLTA</span>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="divider my-6">
+                        <span>atau</span>
+                    </div>
+
+                    <!-- Social Login (Optional) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" class="btn-secondary py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fab fa-google text-red-600 text-lg"></i>
+                            <span class="text-sm">Google</span>
+                        </button>
+                        <button type="button" class="btn-secondary py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fab fa-microsoft text-blue-600 text-lg"></i>
+                            <span class="text-sm">Microsoft</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Registration Options -->
+                <div class="space-y-3">
+                    <!-- Option 1: Customer Registration -->
+                    <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
+                        <p class="text-sm text-gray-700 mb-2">
+                            <strong>Belum punya akun?</strong>
+                        </p>
+                        <a href="#" class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 font-semibold text-sm">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Daftar sebagai Customer/Pembeli B2B-B2C</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Option 2: Vendor Registration -->
+                    <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-lg hover:shadow-lg hover:shadow-indigo-200 transition-all">
+                        <p class="text-sm text-indigo-700 mb-2">
+                            <strong>Untuk Mitra Bisnis</strong>
+                        </p>
+                        <a href="#" class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 font-semibold text-sm">
+                            <i class="fas fa-store"></i>
+                            <span>Ingin menjadi Mitra Brand Resmi?</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Help Text -->
+                <p class="text-center text-xs text-gray-600 mt-6">
+                    Butuh bantuan? <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-700">Hubungi Support Kami</a>
+                </p>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // Toggle Password Visibility
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const passwordIcon = document.getElementById('password-icon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                passwordIcon.classList.add('fa-eye');
+                passwordIcon.classList.remove('fa-eye-slash');
+            }
+        }
+
+        // Auto-close alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-container > div');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'slideOut 0.3s ease-out forwards';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+
+            // Focus animation on inputs
+            document.querySelectorAll('.input-field').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('div').style.transform = 'scale(1.01)';
+                });
+                input.addEventListener('blur', function() {
+                    this.closest('div').style.transform = 'scale(1)';
+                });
+            });
+
+            // Form submission handler
+            document.querySelector('form').addEventListener('submit', function(e) {
+                console.log('Form submitted');
+            });
+        });
+    </script>
+
+</body>
+</html>
