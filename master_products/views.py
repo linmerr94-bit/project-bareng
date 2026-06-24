@@ -13,7 +13,8 @@ from datetime import datetime
 import uuid
 from master_products.models import (
     Product, Category, VendorRequest, Cart, CartItem, 
-    Order, OrderItem, Brand, Review
+    Order, OrderItem, Brand, Review,
+    UserTwoFactor, LoginSession
 )
 from master_products.decorators import seller_required, customer_required
 
@@ -1758,8 +1759,17 @@ def user_profile_view(request):
         return redirect('master_products:user_profile')
     
     # ==================== BUILD CONTEXT ====================
+    two_factor, created = UserTwoFactor.objects.get_or_create(user=request.user)
+    
+    active_sessions_count = LoginSession.objects.filter(
+        user=request.user,
+        is_active=True
+    ).count()
+    
     context = {
         'user': user,
+        'two_factor': two_factor,
+        'active_sessions_count': active_sessions_count,
     }
     
     return render(request, 'master_products/profile.html', context)
