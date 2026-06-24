@@ -794,7 +794,7 @@ class VendorRequest(models.Model):
     admin_notes = models.TextField(
         blank=True,
         null=True,
-        help_text="Catatan atau alasan penolakan dari Admin"
+        help_text="Catatan dari admin untuk pengajuan ini"
     )
     
     # Timestamp
@@ -805,7 +805,7 @@ class VendorRequest(models.Model):
     
     updated_at = models.DateTimeField(
         auto_now=True,
-        help_text="Tanggal pembaruan terakhir"
+        help_text="Tanggal pengajuan terakhir diperbarui"
     )
     
     class Meta:
@@ -815,8 +815,149 @@ class VendorRequest(models.Model):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['status']),
-            models.Index(fields=['-created_at']),
+            models.Index(fields=['user']),
+            models.Index(fields=['created_at']),
         ]
     
     def __str__(self):
-        return f"{self.vendor_name} - {self.get_status_display()}"
+        return f"{self.vendor_name} ({self.get_status_display()})"
+
+
+# ============================================================================
+# USER TWO-FACTOR AUTHENTICATION MODEL
+# ============================================================================
+
+class UserTwoFactor(models.Model):
+    """
+    Model untuk menyimpan konfigurasi Two-Factor Authentication (2FA) user.
+    Setiap user hanya bisa memiliki satu konfigurasi 2FA.
+    """
+    
+    # OneToOne ke User
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='two_factor',
+        db_column='user_id',
+        help_text="User yang menggunakan 2FA"
+    )
+    
+    # Status 2FA (aktif/nonaktif)
+    is_enabled = models.BooleanField(
+        default=False,
+        help_text="Status aktivasi Two-Factor Authentication"
+    )
+    
+    # Secret key untuk 2FA (TOTP)
+    secret_key = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Secret key untuk Time-based One-Time Password (TOTP)"
+    )
+    
+    # Backup codes (JSON atau text)
+    backup_codes = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Kode backup untuk akses emergency (simpan sebagai JSON)"
+    )
+    
+    # Timestamp
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Tanggal 2FA pertama kali diaktifkan"
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        help_text="Tanggal 2FA terakhir diperbarui"
+    )
+    
+    class Meta:
+        verbose_name = _('User Two-Factor Authentication')
+        verbose_name_plural = _('User Two-Factor Authentications')
+        db_table = 'user_two_factor'
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['is_enabled']),
+        ]
+    
+    def __str__(self):
+        status = 'Enabled' if self.is_enabled else 'Disabled'
+        return f"2FA {status} - {self.user.username}"
+
+
+# ============================================================================
+# LOGIN SESSION MODEL
+# ============================================================================
+
+class LoginSession(models.Model):
+    """
+    Model untuk menyimpan riwayat login session user di berbagai perangkat.
+    Digunakan untuk fitur "Login Session Management" di halaman profil.
+    """
+    
+    # Foreign Key ke User
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='login_sessions',
+        db_column='user_id',
+        help_text="User yang memiliki session ini"
+    )
+    
+    # Nama perangkat
+    device_name = models.CharField(
+        max_length=255,
+        help_text="Nama perangkat (contoh: 'Chrome on Windows', 'Safari on iPhone')"
+    )
+    
+    # Alamat IP
+    ip_address = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="Alamat IP perangkat saat login"
+    )
+    
+    # User agent
+    user_agent = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Browser user agent string"
+    )
+    
+    # Status session (aktif/nonaktif)
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Status session saat ini (aktif atau sudah logout)"
+    )
+    
+    # Aktivitas terakhir
+    last_activity = models.DateTimeField(
+        auto_now=True,
+        help_text="Waktu aktivitas terakhir di session ini"
+    )
+    
+    # Timestamp
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Tanggal dan waktu session dibuat (saat login)"
+    )
+    
+    class Meta:
+        verbose_name = _('Login Session')
+        verbose_name_plural = _('Login Sessions')
+        db_table = 'login_sessions'
+        ordering = ['-last_activity']
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['is_active']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['last_activity']),
+        ]
+    
+    def __str__(self):
+        status = 'Active' if self.is_active else 'Inactive'
+        return f"{self.device_name} - {self.user.username} ({status})"
