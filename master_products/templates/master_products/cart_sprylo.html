@@ -393,7 +393,7 @@
                         <div class="cart-item">
                             <div class="cart-item-image">
                                 {% if item.product.image %}
-                                    <img src="{{ item.product.image }}" alt="{{ item.product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/120x120?text=No+Image';">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/120x120?text=No+Image';">
                                 {% else %}
                                     <i class="fas fa-image" style="font-size: 40px; color: #cbd5e1;"></i>
                                 {% endif %}

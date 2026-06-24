@@ -420,9 +420,9 @@
             <div class="image-column">
                 <div class="product-image-large">
                     {% if product.image %}
-                        <img src="{{ product.image }}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/500x500?text=No+Image';">
+                        <img src="{{ product.image.url }}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/500x500?text=No+Image';">
                     {% else %}
-                        <i class="fas fa-image" style="font-size: 80px; color: #cbd5e1;"></i>
+                        <img src="https://via.placeholder.com/500x500?text=No+Image" alt="No Image Available" class="object-contain">
                     {% endif %}
                 </div>
             </div>

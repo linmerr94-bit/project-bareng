@@ -11,7 +11,7 @@
 
         :root {
             --bg: #f7f8fc;
-            --surface: #ffffff;
+            --surface: #201212;
             --primary: #6d28d9;
             --accent: #4f46e5;
             --shadow-md: 0 12px 28px rgba(16,24,40,.10);
@@ -269,41 +269,52 @@
                         Alamat Utama Purwokerto
                     </h3>
 
-                    <form class="space-y-5">
+                    <form method="POST" action="{% url 'master_products:update_address' %}" class="space-y-5">
+                        {% csrf_token %}
+
                         <!-- Address -->
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label for="address_street" class="block text-sm font-semibold text-gray-700 mb-2">
                                 Alamat Lengkap
                             </label>
                             <textarea 
+                                id="address_street"
+                                name="address_street"
                                 rows="3"
                                 class="form-control w-full text-gray-900"
                                 placeholder="Jl. Contoh No. 123, Kelurahan, Kecamatan, Purwokerto, Jawa Tengah"
-                            ></textarea>
+                            >{{ user.address_street|default:'' }}</textarea>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <!-- City -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Kota</label>
+                                <label for="address_city" class="block text-sm font-semibold text-gray-700 mb-2">Kota</label>
                                 <input 
                                     type="text" 
-                                    value="Purwokerto"
+                                    id="address_city"
+                                    name="address_city"
+                                    value="{{ user.address_city|default:'' }}"
                                     class="form-control w-full text-gray-900"
-                                    disabled
+                                    placeholder="Masukkan kota"
                                 >
                             </div>
 
                             <!-- Postal Code -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Kode Pos</label>
+                                <label for="address_postal_code" class="block text-sm font-semibold text-gray-700 mb-2">Kode Pos</label>
                                 <input 
                                     type="text" 
+                                    id="address_postal_code"
+                                    name="address_postal_code"
+                                    value="{{ user.address_postal_code|default:'' }}"
                                     placeholder="53121"
                                     class="form-control w-full text-gray-900"
                                 >
                             </div>
                         </div>
+
+                        <input type="hidden" name="address_province" value="{{ user.address_province|default:'' }}" />
 
                         <!-- Save Button -->
                         <div class="flex gap-3 pt-4">
