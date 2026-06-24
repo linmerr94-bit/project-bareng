@@ -2228,6 +2228,32 @@ def edit_profile(request):
 
 @login_required(login_url='master_products:login')
 @require_http_methods(["GET", "POST"])
+def update_address(request):
+    user = request.user
+    if request.method == 'POST':
+        address_street = request.POST.get('address_street', '').strip()
+        address_city = request.POST.get('address_city', '').strip()
+        address_province = request.POST.get('address_province', '').strip()
+        address_postal_code = request.POST.get('address_postal_code', '').strip()
+
+        user.address_street = address_street
+        user.address_city = address_city
+        user.address_province = address_province
+        user.address_postal_code = address_postal_code
+        user.save()
+
+        messages.success(request, 'Alamat berhasil diperbarui!')
+        return redirect('master_products:user_profile')
+
+    context = {
+        'user': user,
+        'role_display': dict(user._meta.get_field('role').choices).get(user.role, user.role),
+    }
+    return render(request, 'master_products/update_address.html', context)
+
+
+@login_required(login_url='master_products:login')
+@require_http_methods(["GET", "POST"])
 def change_password(request):
     if request.method == 'POST':
         old_password = request.POST.get('old_password', '')

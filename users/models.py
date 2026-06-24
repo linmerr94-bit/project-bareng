@@ -44,6 +44,34 @@ class User(AbstractUser):
         help_text="Nomor telepon kontak pengguna"
     )
     
+    # Field untuk alamat
+    address_street = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Jalan dan nomor rumah"
+    )
+    
+    address_city = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Kota/Kabupaten"
+    )
+    
+    address_province = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Provinsi"
+    )
+    
+    address_postal_code = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Kode pos"
+    )
+    
     # Override default is_active
     is_active = models.BooleanField(
         default=True,

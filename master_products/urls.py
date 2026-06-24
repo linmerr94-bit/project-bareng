@@ -70,5 +70,6 @@ urlpatterns = [
     # ==================== USER PROFILE MANAGEMENT ====================
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('profile/change-password/', views.change_password, name='change_password'),
+    path('profile/update-address/', views.update_address, name='update_address'),
     path('customer-orders/', views.order_list_view, name='customer_orders'),
 ]
