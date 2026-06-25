@@ -11,10 +11,13 @@ from django.utils import timezone
 from django.http import HttpResponseForbidden, JsonResponse
 from datetime import datetime
 import uuid
+import random
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.conf import settings as django_settings
 from master_products.models import (
     Product, Category, VendorRequest, Cart, CartItem, 
     Order, OrderItem, Brand, Review,
-    UserTwoFactor, LoginSession
+    UserTwoFactor, LoginSession, EmailOTP
 )
 from master_products.decorators import seller_required, customer_required
 
@@ -669,6 +672,31 @@ def login_view(request):
         
         if user is not None:
             # User berhasil diautentikasi
+            if hasattr(user, 'two_factor') and user.two_factor.is_enabled:
+                otp = str(random.randint(100000, 999999))
+                EmailOTP.objects.create(user=user, otp_code=otp)
+                subject = 'Kode Verifikasi VOLTA'
+                text_content = f'Kode OTP Anda adalah: {otp}'
+                html_content = f"""
+<div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; background: #1a1a2e; border-radius: 16px; padding: 40px; color: #ffffff;">
+    <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #60a5fa; font-size: 28px; margin: 0;">⚡ VOLTA</h1>
+        <p style="color: #9ca3af; margin-top: 8px;">Keamanan Akun Anda</p>
+    </div>
+    <div style="background: #16213e; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
+        <p style="color: #9ca3af; margin: 0 0 12px 0;">Kode OTP Anda:</p>
+        <div style="font-size: 40px; font-weight: bold; letter-spacing: 12px; color: #60a5fa;">{otp}</div>
+        <p style="color: #6b7280; font-size: 13px; margin-top: 12px;">Berlaku selama 5 menit</p>
+    </div>
+    <p style="color: #6b7280; font-size: 13px; text-align: center;">Jangan bagikan kode ini kepada siapapun. Tim VOLTA tidak pernah meminta kode OTP Anda.</p>
+</div>
+"""
+                msg = EmailMultiAlternatives(subject, text_content, django_settings.DEFAULT_FROM_EMAIL, [user.email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+                request.session['pending_user_id'] = user.pk
+                return redirect('master_products:verify_otp')
+
             auth_login(request, user)
             
             # ==================== DYNAMIC ROLE-BASED REDIRECT ====================
@@ -1776,6 +1804,26 @@ def user_profile_view(request):
 
 
 @login_required(login_url='master_products:login')
+def enable_2fa(request):
+    """Aktifkan Two-Factor Authentication untuk user saat ini."""
+    two_factor, created = UserTwoFactor.objects.get_or_create(user=request.user)
+    two_factor.is_enabled = True
+    two_factor.save()
+    messages.success(request, 'Two-Factor Authentication berhasil diaktifkan')
+    return redirect('master_products:user_profile')
+
+
+@login_required(login_url='master_products:login')
+def disable_2fa(request):
+    """Nonaktifkan Two-Factor Authentication untuk user saat ini."""
+    two_factor, created = UserTwoFactor.objects.get_or_create(user=request.user)
+    two_factor.is_enabled = False
+    two_factor.save()
+    messages.success(request, 'Two-Factor Authentication berhasil dinonaktifkan')
+    return redirect('master_products:user_profile')
+
+
+@login_required(login_url='master_products:login')
 @seller_required
 def seller_products(request):
     """Halaman kelola produk untuk penjual."""
@@ -2404,3 +2452,31 @@ def submit_care_hub_inquiry(request):
         })
     except:
         return JsonResponse({'status': 'error', 'message': 'Error'}, status=500)
+
+
+def verify_otp(request):
+    if request.method == 'POST':
+        otp_input = request.POST.get('otp')
+        user_id = request.session.get('pending_user_id')
+        from django.utils import timezone
+        from datetime import timedelta
+        otp_obj = EmailOTP.objects.filter(
+            user_id=user_id
+        ).order_by('-created_at').first()
+        if otp_obj:
+            expired = timezone.now() > otp_obj.created_at + timedelta(minutes=5)
+            if expired:
+                messages.error(request, 'Kode OTP sudah kadaluarsa. Silakan login ulang.')
+                return redirect('master_products:login')
+            if otp_obj.otp_code == otp_input:
+                user = User.objects.get(pk=user_id)
+                auth_login(request, user)
+                try:
+                    del request.session['pending_user_id']
+                except KeyError:
+                    pass
+                otp_obj.delete()
+                return redirect('master_products:product_list')
+            else:
+                messages.error(request, 'Kode OTP salah. Silakan coba lagi.')
+    return render(request, 'master_products/verify_otp.html')

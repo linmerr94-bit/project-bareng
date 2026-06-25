@@ -2,10 +2,11 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from .models import (
-    Brand, Category, Product, 
-    Cart, CartItem, 
-    Order, OrderItem, 
-    Review, VendorRequest
+    Brand, Category, Product,
+    Cart, CartItem,
+    Order, OrderItem,
+    Review, VendorRequest,
+    EmailOTP, UserTwoFactor,
 )
 
 
@@ -56,6 +57,23 @@ class BrandAdmin(admin.ModelAdmin):
             obj.get_status_display()
         )
     status_badge.short_description = _('Status')
+
+
+# ============================================================================
+# OTP / TWO-FACTOR ADMIN
+# ============================================================================
+
+
+@admin.register(EmailOTP)
+class EmailOTPAdmin(admin.ModelAdmin):
+    list_display = ['user', 'otp_code', 'created_at']
+    ordering = ['-created_at']
+
+
+@admin.register(UserTwoFactor)
+class UserTwoFactorAdmin(admin.ModelAdmin):
+    list_display = ['user', 'is_enabled', 'created_at']
+    ordering = ['-created_at']
 
 
 # ============================================================================
