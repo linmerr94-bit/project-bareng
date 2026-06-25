@@ -40,6 +40,9 @@ urlpatterns = [
     
     # ==================== USER PROFILE ====================
     path('profile/', views.user_profile_view, name='user_profile'),
+    path('profile/enable-2fa/', views.enable_2fa, name='enable_2fa'),
+    path('profile/disable-2fa/', views.disable_2fa, name='disable_2fa'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
     
     # ==================== SELLER - DASHBOARD & PRODUCT MANAGEMENT ====================
     path('toko/dashboard/', views.seller_dashboard, name='seller_dashboard'),

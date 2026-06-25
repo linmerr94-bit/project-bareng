@@ -975,3 +975,25 @@ class LoginSession(models.Model):
     def __str__(self):
         status = 'Active' if self.is_active else 'Inactive'
         return f"{self.device_name} - {self.user.username} ({status})"
+
+
+# ============================================================================
+# EMAIL OTP MODEL
+# ============================================================================
+
+class EmailOTP(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='email_otps',
+        help_text="User yang menerima OTP ini"
+    )
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'email_otps'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.otp_code}"
