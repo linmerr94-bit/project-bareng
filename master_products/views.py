@@ -19,6 +19,8 @@ import uuid
 import random
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.conf import settings as django_settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from master_products.models import (
     Product, Category, VendorRequest, Cart, CartItem, 
     Order, OrderItem, Brand, Review,
@@ -119,6 +121,20 @@ def seller_dashboard(request):
     
     # Get last 5 orders for recent table
     recent_orders = orders[:5]
+
+    # Incoming orders (pending) for quick action
+    incoming_orders = orders.filter(status='pending')[:10]
+
+    # Rating toko: prefer aggregated brand rating, fallback to average of product reviews
+    rating_toko = None
+    try:
+        rating_toko = float(current_toko.rating or 0.0)
+        # If brand rating is zero, compute average from reviews
+        if rating_toko == 0.0:
+            avg = Review.objects.filter(product_id__brand_id=current_toko).aggregate(avg_rating=Avg('rating'))
+            rating_toko = float(avg['avg_rating'] or 0.0)
+    except Exception:
+        rating_toko = 0.0
     
     # ==================== BUILD CONTEXT ====================
     context = {
@@ -128,6 +144,8 @@ def seller_dashboard(request):
         'total_orders': total_orders,
         'products': products[:10],  # Top 10 produk untuk tabel
         'recent_orders': recent_orders,
+        'incoming_orders': incoming_orders,
+        'rating_toko': round(rating_toko, 2),
     }
     
     return render(request, 'master_products/seller_dashboard.html', context)
@@ -899,20 +917,22 @@ def add_product_view(request):
         return redirect('master_products:product_list')
     
     if request.method == 'GET':
-        return render(request, 'master_products/add_product.html')
+        categories = Category.objects.all()
+        return render(request, 'master_products/add_product.html', {'categories': categories})
     
     if request.method == 'POST':
         # ==================== AMBIL DATA DARI FORM ====================
         name = request.POST.get('name', '').strip()
-        category_name = request.POST.get('category', '').strip()
+        category_value = request.POST.get('category', '').strip()
         price = request.POST.get('price', '').strip()
         stock = request.POST.get('stock', '').strip()
         description = request.POST.get('description', '').strip()
+        categories = Category.objects.all()
         
         # ==================== VALIDASI DATA ====================
-        if not all([name, category_name, price, stock, description]):
+        if not all([name, category_value, price, stock, description]):
             messages.error(request, 'Semua field harus diisi! Pastikan Nama, Kategori, Harga, Stok, dan Deskripsi sudah lengkap.')
-            return render(request, 'master_products/add_product.html')
+            return render(request, 'master_products/add_product.html', {'categories': categories})
         
         # Validasi tipe data
         try:
@@ -921,15 +941,15 @@ def add_product_view(request):
             
             if price <= 0:
                 messages.error(request, 'Harga produk harus lebih dari 0!')
-                return render(request, 'master_products/add_product.html')
+                return render(request, 'master_products/add_product.html', {'categories': categories})
             
             if stock < 0:
                 messages.error(request, 'Stok produk tidak boleh negatif!')
-                return render(request, 'master_products/add_product.html')
+                return render(request, 'master_products/add_product.html', {'categories': categories})
         
         except ValueError:
             messages.error(request, 'Format harga atau stok tidak valid! Gunakan angka saja.')
-            return render(request, 'master_products/add_product.html')
+            return render(request, 'master_products/add_product.html', {'categories': categories})
         
         # ==================== GET ATAU CREATE KATEGORI ====================
         # Mapping nama kategori ke model Category
@@ -944,16 +964,34 @@ def add_product_view(request):
             'lainnya': 'Kategori Lainnya',
         }
         
-        category_display_name = category_mapping.get(category_name, category_name)
-        
-        try:
-            category = Category.objects.get(category_name=category_display_name)
-        except Category.DoesNotExist:
-            messages.error(request, f'Kategori "{category_display_name}" tidak ditemukan. Silakan pilih kategori yang valid.')
-            return render(request, 'master_products/add_product.html')
+        # Attempt flexible category lookup:
+        category = None
+        # 1) Prefer PK lookup (safer)
+        if category_value.isdigit():
+            try:
+                category = Category.objects.get(id=int(category_value))
+            except Category.DoesNotExist:
+                category = None
+
+        # 2) Exact case-insensitive match on name
+        if category is None and category_value:
+            try:
+                category = Category.objects.get(category_name__iexact=category_value)
+            except Category.DoesNotExist:
+                category = None
+
+        # 3) Fuzzy contains match
+        if category is None and category_value:
+            category = Category.objects.filter(category_name__icontains=category_value).first()
+
+        if category is None:
+            messages.error(request, f'Kategori "{category_value}" tidak ditemukan. Silakan pilih kategori yang valid.')
+            return render(request, 'master_products/add_product.html', {'categories': categories})
         
         # ==================== SIMPAN PRODUK KE DATABASE ====================
         try:
+            image = request.FILES.get('image') if hasattr(request, 'FILES') else None
+
             product = Product.objects.create(
                 brand_id=current_toko,
                 category_id=category,
@@ -962,6 +1000,7 @@ def add_product_view(request):
                 description=description,
                 price=price,
                 stock=stock,
+                image=image,
                 is_active=True
             )
             
@@ -970,7 +1009,7 @@ def add_product_view(request):
         
         except Exception as e:
             messages.error(request, f'Terjadi kesalahan saat menyimpan produk: {str(e)}')
-            return render(request, 'master_products/add_product.html')
+            return render(request, 'master_products/add_product.html', {'categories': categories})
 
 
 @login_required(login_url='master_products:login')
@@ -1928,6 +1967,31 @@ def seller_order_update(request, order_id):
     # Log status change
     status_display = dict(Order._meta.get_field('status').choices).get(new_status, new_status)
     messages.success(request, f'✅ Status pesanan berhasil diperbarui menjadi: {status_display}')
+    
+    # Send notification email to buyer when order moved to 'processing'
+    if new_status == 'processing':
+        try:
+            buyer_email = getattr(order.user_id, 'email', None)
+            if buyer_email:
+                subject = f'Pesanan {order.order_code} sedang diproses'
+                email_context = {
+                    'user': order.user_id,
+                    'order': order,
+                    'brand': order.brand_id,
+                    'site_url': request.build_absolute_uri('/')
+                }
+                try:
+                    html_body = render_to_string('emails/order_processing.html', email_context)
+                    text_body = strip_tags(html_body)
+
+                    msg = EmailMultiAlternatives(subject, text_body, settings.DEFAULT_FROM_EMAIL, [buyer_email])
+                    msg.attach_alternative(html_body, 'text/html')
+                    msg.send(fail_silently=False)
+                except Exception as e:
+                    messages.warning(request, f'⚠️ Gagal mengirim email notifikasi ke pembeli: {str(e)}')
+        except Exception as e:
+            # Don't block the main flow if email sending fails
+            messages.info(request, f'Info: error saat mencoba mengirim notifikasi email ({str(e)})')
     
     return redirect('master_products:seller_order_detail', order_id=order_id)
 

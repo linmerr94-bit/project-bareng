@@ -51,12 +51,18 @@ def seller_required(view_func):
         if not request.user.is_authenticated:
             return redirect('master_products:login')
 
+        # If role isn't one of the known seller aliases, allow access still when
+        # the user owns an approved toko. This covers cases where role value
+        # may differ (e.g. 'vendor' or legacy values) but the user has a valid
+        # approved Brand profile.
         if request.user.role not in SELLER_ROLE_ALIASES:
-            messages.error(
-                request,
-                '❌ Akses Ditolak! Hanya penjual yang dapat mengakses halaman ini.'
-            )
-            return HttpResponseForbidden('Access Forbidden')
+            current_toko_fallback = getattr(request.user, 'toko', None)
+            if current_toko_fallback is None or not getattr(current_toko_fallback, 'is_approved', False):
+                messages.error(
+                    request,
+                    '❌ Akses Ditolak! Hanya penjual yang dapat mengakses halaman ini.'
+                )
+                return HttpResponseForbidden('Access Forbidden')
 
         current_toko = getattr(request.user, 'toko', None)
         if current_toko is None:

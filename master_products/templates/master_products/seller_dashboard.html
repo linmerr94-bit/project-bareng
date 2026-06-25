@@ -436,12 +436,58 @@
                                 <i class="fas fa-star"></i>
                             </div>
                             <div class="stat-label">Rating Toko</div>
-                            <div class="stat-value">{{ toko.rating|floatformat:1 }}/5</div>
+                            <div class="stat-value">{{ rating_toko|floatformat:1 }}/5</div>
                             <small class="text-muted">dari customer</small>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Incoming Orders (Pesanan Masuk) -->
+                <div class="table-card mb-4">
+                    <div class="table-header">
+                        <i class="fas fa-inbox"></i>
+                        <h5>Pesanan Masuk</h5>
+                    </div>
+                    {% if incoming_orders %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Kode Order</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Metode Bayar</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in incoming_orders %}
+                                        <tr>
+                                            <td>{{ order.order_code }}</td>
+                                            <td>{{ order.user_id.username }}</td>
+                                            <td><strong>Rp{{ order.total_amount|floatformat:0 }}</strong></td>
+                                            <td>{{ order.get_payment_method_display }}</td>
+                                            <td>
+                                                <form method="POST" action="{% url 'master_products:seller_order_update' order.order_id %}" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="status" value="processing">
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm">Proses Pesanan</button>
+                                                </form>
+                                                <a href="{% url 'master_products:seller_order_detail' order.order_id %}" class="btn btn-outline-primary btn-sm">Detail</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                            <p class="empty-message">Tidak ada pesanan masuk saat ini</p>
+                        </div>
+                    {% endif %}
+                </div>
+
                 <!-- Recent Orders Table -->
                 <div class="table-card">
                     <div class="table-header">
@@ -516,7 +562,8 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Nama Produk</th>
+                                            <th>Gambar</th>
+                                            <th>Nama Produk</th>
                                         <th>Kategori</th>
                                         <th>Harga</th>
                                         <th>Stok</th>
@@ -527,12 +574,21 @@
                                 <tbody>
                                     {% for product in products %}
                                         <tr>
-                                            <td>
-                                                <a href="{% url 'master_products:product_detail' product.slug %}" 
-                                                   style="color: var(--volta-primary); text-decoration: none;">
-                                                    {{ product.product_name|truncatewords:5 }}
-                                                </a>
-                                            </td>
+                                                <td>
+                                                    {% if product.image %}
+                                                        <img src="{{ product.image.url }}" alt="{{ product.product_name }}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                                                    {% else %}
+                                                        <div style="width:60px;height:60px;background:#111827;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94a3b8;">
+                                                            <i class="fas fa-image"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'master_products:product_detail' product.slug %}" 
+                                                       style="color: var(--volta-primary); text-decoration: none;">
+                                                        {{ product.product_name|truncatewords:5 }}
+                                                    </a>
+                                                </td>
                                             <td>{{ product.category_id.category_name }}</td>
                                             <td>
                                                 <strong>Rp{{ product.price|floatformat:0 }}</strong>
