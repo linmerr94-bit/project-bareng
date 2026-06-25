@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Toko UMKM Purwokerto - VOLTA Platform</title>
+    <title>Pengajuan Kemitraan Toko UMKM Purwokerto - VOLTA Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -105,18 +105,6 @@
                 display: none;
             }
         }
-
-        /* ==================== LINK STYLING ==================== */
-        a {
-            color: #6366f1;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        a:hover {
-            color: #4f46e5;
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -135,9 +123,7 @@
                 </div>
 
                 <!-- Main Title -->
-                <h1 class="text-5xl font-bold mb-6 leading-tight">
-                    VOLTA
-                </h1>
+                <h1 class="text-5xl font-bold mb-6 leading-tight">VOLTA</h1>
 
                 <!-- Subtitle -->
                 <h2 class="text-2xl font-semibold mb-8 bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">
@@ -146,36 +132,36 @@
 
                 <!-- Description -->
                 <p class="text-lg text-gray-300 leading-relaxed mb-12">
-                    Bergabunglah sebagai mitra penjual lokal platform VOLTA. Kami membuka kesempatan emas bagi seluruh Toko Elektronik UMKM di Purwokerto untuk mendigitalisasi ruko dan memperluas jangkauan penjualan.
+                    Ajukan pendaftaran toko elektronik UMKM Anda. Sistem kurasi VOLTA memastikan seluruh mitra ruko yang bergabung terverifikasi demi keamanan transaksi bersama.
                 </p>
 
-                <!-- Benefits -->
+                <!-- Benefits / Steps -->
                 <div class="space-y-4">
                     <div class="flex items-center space-x-4 text-left">
                         <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm"></i>
+                            <i class="fas fa-file-alt text-white text-sm"></i>
                         </div>
-                        <p class="text-gray-300">Target Pasar Lokal Purwokerto & Sekitarnya</p>
+                        <p class="text-gray-300">1. Isi Formulir Data Toko Lengkap</p>
                     </div>
 
                     <div class="flex items-center space-x-4 text-left">
                         <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm"></i>
+                            <i class="fas fa-user-shield text-white text-sm"></i>
                         </div>
-                        <p class="text-gray-300">Manajemen Stok & Harga Fleksibel</p>
+                        <p class="text-gray-300">2. Review Dokumen oleh Admin VOLTA</p>
                     </div>
 
                     <div class="flex items-center space-x-4 text-left">
                         <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm"></i>
+                            <i class="fas fa-envelope-open-text text-white text-sm"></i>
                         </div>
-                        <p class="text-gray-300">Dashboard Penjual Khusus Setiap Toko</p>
+                        <p class="text-gray-300">3. Terima Email Aktivasi Akun</p>
                     </div>
                 </div>
 
                 <!-- Footer Info -->
                 <div class="mt-12 pt-8 border-t border-slate-700 text-sm text-gray-400">
-                    <p>Verifikasi data UMKM dijamin cepat dan transparan</p>
+                    <p>Proses peninjauan berkas maksimal 2x24 jam hari kerja</p>
                 </div>
             </div>
         </div>
@@ -194,41 +180,27 @@
                 <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
-                        Daftar Toko UMKM
+                        Form Pengajuan Mitra
                     </h1>
                     <p class="text-gray-600">
-                        Buat akun login sekaligus daftarkan Toko Elektronik Anda di platform VOLTA
+                        Isi data ruko elektronik Anda di Purwokerto dengan benar untuk proses verifikasi
                     </p>
                 </div>
 
                 <!-- Messages Display (Error/Success) -->
                 {% if messages %}
                     {% for message in messages %}
-                        {% if message.tags == 'error' %}
-                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-exclamation-circle text-red-600 text-lg mt-1"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold text-red-900 mb-1">Error</h4>
-                                        <p class="text-sm text-red-800">{{ message }}</p>
-                                    </div>
+                        <div class="mb-6 p-4 {% if message.tags == 'error' %}bg-red-50 border-red-200 text-red-800{% else %}bg-green-50 border-green-200 text-green-800{% endif %} border rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle text-red-600{% else %}fa-check-circle text-green-600{% endif %} text-lg mt-1"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">{% if message.tags == 'error' %}Error{% else %}Berhasil{% endif %}</h4>
+                                    <p class="text-sm">{{ message }}</p>
                                 </div>
                             </div>
-                        {% elif message.tags == 'success' %}
-                            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-check-circle text-green-600 text-lg mt-1"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold text-green-900 mb-1">Berhasil</h4>
-                                        <p class="text-sm text-green-800">{{ message }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
+                        </div>
                     {% endfor %}
                 {% endif %}
 
@@ -236,35 +208,22 @@
                 <form method="POST" action="{% url 'master_products:register_vendor' %}" class="space-y-5">
                     {% csrf_token %}
 
-                    <!-- ==================== SECTION 1: AKUN LOGIN PENJUAL ==================== -->
+                    <!-- Kontak Pemilik (Paling Penting untuk Notifikasi Email) -->
                     <div class="p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
                         <h3 class="text-sm font-bold text-indigo-900 uppercase tracking-wider">
-                            <i class="fas fa-user-lock mr-1"></i> Informasi Akun Login
+                            <i class="fas fa-address-card mr-1"></i> Kontak Penanggung Jawab
                         </h3>
-                        
-                        <!-- Username -->
                         <div>
-                            <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Username Akun</label>
-                            <input type="text" id="username" name="username" required placeholder="Buat username untuk login dashboard" class="input-field w-full px-4 py-2.5">
-                        </div>
-
-                        <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email Aktif</label>
-                            <input type="email" id="email" name="email" required placeholder="Contoh: tokoanda@email.com" class="input-field w-full px-4 py-2.5">
-                        </div>
-
-                        <!-- Password -->
-                        <div>
-                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                            <input type="password" id="password" name="password" required placeholder="Buat password akun Anda" class="input-field w-full px-4 py-2.5">
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email Aktif Pemilik</label>
+                            <input type="email" id="email" name="email" required placeholder="Contoh: tokosaya@email.com" class="input-field w-full px-4 py-2.5">
+                            <p class="text-xs text-gray-500 mt-1">Link set-up password login akan dikirim ke email ini setelah disetujui.</p>
                         </div>
                     </div>
 
-                    <!-- ==================== SECTION 2: PROFIL TOKO UMKM ==================== -->
+                    <!-- Profil Ruko / Toko -->
                     <div class="space-y-4 pt-2">
                         <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                            <i class="fas fa-store mr-1"></i> Profil Toko Purwokerto
+                            <i class="fas fa-store mr-1"></i> Informasi Detail Toko
                         </h3>
 
                         <!-- Nama Toko -->
@@ -276,7 +235,7 @@
                         <!-- NIB / KTP -->
                         <div>
                             <label for="nib" class="block text-sm font-semibold text-gray-700 mb-1">Nomor NIB / No. KTP Pemilik</label>
-                            <input type="text" id="nib" name="nib" required placeholder="Masukkan NIB atau Nomor KTP untuk verifikasi" class="input-field w-full px-4 py-2.5">
+                            <input type="text" id="nib" name="nib" required placeholder="Masukkan NIB atau Nomor KTP untuk validasi berkas" class="input-field w-full px-4 py-2.5">
                         </div>
 
                         <!-- Kategori Utama -->
@@ -296,14 +255,14 @@
 
                         <!-- Alamat Lengkap Toko -->
                         <div>
-                            <label for="address" class="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap Toko / Ruko</label>
-                            <textarea id="address" name="address" required rows="2" placeholder="Masukkan alamat ruko lengkap di Purwokerto beserta kode pos" class="input-field w-full px-4 py-2.5 resize-none"></textarea>
+                            <label for="address" class="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap Ruko / Toko</label>
+                            <textarea id="address" name="address" required rows="2" placeholder="Masukkan nama jalan, kelurahan, kecamatan di Purwokerto secara detail" class="input-field w-full px-4 py-2.5 resize-none"></textarea>
                         </div>
 
                         <!-- Deskripsi Toko -->
                         <div>
-                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Deskripsi Singkat Toko</label>
-                            <textarea id="description" name="description" required rows="2" placeholder="Jelaskan jenis produk elektronik apa saja yang Anda jual di toko" class="input-field w-full px-4 py-2.5 resize-none"></textarea>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Deskripsi Singkat Usaha</label>
+                            <textarea id="description" name="description" required rows="2" placeholder="Jelaskan spesialisasi produk elektronik yang Anda pasarkan" class="input-field w-full px-4 py-2.5 resize-none"></textarea>
                         </div>
                     </div>
 
@@ -311,44 +270,24 @@
                     <div class="flex items-start space-x-2 pt-2">
                         <input type="checkbox" id="terms" name="terms" required class="mt-1">
                         <label for="terms" class="text-sm text-gray-700">
-                            Saya menyatakan bahwa seluruh data akun dan data toko ini adalah benar dan siap diverifikasi.
+                            Saya menjamin data pengajuan ini valid dan bersedia dihubungi oleh Admin VOLTA untuk verifikasi lapangan jika diperlukan.
                         </label>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit" class="btn-primary w-full py-3 text-white font-semibold rounded-lg mt-4 flex items-center justify-center space-x-2">
                         <i class="fas fa-paper-plane"></i>
-                        <span>Daftarkan Akun & Toko UMKM</span>
+                        <span>Kirim Proposal Kemitraan</span>
                     </button>
                 </form>
 
-                <!-- Info Alert -->
-                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div class="flex items-start gap-3">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-info-circle text-blue-600 text-lg mt-1"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-blue-900 mb-1">Informasi Verifikasi</h4>
-                            <p class="text-sm text-blue-800 leading-relaxed">
-                                Setelah mendaftar, akun dan data ruko UMKM Anda akan ditinjau oleh Admin Platform VOLTA terlebih dahulu. Status persetujuan login dashboard akan dikirim via email.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <!-- Divider Line -->
+                <div class="h-px bg-gray-300 my-8"></div>
 
-                <!-- Divider -->
-                <div class="flex items-center gap-4 my-6">
-                    <div class="flex-1 h-px bg-gray-300"></div>
-                    <span class="text-gray-500 text-sm">atau</span>
-                    <div class="flex-1 h-px bg-gray-300"></div>
-                </div>
-
-                <!-- Link ke Halaman Lain -->
-                <div class="text-center space-y-2">
-                    <p class="text-gray-700">
-                        Sudah punya akun toko? 
-                        <a href="{% url 'master_products:login' %}" class="font-semibold text-indigo-600 hover:text-indigo-700">Masuk di sini</a>
+                <!-- Footer Nav -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Kembali ke <a href="/" class="font-semibold text-indigo-600 hover:text-indigo-700">Halaman Utama</a>
                     </p>
                 </div>
             </div>

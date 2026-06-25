@@ -773,6 +773,12 @@ class VendorRequest(models.Model):
         help_text="Nama Brand / Toko Resmi Elektronik"
     )
     
+    # Email kontak pengaju
+    email = models.EmailField(
+        max_length=255,
+        help_text="Alamat email pengaju yang akan digunakan untuk notifikasi dan verifikasi"
+    )
+    
     # NIB atau Nomor KTP
     nib = models.CharField(
         max_length=100,
@@ -802,6 +808,22 @@ class VendorRequest(models.Model):
         choices=STATUS_CHOICES,
         default='Pending',
         help_text="Status pengajuan vendor"
+    )
+
+    # Token aktivasi untuk pengaturan akun vendor setelah disetujui
+    activation_token = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        unique=True,
+        help_text="Token unik untuk setup akun vendor setelah pengajuan disetujui"
+    )
+
+    # Timestamp ketika token aktivasi dibuat
+    token_created_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Waktu token aktivasi dibuat"
     )
     
     # Catatan admin

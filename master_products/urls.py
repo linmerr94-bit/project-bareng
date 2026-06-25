@@ -11,6 +11,12 @@ urlpatterns = [
     
     # ==================== ADMIN PLATFORM ====================
     path('platform-admin/dashboard/', views.admin_platform_dashboard, name='admin_platform_dashboard'),
+    path('market-admin/dashboard/', views.admin_platform_dashboard, name='market_admin_dashboard'),
+    path('platform-admin/vendor-request/<int:request_id>/approve/', views.approve_vendor_request, name='approve_vendor_request'),
+    path('platform-admin/vendor-request/<int:request_id>/reject/', views.reject_vendor_request, name='reject_vendor_request'),
+    path('platform-admin/product/<int:product_id>/deactivate/', views.deactivate_product, name='deactivate_product'),
+    path('platform-admin/user/<int:user_id>/suspend/', views.suspend_user, name='suspend_user'),
+    path('platform-admin/user/<int:user_id>/delete/', views.delete_user, name='delete_user'),
     path('platform-admin/approve-seller/<int:seller_id>/', views.approve_seller, name='approve_seller'),
     path('platform-admin/reject-seller/<int:seller_id>/', views.reject_seller, name='reject_seller'),
     
@@ -68,6 +74,7 @@ urlpatterns = [
     path('register/', views.register_customer_view, name='register_customer'),
     path('toko/register/', views.register_vendor_view, name='register_vendor'),
     path('register-vendor/', views.register_vendor_view),
+    path('toko/setup-account/<str:token>/', views.vendor_setup_account, name='vendor_setup_account'),
     
     # ==================== CART API ENDPOINTS ====================
     path('api/update-cart/', views.update_cart_item, name='update_cart_item'),

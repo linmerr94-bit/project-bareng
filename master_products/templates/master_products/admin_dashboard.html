@@ -192,6 +192,32 @@
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
             transform: translateY(-2px);
         }
+
+        .stat-card.clickable {
+            cursor: pointer;
+        }
+
+        .stat-card.clickable:active {
+            transform: translateY(0);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .dashboard-tab-content {
+            display: none;
+        }
+
+        .dashboard-tab-content.active {
+            display: block;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: var(--volta-primary);
+            border-left-color: var(--volta-primary);
+        }
         
         .stat-card:hover::before {
             opacity: 1;
@@ -480,19 +506,24 @@
             <!-- SIDEBAR -->
             <div class="col-lg-2 sidebar d-none d-lg-block">
                 <nav class="nav flex-column">
-                    <a class="nav-link active" href="{% url 'master_products:admin_platform_dashboard' %}">
+                    <div class="sidebar-title">Manajemen</div>
+                    <a class="nav-link active" href="#content-dashboard">
                         <i class="fas fa-chart-line"></i> Dashboard
                     </a>
-                    
-                    <div class="sidebar-title">Manajemen</div>
-                    <a class="nav-link" href="#approvals">
-                        <i class="fas fa-check-circle"></i> Persetujuan Brand
-                    </a>
-                    <a class="nav-link" href="/admin/auth/user/" target="_blank">
+                    <a class="nav-link" href="#content-users">
                         <i class="fas fa-users"></i> Manajemen User
                     </a>
-                    <a class="nav-link" href="/admin/master_products/order/" target="_blank">
+                    <a class="nav-link" href="#content-transactions">
                         <i class="fas fa-shopping-bag"></i> Transaksi
+                    </a>
+                    <a class="nav-link" href="#content-vendors-approved">
+                        <i class="fas fa-check-circle"></i> Brand Aktif
+                    </a>
+                    <a class="nav-link" href="#content-vendors-pending">
+                        <i class="fas fa-user-plus"></i> Pengajuan Seller
+                    </a>
+                    <a class="nav-link" href="#content-moderation">
+                        <i class="fas fa-box-open"></i> Moderasi Produk
                     </a>
                     
                     <hr style="border-color: var(--volta-border); margin: 1rem 0;">
@@ -530,56 +561,46 @@
                     {% endfor %}
                 {% endif %}
                 
+                <div class="dashboard-tab-content active" id="content-dashboard">
                 <!-- Statistics Row -->
                 <div class="row">
                     <div class="col-lg-3 col-md-6">
-                        <div class="stat-card">
+                        <div class="stat-card clickable" data-target="content-users" data-sidebar="#content-users">
                             <div class="stat-icon primary">
-                                <i class="fas fa-store"></i>
+                                <i class="fas fa-users"></i>
                             </div>
-                            <div class="stat-label">Total Brand</div>
-                            <div class="stat-value">{{ total_brands }}</div>
-                            <small class="text-muted">terdaftar</small>
+                            <div class="stat-label">Total Pengguna</div>
+                            <div class="stat-value">{{ total_users }}</div>
+                            <small class="text-muted">semua user</small>
                         </div>
                     </div>
                     
                     <div class="col-lg-3 col-md-6">
-                        <div class="stat-card">
+                        <div class="stat-card clickable" data-target="content-vendors-approved" data-sidebar="#content-vendors-approved">
+                            <div class="stat-icon success">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="stat-label">Penjual Aktif</div>
+                            <div class="stat-value">{{ active_sellers }}</div>
+                            <small class="text-muted">brand approved</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card clickable" data-target="content-vendors-pending" data-sidebar="#content-vendors-pending">
                             <div class="stat-icon warning">
                                 <i class="fas fa-clock"></i>
                             </div>
-                            <div class="stat-label">Menunggu Persetujuan</div>
-                            <div class="stat-value">{{ pending_brands }}</div>
-                            <small class="text-muted">brand pending</small>
+                            <div class="stat-label">Pengajuan Seller</div>
+                            <div class="stat-value">{{ pending_vendor_requests }}</div>
+                            <small class="text-muted">request pending</small>
                         </div>
                     </div>
                     
                     <div class="col-lg-3 col-md-6">
-                        <div class="stat-card">
-                            <div class="stat-icon success">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-label">Total Customer</div>
-                            <div class="stat-value">{{ total_customers }}</div>
-                            <small class="text-muted">aktif</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-6">
-                        <div class="stat-card">
+                        <div class="stat-card clickable" data-target="content-transactions" data-sidebar="#content-transactions">
                             <div class="stat-icon info">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </div>
-                            <div class="stat-label">Total Revenue</div>
-                            <div class="stat-value" style="font-size: 1.5rem;">{{ total_revenue_formatted }}</div>
-                            <small class="text-muted">dari order confirmed</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-6">
-                        <div class="stat-card">
-                            <div class="stat-icon danger">
-                                <i class="fas fa-shopping-bag"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
                             <div class="stat-label">Transaksi Bulan Ini</div>
                             <div class="stat-value">{{ total_transactions_month }}</div>
@@ -587,78 +608,313 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Pending Brands Table -->
-                <div class="table-card" id="approvals">
-                    <div class="table-header">
-                        <i class="fas fa-list-check"></i>
-                        <h5>Persetujuan Pendaftaran Brand Baru</h5>
-                        {% if pending_brands_list|length > 0 %}
-                            <span class="badge badge-pending ms-2">{{ pending_brands_list|length }} Pending</span>
-                        {% endif %}
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="stat-card clickable" data-target="content-transactions" data-sidebar="#content-transactions">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value" style="font-size: 1.5rem;">{{ total_revenue_formatted }}</div>
+                            <small class="text-muted">dari order confirmed</small>
+                        </div>
                     </div>
-                    
-                    {% if pending_brands_list %}
+                    <div class="col-lg-6 col-md-6">
+                        <div class="stat-card clickable" data-target="content-users" data-sidebar="#content-users">
+                            <div class="stat-icon success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="stat-label">Customer Aktif</div>
+                            <div class="stat-value">{{ total_customers }}</div>
+                            <small class="text-muted">customer aktif</small>
+                        </div>
+                    </div>
+                </div>
+                
+                    <div class="row gy-4 mt-3">
+                        <div class="col-12">
+                            <div class="stat-card chart-card">
+                                <div class="table-header">
+                                    <i class="fas fa-chart-area"></i>
+                                    <h5>Ringkasan Performa</h5>
+                                </div>
+                                <div class="chart-placeholder">
+                                    <p>Grafik penjualan dan indikator performa akan tampil di sini.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History Table -->
+                <div class="dashboard-tab-content" id="content-transactions">
+                <div class="table-card">
+                    <div class="table-header">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h5>Riwayat Transaksi Terbaru</h5>
+                        <span class="badge badge-info ms-2">{{ recent_transactions|length }} Transaksi</span>
+                    </div>
+                    {% if recent_transactions %}
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Nama Brand</th>
-                                        <th>User</th>
-                                        <th>Email</th>
-                                        <th>NIB/KTP</th>
-                                        <th>Tanggal Daftar</th>
+                                        <th>Order</th>
+                                        <th>Customer</th>
+                                        <th>Brand</th>
+                                        <th>Total</th>
                                         <th>Status</th>
+                                        <th>Tanggal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_transactions %}
+                                        <tr>
+                                            <td><strong>{{ order.order_id|default:order.pk }}</strong></td>
+                                            <td>{{ order.user_id.username }}</td>
+                                            <td>{{ order.brand_id.brand_name }}</td>
+                                            <td>Rp{{ order.total_amount|floatformat:0 }}</td>
+                                            <td>{{ order.get_status_display }}</td>
+                                            <td>{{ order.order_date|date:"d M Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <p class="empty-message">Tidak ada transaksi terbaru</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                </div>
+
+                
+                <div class="dashboard-tab-content" id="content-moderation">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <i class="fas fa-box-open"></i>
+                            <h5>Moderasi Produk</h5>
+                            <span class="badge badge-info ms-2">{{ product_moderation_list|length }} Produk</span>
+                        </div>
+                        {% if product_moderation_list %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Produk</th>
+                                            <th>Brand</th>
+                                            <th>Harga</th>
+                                            <th>Stok</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for prod in product_moderation_list %}
+                                            <tr>
+                                                <td><strong>{{ prod.product_name }}</strong></td>
+                                                <td>{{ prod.brand_id.brand_name }}</td>
+                                                <td>Rp{{ prod.price|floatformat:0 }}</td>
+                                                <td>{{ prod.stock }}</td>
+                                                <td>{% if prod.is_active %}<span class="badge badge-approved">Aktif</span>{% else %}<span class="badge badge-rejected">Nonaktif</span>{% endif %}</td>
+                                                <td>
+                                                    <div class="btn-action-group">
+                                                        {% if prod.is_active %}
+                                                            <form method="POST" action="{% url 'master_products:deactivate_product' prod.product_id %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-reject" onclick="return confirm('Nonaktifkan produk ini?')"><i class="fas fa-power-off"></i></button>
+                                                            </form>
+                                                        {% else %}
+                                                            <span class="badge badge-pending">Menunggu</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+                                <p class="empty-message">Tidak ada produk untuk dimoderasi</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="dashboard-tab-content" id="content-vendors-pending">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <i class="fas fa-user-plus"></i>
+                            <h5>Pengajuan Penjual Baru</h5>
+                            {% if pending_vendor_requests_list|length > 0 %}
+                                <span class="badge badge-pending ms-2">{{ pending_vendor_requests_list|length }} Pending</span>
+                            {% endif %}
+                        </div>
+                        {% if pending_vendor_requests_list %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vendor</th>
+                                            <th>Email</th>
+                                            <th>NIB/KTP</th>
+                                            <th>Kategori</th>
+                                            <th>Pengaju</th>
+                                            <th>Tanggal</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for req in pending_vendor_requests_list %}
+                                            <tr>
+                                                <td><strong>{{ req.vendor_name }}</strong>{% if req.description %}<br><small class="text-muted">{{ req.description|truncatewords:10 }}</small>{% endif %}</td>
+                                                <td><a href="mailto:{{ req.email }}" style="color: var(--volta-primary); text-decoration: none;">{{ req.email }}</a></td>
+                                                <td><code style="color: #94a3b8; background: rgba(99, 102, 241, 0.1); padding: 0.2rem 0.4rem; border-radius: 3px;">{{ req.nib }}</code></td>
+                                                <td>{{ req.category }}</td>
+                                                <td>{% if req.user %}{{ req.user.username }}{% else %}<span class="text-muted">Guest</span>{% endif %}</td>
+                                                <td>{{ req.created_at|date:"d M Y" }}</td>
+                                                <td>{% if req.status == 'Pending' %}<span class="badge badge-pending">Menunggu</span>{% elif req.status == 'Approved' %}<span class="badge badge-approved">Disetujui</span>{% else %}<span class="badge badge-rejected">Ditolak</span>{% endif %}</td>
+                                                <td>
+                                                    <div class="btn-action-group">
+                                                        <form method="POST" action="{% url 'master_products:approve_vendor_request' req.id %}" style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-approve" onclick="return confirm('Setujui pengajuan vendor ini?')"><i class="fas fa-check"></i></button>
+                                                        </form>
+                                                        <form method="POST" action="{% url 'master_products:reject_vendor_request' req.id %}" style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-reject" onclick="return confirm('Tolak pengajuan vendor ini?')"><i class="fas fa-times"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <p class="empty-message">Tidak ada pengajuan penjual baru</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="dashboard-tab-content" id="content-vendors-approved">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h5>Daftar Brand yang Sudah Aktif</h5>
+                            <span class="badge badge-approved ms-2">{{ approved_brands_list|length }}+ Aktif</span>
+                        </div>
+                        {% if approved_brands_list %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Brand</th>
+                                            <th>User</th>
+                                            <th>Email</th>
+                                            <th>Rating</th>
+                                            <th>Status</th>
+                                            <th>Disetujui Oleh</th>
+                                            <th>Tanggal Persetujuan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for brand in approved_brands_list %}
+                                            <tr>
+                                                <td><strong>{{ brand.brand_name }}</strong>{% if brand.description %}<br><small class="text-muted">{{ brand.description|truncatewords:8 }}</small>{% endif %}</td>
+                                                <td>{{ brand.user_id.username }}</td>
+                                                <td><a href="mailto:{{ brand.user_id.email }}" style="color: var(--volta-primary); text-decoration: none;">{{ brand.user_id.email }}</a></td>
+                                                <td><span style="color: var(--volta-warning);"><i class="fas fa-star"></i> {{ brand.rating|floatformat:1 }}/5</span></td>
+                                                <td><span class="badge badge-approved">{{ brand.get_status_display }}</span></td>
+                                                <td>{% if brand.approved_by %}<small>{{ brand.approved_by.username }}</small>{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                                <td>{% if brand.approved_at %}{{ brand.approved_at|date:"d M Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <p class="empty-message">Belum ada brand yang disetujui</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- User Management Table -->
+                <div class="dashboard-tab-content" id="content-users">
+                <div class="table-card">
+                    <div class="table-header">
+                        <i class="fas fa-user-cog"></i>
+                        <h5>Manajemen Pengguna</h5>
+                        <span class="badge badge-info ms-2">{{ all_users|length }} User</span>
+                    </div>
+                    
+                    {% if all_users %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Terdaftar</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for brand in pending_brands_list %}
+                                    {% for user_item in all_users %}
                                         <tr>
+                                            <td>{{ user_item.username }}</td>
+                                            <td><a href="mailto:{{ user_item.email }}" style="color: var(--volta-primary); text-decoration: none;">{{ user_item.email }}</a></td>
+                                            <td>{{ user_item.get_role_display }}</td>
                                             <td>
-                                                <strong>{{ brand.brand_name }}</strong>
-                                                {% if brand.description %}
-                                                    <br>
-                                                    <small class="text-muted">{{ brand.description|truncatewords:10 }}</small>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {{ brand.user_id.username }}
-                                            </td>
-                                            <td>
-                                                <a href="mailto:{{ brand.user_id.email }}" style="color: var(--volta-primary); text-decoration: none;">
-                                                    {{ brand.user_id.email }}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                {% if brand.nib_or_ktp %}
-                                                    <code style="color: #94a3b8; background: rgba(99, 102, 241, 0.1); padding: 0.2rem 0.4rem; border-radius: 3px;">
-                                                        {{ brand.nib_or_ktp }}
-                                                    </code>
+                                                {% if user_item.is_active %}
+                                                    <span class="badge badge-approved">Aktif</span>
                                                 {% else %}
-                                                    <span class="text-muted">-</span>
+                                                    <span class="badge badge-rejected">Diskors</span>
                                                 {% endif %}
                                             </td>
-                                            <td>
-                                                {{ brand.created_at|date:"d M Y" }}
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pending">{{ brand.get_status_display }}</span>
-                                            </td>
+                                            <td>{{ user_item.created_at|date:"d M Y" }}</td>
                                             <td>
                                                 <div class="btn-action-group">
-                                                    <form method="POST" action="{% url 'master_products:approve_seller' brand.brand_id %}" style="display: inline;">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="btn btn-approve" onclick="return confirm('Setujui brand ini?')">
-                                                            <i class="fas fa-check"></i> Setujui
-                                                        </button>
-                                                    </form>
-                                                    <form method="POST" action="{% url 'master_products:reject_seller' brand.brand_id %}" style="display: inline;">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="btn btn-reject" onclick="return confirm('Tolak brand ini?')">
-                                                            <i class="fas fa-times"></i> Tolak
-                                                        </button>
-                                                    </form>
+                                                    {% if user_item.id or user_item.pk %}
+                                                        {% if user_item.is_active and not user_item.is_superuser and user_item != request.user %}
+                                                            <form method="POST" action="{% url 'master_products:suspend_user' user_item.id|default:user_item.pk %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-reject" onclick="return confirm('Diskors user ini?')">
+                                                                    <i class="fas fa-user-slash"></i>
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                        {% if not user_item.is_superuser and user_item != request.user %}
+                                                            <form method="POST" action="{% url 'master_products:delete_user' user_item.id|default:user_item.pk %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-reject" onclick="return confirm('Hapus user ini?')">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    {% endif %}
                                                 </div>
                                             </td>
                                         </tr>
@@ -669,89 +925,12 @@
                     {% else %}
                         <div class="empty-state">
                             <div class="empty-icon">
-                                <i class="fas fa-inbox"></i>
+                                <i class="fas fa-users-slash"></i>
                             </div>
-                            <p class="empty-message">Tidak ada brand menunggu persetujuan</p>
-                            <small class="text-muted">Semua pengajuan brand sudah diproses</small>
+                            <p class="empty-message">Tidak ada pengguna untuk dikelola</p>
                         </div>
                     {% endif %}
                 </div>
-                
-                <!-- Approved Brands Table -->
-                <div class="table-card">
-                    <div class="table-header">
-                        <i class="fas fa-check-circle"></i>
-                        <h5>Daftar Brand yang Sudah Aktif</h5>
-                        <span class="badge badge-approved ms-2">{{ approved_brands_list|length }}+ Aktif</span>
-                    </div>
-                    
-                    {% if approved_brands_list %}
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Brand</th>
-                                        <th>User</th>
-                                        <th>Email</th>
-                                        <th>Rating</th>
-                                        <th>Status</th>
-                                        <th>Disetujui Oleh</th>
-                                        <th>Tanggal Persetujuan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for brand in approved_brands_list %}
-                                        <tr>
-                                            <td>
-                                                <strong>{{ brand.brand_name }}</strong>
-                                                {% if brand.description %}
-                                                    <br>
-                                                    <small class="text-muted">{{ brand.description|truncatewords:8 }}</small>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {{ brand.user_id.username }}
-                                            </td>
-                                            <td>
-                                                <a href="mailto:{{ brand.user_id.email }}" style="color: var(--volta-primary); text-decoration: none;">
-                                                    {{ brand.user_id.email }}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <span style="color: var(--volta-warning);">
-                                                    <i class="fas fa-star"></i> {{ brand.rating|floatformat:1 }}/5
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-approved">{{ brand.get_status_display }}</span>
-                                            </td>
-                                            <td>
-                                                {% if brand.approved_by %}
-                                                    <small>{{ brand.approved_by.username }}</small>
-                                                {% else %}
-                                                    <span class="text-muted">-</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if brand.approved_at %}
-                                                    {{ brand.approved_at|date:"d M Y" }}
-                                                {% else %}
-                                                    <span class="text-muted">-</span>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="fas fa-inbox"></i>
-                            </div>
-                            <p class="empty-message">Belum ada brand yang disetujui</p>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -777,6 +956,59 @@
                     order: [[4, 'desc']]
                 });
             }
+
+            const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+            const tabContents = document.querySelectorAll('.dashboard-tab-content');
+
+            function activateTab(targetId) {
+                tabContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+
+                sidebarLinks.forEach(link => {
+                    if (link.getAttribute('href') === `#${targetId}`) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            const cardLinks = document.querySelectorAll('.stat-card.clickable');
+
+            cardLinks.forEach(card => {
+                card.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    const sidebarTarget = this.dataset.sidebar;
+                    if (targetId) {
+                        activateTab(targetId);
+                        if (sidebarTarget) {
+                            sidebarLinks.forEach(link => {
+                                if (link.getAttribute('href') === sidebarTarget) {
+                                    link.classList.add('active');
+                                } else {
+                                    link.classList.remove('active');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#content-')) {
+                        event.preventDefault();
+                        const targetId = href.replace('#', '');
+                        activateTab(targetId);
+                    }
+                });
+            });
         });
     </script>
 </body>

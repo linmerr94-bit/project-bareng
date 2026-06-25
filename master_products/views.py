@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.db.models import Q, Count, F, Avg, Sum
+from django.urls import reverse
 from django.contrib.auth import logout, authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.db import transaction, models
 from django.utils import timezone
 from django.http import HttpResponseForbidden, JsonResponse
@@ -807,11 +810,12 @@ def register_vendor_view(request):
     Logic:
     1. GET request: Tampilkan halaman form
     2. POST request: Validasi dan simpan data ke VendorRequest model
-       - Ambil data: vendor_name, nib, category, address, description
+       - Ambil data: vendor_name, email, nib, category, address, description
        - Validasi field tidak kosong
+       - Validasi email
        - Cek NIB belum pernah terdaftar
-       - Simpan ke database dengan request.user
-       - Redirect ke halaman login setelah sukses
+       - Simpan data ke VendorRequest dengan status Pending tanpa membuat User/auth
+       - Redirect ke halaman utama setelah sukses
     """
     if request.method == 'GET':
         return render(request, 'master_products/register_vendor.html')
@@ -819,26 +823,39 @@ def register_vendor_view(request):
     if request.method == 'POST':
         # ==================== AMBIL DATA DARI FORM ====================
         vendor_name = request.POST.get('vendor_name', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         nib = request.POST.get('nib', '').strip()
         category = request.POST.get('category', '').strip()
         address = request.POST.get('address', '').strip()
         description = request.POST.get('description', '').strip()
         
         # ==================== VALIDASI DATA ====================
-        if not all([vendor_name, nib, category, address, description]):
-            messages.error(request, 'Semua field harus diisi! Pastikan Nama Brand, NIB, Kategori, Alamat, dan Deskripsi sudah diisi lengkap.')
+        if not all([vendor_name, email, nib, category, address, description]):
+            messages.error(request, 'Semua field harus diisi! Pastikan Nama Brand, Email, NIB, Kategori, Alamat, dan Deskripsi sudah diisi lengkap.')
+            return render(request, 'master_products/register_vendor.html')
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, 'Alamat email tidak valid. Mohon gunakan format email yang benar.')
             return render(request, 'master_products/register_vendor.html')
         
         # ==================== VALIDASI NIB UNIK ====================
         if VendorRequest.objects.filter(nib=nib).exists():
             messages.error(request, 'NIB/KTP ini sudah pernah mendaftar sebelumnya. Jika ini adalah kesalahan, silakan hubungi admin VOLTA.')
             return render(request, 'master_products/register_vendor.html')
+
+        # ==================== VALIDASI EMAIL DUPLIKAT PENGAJUAN ====================
+        if VendorRequest.objects.filter(email=email, status='Pending').exists():
+            messages.error(request, 'Email ini sudah digunakan untuk pengajuan mitra yang sedang diproses. Silakan cek email Anda atau hubungi admin jika perlu bantuan.')
+            return render(request, 'master_products/register_vendor.html')
         
         # ==================== SIMPAN KE DATABASE ====================
         try:
             vendor_request = VendorRequest.objects.create(
-                user=request.user if request.user.is_authenticated else None,
+                user=None,
                 vendor_name=vendor_name,
+                email=email,
                 nib=nib,
                 category=category,
                 address=address,
@@ -846,11 +863,11 @@ def register_vendor_view(request):
                 status='Pending'
             )
             
-            # Tampilkan success message
-            messages.success(request, 'Pengajuan pendaftaran mitra Anda berhasil dikirim! Mohon tunggu verifikasi dari Admin VOLTA. Kami akan menghubungi Anda dalam 2-5 hari kerja.')
-            
-            # ==================== REDIRECT KE HALAMAN LOGIN ====================
-            return redirect('master_products:login')
+            messages.success(
+                request,
+                'Pengajuan pendaftaran toko berhasil dikirim! Silakan tunggu kurasi admin VOLTA. Kami akan menghubungi Anda melalui email dalam 2-5 hari kerja.'
+            )
+            return redirect('master_products:product_list')
             
         except Exception as e:
             messages.error(request, f'Terjadi kesalahan saat memproses pengajuan: {str(e)}')
@@ -2039,13 +2056,19 @@ def admin_platform_dashboard(request):
     # 1. Total Brand (all statuses)
     total_brands = Brand.objects.count()
     
-    # 2. Brand Pending Approval
-    pending_brands = Brand.objects.filter(status='pending').count()
+    # 2. Vendor Requests Pending Approval
+    pending_vendor_requests = VendorRequest.objects.filter(status='Pending').count()
     
-    # 3. Total Customer Aktif
+    # 3. Total Users
+    total_users = User.objects.count()
+    
+    # 4. Active Sellers
+    active_sellers = Brand.objects.filter(status='approved').count()
+    
+    # 5. Total Customer Aktif
     total_customers = User.objects.filter(role='customer', is_active=True).count()
     
-    # 4. Total Transaksi (orders) bulan ini
+    # 6. Total Transaksi (orders) bulan ini
     from django.utils import timezone
     from datetime import timedelta
     
@@ -2063,10 +2086,19 @@ def admin_platform_dashboard(request):
         payment_status='paid'
     ).aggregate(total=Sum('total_amount'))['total'] or 0
     
-    # ==================== GET PENDING BRANDS (untuk tabel utama) ====================
-    pending_brands_list = Brand.objects.filter(
-        status='pending'
-    ).select_related('user_id').order_by('-created_at')
+    # 6. Daftar transaksi terbaru untuk dashboard
+    recent_transactions = Order.objects.select_related('user_id', 'brand_id').order_by('-order_date')[:10]
+    
+    # ==================== GET PENDING VENDOR REQUESTS ====================
+    pending_vendor_requests_list = VendorRequest.objects.filter(
+        status='Pending'
+    ).select_related('user').order_by('-created_at')[:25]
+    
+    # ==================== GET PRODUCTS FOR MODERATION ====================
+    product_moderation_list = Product.objects.select_related('brand_id').order_by('-created_at')[:25]
+    
+    # ==================== GET USERS FOR MANAGEMENT ====================
+    all_users = User.objects.order_by('-created_at')[:25]
     
     # ==================== GET APPROVED BRANDS (untuk tabel tambahan) ====================
     approved_brands_list = Brand.objects.filter(
@@ -2077,14 +2109,19 @@ def admin_platform_dashboard(request):
     context = {
         # Metrics
         'total_brands': total_brands,
-        'pending_brands': pending_brands,
+        'total_users': total_users,
+        'active_sellers': active_sellers,
+        'pending_vendor_requests': pending_vendor_requests,
         'total_customers': total_customers,
         'total_transactions_month': total_transactions_month,
         'total_revenue': total_revenue,
         'total_revenue_formatted': f"Rp{total_revenue:,.0f}",
         
         # Data untuk tabel
-        'pending_brands_list': pending_brands_list,
+        'pending_vendor_requests_list': pending_vendor_requests_list,
+        'product_moderation_list': product_moderation_list,
+        'recent_transactions': recent_transactions,
+        'all_users': all_users,
         'approved_brands_list': approved_brands_list,
     }
     
@@ -2204,6 +2241,204 @@ def reject_seller(request, seller_id):
     
     # ==================== REDIRECT KE DASHBOARD ====================
     return redirect('master_products:admin_platform_dashboard')
+
+
+@login_required(login_url='master_products:login')
+@require_http_methods(["POST"])
+def approve_vendor_request(request, request_id):
+    if request.user.role != 'admin' or not request.user.is_staff:
+        messages.error(request, '❌ Akses Ditolak! Anda tidak memiliki izin sebagai admin.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    try:
+        vendor_request = VendorRequest.objects.get(id=request_id)
+
+        if vendor_request.status == 'Rejected':
+            messages.error(request, f'❌ Pengajuan vendor "{vendor_request.vendor_name}" sudah ditolak.')
+            return redirect('master_products:admin_platform_dashboard')
+
+        if not vendor_request.activation_token:
+            vendor_request.activation_token = uuid.uuid4().hex
+        vendor_request.token_created_at = timezone.now()
+        vendor_request.status = 'Approved'
+        vendor_request.save()
+
+        activation_url = request.build_absolute_uri(
+            reverse('master_products:vendor_setup_account', args=[vendor_request.activation_token])
+        )
+
+        subject = f'Aktivasi Akun Vendor VOLTA: {vendor_request.vendor_name}'
+        message = (
+            f'Halo {vendor_request.vendor_name},\n\n'
+            f'Pengajuan kemitraan Anda telah disetujui oleh tim admin VOLTA.\n'
+            f'Silakan lanjutkan pembuatan akun vendor dengan membuka tautan berikut:\n\n'
+            f'{activation_url}\n\n'
+            'Jika Anda tidak mengajukan kemitraan ini, abaikan email ini.\n\n'
+            'Salam,\nTim VOLTA'
+        )
+
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [vendor_request.email],
+                fail_silently=False,
+            )
+            messages.success(request, f'✅ Pengajuan vendor "{vendor_request.vendor_name}" berhasil disetujui dan email aktivasi dikirim ke {vendor_request.email}.')
+        except Exception as email_error:
+            messages.warning(
+                request,
+                f'✅ Pengajuan vendor "{vendor_request.vendor_name}" disetujui, tetapi terjadi masalah saat mengirim email: {str(email_error)}'
+            )
+    except VendorRequest.DoesNotExist:
+        messages.error(request, '❌ Pengajuan vendor tidak ditemukan.')
+
+    return redirect('master_products:admin_platform_dashboard')
+
+
+@require_http_methods(["GET", "POST"])
+def vendor_setup_account(request, token):
+    try:
+        vendor_request = VendorRequest.objects.get(activation_token=token, status='Approved')
+    except VendorRequest.DoesNotExist:
+        messages.error(request, '❌ Token aktivasi tidak valid atau sudah kadaluwarsa.')
+        return redirect('master_products:product_list')
+
+    if request.method == 'POST':
+        password = request.POST.get('password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+
+        if not password or not confirm_password:
+            messages.error(request, '❌ Mohon isi password dan konfirmasi password.')
+            return render(request, 'master_products/vendor_setup_account.html', {'vendor_request': vendor_request})
+
+        if password != confirm_password:
+            messages.error(request, '❌ Password dan konfirmasi password tidak cocok.')
+            return render(request, 'master_products/vendor_setup_account.html', {'vendor_request': vendor_request})
+
+        existing_user = User.objects.filter(email=vendor_request.email).first()
+        if existing_user:
+            existing_user.role = 'brand'
+            existing_user.is_active = True
+            existing_user.set_password(password)
+            existing_user.save()
+            user = existing_user
+        else:
+            user = User.objects.create_user(
+                username=vendor_request.email,
+                email=vendor_request.email,
+                password=password,
+                role='brand',
+                first_name=vendor_request.vendor_name.split()[0] if vendor_request.vendor_name else '',
+                last_name=' '.join(vendor_request.vendor_name.split()[1:]) if len(vendor_request.vendor_name.split()) > 1 else ''
+            )
+
+        if not hasattr(user, 'brand_vendor'):
+            Brand.objects.create(
+                user_id=user,
+                brand_name=vendor_request.vendor_name,
+                status='approved',
+                approved_at=timezone.now(),
+                approved_by=request.user if request.user.is_authenticated and request.user.role == 'admin' else None,
+                nib_or_ktp=vendor_request.nib,
+                description=vendor_request.description,
+            )
+
+        vendor_request.activation_token = None
+        vendor_request.save()
+
+        messages.success(request, '✅ Akun vendor berhasil dibuat. Silakan login menggunakan email Anda.')
+        return redirect('master_products:login')
+
+    return render(request, 'master_products/vendor_setup_account.html', {'vendor_request': vendor_request})
+
+
+@login_required(login_url='master_products:login')
+@require_http_methods(["POST"])
+def reject_vendor_request(request, request_id):
+    if request.user.role != 'admin' or not request.user.is_staff:
+        messages.error(request, '❌ Akses Ditolak! Anda tidak memiliki izin sebagai admin.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    try:
+        vendor_request = VendorRequest.objects.get(id=request_id)
+        vendor_request.status = 'Rejected'
+        vendor_request.save()
+        messages.success(request, f'⚠️ Pengajuan vendor "{vendor_request.vendor_name}" berhasil ditolak.')
+    except VendorRequest.DoesNotExist:
+        messages.error(request, '❌ Pengajuan vendor tidak ditemukan.')
+
+    return redirect('master_products:admin_platform_dashboard')
+
+
+@login_required(login_url='master_products:login')
+@require_http_methods(["POST"])
+def deactivate_product(request, product_id):
+    if request.user.role != 'admin' or not request.user.is_staff:
+        messages.error(request, '❌ Akses Ditolak! Anda tidak memiliki izin sebagai admin.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    try:
+        product = Product.objects.get(product_id=product_id)
+        product.is_active = False
+        product.save()
+        messages.success(request, f'✅ Produk "{product.product_name}" berhasil dinonaktifkan.')
+    except Product.DoesNotExist:
+        messages.error(request, '❌ Produk tidak ditemukan.')
+
+    return redirect('master_products:admin_platform_dashboard')
+
+
+@login_required(login_url='master_products:login')
+@require_http_methods(["POST"])
+def suspend_user(request, user_id):
+    if request.user.role != 'admin' or not request.user.is_staff:
+        messages.error(request, '❌ Akses Ditolak! Anda tidak memiliki izin sebagai admin.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    if request.user.id == user_id:
+        messages.error(request, '❌ Anda tidak bisa mendiskors diri sendiri.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    try:
+        target_user = User.objects.get(pk=user_id)
+        if target_user.is_superuser:
+            messages.error(request, '❌ Tidak boleh mendiskors superuser.')
+            return redirect('master_products:admin_platform_dashboard')
+        target_user.is_active = False
+        target_user.save()
+        messages.success(request, f'⚠️ User "{target_user.username}" berhasil diskors.')
+    except User.DoesNotExist:
+        messages.error(request, '❌ User tidak ditemukan.')
+
+    return redirect('master_products:admin_platform_dashboard')
+
+
+@login_required(login_url='master_products:login')
+@require_http_methods(["POST"])
+def delete_user(request, user_id):
+    if request.user.role != 'admin' or not request.user.is_staff:
+        messages.error(request, '❌ Akses Ditolak! Anda tidak memiliki izin sebagai admin.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    if request.user.id == user_id:
+        messages.error(request, '❌ Anda tidak bisa menghapus diri sendiri.')
+        return redirect('master_products:admin_platform_dashboard')
+
+    try:
+        target_user = User.objects.get(pk=user_id)
+        if target_user.is_superuser:
+            messages.error(request, '❌ Tidak boleh menghapus superuser.')
+            return redirect('master_products:admin_platform_dashboard')
+        username = target_user.username
+        target_user.delete()
+        messages.success(request, f'❌ User "{username}" berhasil dihapus.')
+    except User.DoesNotExist:
+        messages.error(request, '❌ User tidak ditemukan.')
+
+    return redirect('master_products:admin_platform_dashboard')
+
 
 # ============================================================================
 # USER PROFILE MANAGEMENT VIEWS

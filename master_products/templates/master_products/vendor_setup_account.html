@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Akun Vendor - VOLTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; }
+        .card { background: white; border-radius: 1rem; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08); }
+        .input-field { border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.85rem 1rem; width: 100%; }
+        .input-field:focus { border-color: #6366f1; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12); }
+        .btn-primary { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; border-radius: 0.85rem; padding: 0.95rem 1.25rem; }
+        .btn-primary:hover { opacity: 0.95; }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center px-4 py-10">
+        <div class="w-full max-w-2xl">
+            <div class="card overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-8 py-10 text-white">
+                    <h1 class="text-3xl font-semibold mb-2">Setup Akun Vendor</h1>
+                    <p class="text-sm text-indigo-100 max-w-2xl">
+                        Lengkapi password untuk akun vendor baru Anda. Setelah selesai, Anda dapat login dan mulai mengelola toko.
+                    </p>
+                </div>
+                <div class="px-8 py-10">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="mb-5 rounded-xl border px-4 py-4 {% if message.tags == 'error' %}border-red-200 bg-red-50 text-red-700{% else %}border-green-200 bg-green-50 text-green-700{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="mb-8">
+                        <p class="text-sm text-slate-600">Vendor: <strong>{{ vendor_request.vendor_name }}</strong></p>
+                        <p class="text-sm text-slate-600">Email aktivasi: <strong>{{ vendor_request.email }}</strong></p>
+                        <p class="text-sm text-slate-500 mt-2">Silakan buat password yang kuat untuk akun login vendor Anda.</p>
+                    </div>
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="space-y-5">
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                                <input type="password" id="password" name="password" required class="input-field" placeholder="Masukkan password baru">
+                            </div>
+                            <div>
+                                <label for="confirm_password" class="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password</label>
+                                <input type="password" id="confirm_password" name="confirm_password" required class="input-field" placeholder="Ketik ulang password">
+                            </div>
+                            <button type="submit" class="btn-primary w-full text-base font-semibold">Simpan Password & Buat Akun</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8 text-sm text-slate-500">
+                        <p>Setelah akun dibuat, Anda dapat login melalui halaman <a href="{% url 'master_products:login' %}" class="text-indigo-600 hover:text-indigo-700">Login</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
