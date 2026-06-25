@@ -124,6 +124,20 @@ class Brand(models.Model):
     def __str__(self):
         return f"{self.brand_name} ({self.get_status_display()})"
 
+    @property
+    def nama_toko(self):
+        """
+        Alias nama toko untuk tampilan yang menggunakan istilah lokal.
+        """
+        return self.brand_name
+
+    @property
+    def is_approved(self):
+        """
+        Convenience property to check if the brand/shop is approved.
+        """
+        return self.status == 'approved'
+
 
 # ============================================================================
 # CATEGORY MODEL

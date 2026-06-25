@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q, Count, F, Avg
+from django.conf import settings
+from django.db.models import Q, Count, F, Avg, Sum
 from django.contrib.auth import logout, authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import get_user_model
@@ -10,6 +11,7 @@ from django.db import transaction, models
 from django.utils import timezone
 from django.http import HttpResponseForbidden, JsonResponse
 from datetime import datetime
+import json
 import uuid
 from master_products.models import (
     Product, Category, VendorRequest, Cart, CartItem, 
@@ -33,7 +35,7 @@ def dashboard_redirect_view(request):
     
     Redirect Logic:
     - Admin → Platform Admin Dashboard (/platform-admin/dashboard/)
-    - Brand (Approved) → Seller Dashboard (/seller/dashboard/)
+    - Brand (Approved) → Seller Dashboard (/toko/dashboard/)
     - Brand (Pending/Other) → Product List + Warning Message
     - Customer → Product List (/)
     
@@ -47,21 +49,19 @@ def dashboard_redirect_view(request):
     
     # ==================== BRAND (SELLER) ====================
     elif user.role == 'brand':
-        try:
-            brand = Brand.objects.get(user_id=user)
-            # Hanya bisa akses dashboard jika sudah approved
-            if brand.status == 'approved':
-                return redirect('master_products:seller_dashboard')
-            else:
-                # Brand masih pending, tolak akses
-                messages.warning(
-                    request,
-                    f'⏳ Brand Anda masih menunggu persetujuan dari admin. Status: {brand.get_status_display()}'
-                )
-                return redirect('master_products:product_list')
-        except Brand.DoesNotExist:
-            messages.error(request, '❌ Profil brand Anda belum terdaftar!')
+        current_toko = getattr(user, 'toko', None)
+        if current_toko is None:
+            messages.error(request, '❌ Profil toko Anda belum terdaftar!')
             return redirect('master_products:product_list')
+
+        if current_toko.status != 'approved':
+            messages.warning(
+                request,
+                f'⏳ Toko Anda masih menunggu persetujuan dari admin. Status: {current_toko.get_status_display()}'
+            )
+            return redirect('master_products:product_list')
+
+        return redirect('master_products:seller_dashboard')
     
     # ==================== CUSTOMER ====================
     else:  # customer atau default
@@ -83,16 +83,22 @@ def seller_dashboard(request):
     Hanya bisa diakses oleh user dengan role 'brand'.
     """
     
-    # ==================== GET SELLER PROFILE ====================
-    try:
-        seller_brand = Brand.objects.get(user_id=request.user)
-    except Brand.DoesNotExist:
-        messages.error(request, '❌ Profil brand Anda belum terdaftar!')
+    # ==================== GET STORE PROFILE (TOKO) ====================
+    current_toko = getattr(request.user, 'toko', None)
+    if current_toko is None:
+        messages.error(request, '❌ Profil toko Anda belum terdaftar!')
+        return redirect('master_products:product_list')
+
+    if current_toko.status != 'approved':
+        messages.warning(
+            request,
+            f'⏳ Toko Anda masih dalam proses persetujuan. Status: {current_toko.get_status_display()}'
+        )
         return redirect('master_products:product_list')
     
-    # ==================== GET SELLER PRODUCTS ====================
+    # ==================== GET TOKO PRODUCTS ====================
     products = Product.objects.filter(
-        brand_id=seller_brand,
+        brand_id=current_toko,
         is_active=True
     ).order_by('-created_at')
     
@@ -100,7 +106,7 @@ def seller_dashboard(request):
     
     # ==================== GET SELLER ORDERS ====================
     orders = Order.objects.filter(
-        brand_id=seller_brand
+        brand_id=current_toko
     ).select_related('user_id').order_by('-created_at')
     
     total_orders = orders.count()
@@ -110,7 +116,8 @@ def seller_dashboard(request):
     
     # ==================== BUILD CONTEXT ====================
     context = {
-        'seller_brand': seller_brand,
+        'toko': current_toko,
+        'seller_brand': current_toko,
         'total_products': total_products,
         'total_orders': total_orders,
         'products': products[:10],  # Top 10 produk untuk tabel
@@ -647,7 +654,7 @@ def login_view(request):
        - Authenticate user
        - Jika sukses:
          * Role == 'admin' → redirect ke /admin/ (Django Admin)
-         * Role == 'brand' → redirect ke /seller/dashboard/ (Penjual Dashboard)
+         * Role == 'brand' → redirect ke /toko/dashboard/ (Penjual Dashboard)
          * Role == 'customer' → redirect ke / (Homepage)
        - Jika gagal: tampilkan error message
     """
@@ -680,8 +687,20 @@ def login_view(request):
             
             # 2. PENJUAL (BRAND) → Seller Dashboard
             elif user.role == 'brand':
-                messages.success(request, f'✅ Selamat datang kembali Penjual! Akses dashboard Anda.')
-                return redirect('master_products:seller_dashboard')
+                current_toko = getattr(user, 'toko', None)
+                if current_toko is None:
+                    messages.error(request, '❌ Akun penjual Anda belum memiliki profil toko yang terdaftar.')
+                    return redirect('master_products:product_list')
+
+                if current_toko.status != 'approved':
+                    messages.warning(
+                        request,
+                        f'⏳ Akun penjual Anda belum disetujui. Status toko: {current_toko.get_status_display()}'
+                    )
+                    return redirect('master_products:product_list')
+
+                messages.success(request, f'✅ Selamat datang kembali, {current_toko.nama_toko}! Akses dashboard Anda.')
+                return redirect('master_products:dashboard_redirect')
             
             # 3. CUSTOMER → Homepage / Product List
             else:
@@ -811,69 +830,28 @@ def register_vendor_view(request):
 
 
 @login_required(login_url='master_products:login')
-def vendor_dashboard_view(request):
-    """
-    Menampilkan halaman dashboard khusus untuk penjual/vendor.
-    Halaman ini menampilkan:
-    - Sidebar navigasi dengan menu penjual
-    - Statistik ringkas (Total Produk, Omset, Pesanan Baru)
-    - Tabel daftar produk yang dijual
-    
-    Keamanan:
-    - @login_required: User harus sudah login
-    - Role check: User harus memiliki role='brand' (Penjual)
-    
-    Persyaratan:
-    - User harus sudah login (authenticated)
-    - User harus memiliki role='brand'
-    """
-    # ==================== CEK ROLE: HARUS BRAND/PENJUAL ====================
-    # Verifikasi bahwa user adalah penjual (memiliki role='brand')
-    if request.user.role != 'brand':
-        # User BUKAN penjual - akses ditolak
-        messages.error(request, 'Akses ditolak! Hanya penjual yang dapat mengakses dashboard ini.')
-        return redirect('master_products:login')
-    
-    # User adalah penjual - izinkan akses ke dashboard
-    return render(request, 'master_products/vendor_dashboard.html')
-
-
-@login_required(login_url='master_products:login')
+@seller_required
 def add_product_view(request):
     """
     Menampilkan form dan memproses penambahan produk elektronik baru.
-    Penjual (Seller/Brand) dapat menambahkan produk ke katalog mereka tanpa perlu pengecekan approval.
+    Penjual (Seller/Brand) dapat menambahkan produk ke katalog mereka.
     
     Keamanan:
     - @login_required: User harus sudah login
-    - Role check: User harus memiliki role='brand' (Penjual)
+    - @seller_required: User harus penjual yang disetujui
     - Ownership check: Produk harus milik brand user yang sedang login
     
     Logic:
     1. GET request: Tampilkan form tambah produk
     2. POST request:
        - Validasi data (name, category, price, stock, description)
-       - Get atau create Brand untuk user
-       - Get kategori berdasarkan nama
        - Simpan produk ke database
        - Redirect ke dashboard dengan success message
     """
-    # ==================== CEK ROLE: HARUS BRAND/PENJUAL ====================
-    if request.user.role != 'brand':
-        messages.error(request, 'Akses ditolak! Hanya penjual yang dapat menambah produk.')
+    current_toko = getattr(request.user, 'toko', None)
+    if current_toko is None:
+        messages.error(request, '❌ Profil toko Anda belum terdaftar! Silakan hubungi admin atau daftar toko terlebih dahulu.')
         return redirect('master_products:product_list')
-    
-    # ==================== GET ATAU CREATE BRAND ====================
-    # Penjual harus memiliki Brand untuk menambah produk
-    # Jika belum ada, buat brand baru dengan nama default dari username
-    brand, created = Brand.objects.get_or_create(
-        user_id=request.user,
-        defaults={
-            'brand_name': request.user.full_name or request.user.username.upper(),
-            'description': f'Toko {request.user.username}',
-            'status': 'approved'
-        }
-    )
     
     if request.method == 'GET':
         return render(request, 'master_products/add_product.html')
@@ -929,15 +907,10 @@ def add_product_view(request):
             messages.error(request, f'Kategori "{category_display_name}" tidak ditemukan. Silakan pilih kategori yang valid.')
             return render(request, 'master_products/add_product.html')
         
-        # ==================== GENERATE SKU ====================
-        # SKU format: BRAND_PRODUCTNAME_TIMESTAMP
-        import time
-        sku = f"{brand.brand_name[:3].upper()}_{name[:5].upper()}_{int(time.time())}"
-        
         # ==================== SIMPAN PRODUK KE DATABASE ====================
         try:
             product = Product.objects.create(
-                brand_id=brand,
+                brand_id=current_toko,
                 category_id=category,
                 product_name=name,
                 slug=name.lower().replace(' ', '-'),
@@ -948,7 +921,7 @@ def add_product_view(request):
             )
             
             messages.success(request, f'Produk "{name}" berhasil ditambahkan ke katalog Anda! Produk akan tampil di dashboard dan dapat ditemukan pembeli.')
-            return redirect('master_products:vendor_dashboard')
+            return redirect('master_products:seller_dashboard')
         
         except Exception as e:
             messages.error(request, f'Terjadi kesalahan saat menyimpan produk: {str(e)}')

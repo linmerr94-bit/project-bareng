@@ -103,6 +103,14 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
     
+    @property
+    def toko(self):
+        """
+        Alias ke profile toko/vendor yang dimiliki user ini.
+        Digunakan untuk akses tenant-aware store isolation.
+        """
+        return getattr(self, 'brand_vendor', None)
+    
     def get_role_display(self):
         """Return display name untuk role"""
         return dict(self.ROLE_CHOICES).get(self.role, self.role)
