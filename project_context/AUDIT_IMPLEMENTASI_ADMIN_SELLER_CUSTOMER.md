@@ -29,11 +29,11 @@
 | 3 | Kolom Email | ✅ Tampilkan email owner | ✅ `pending_brands_list.user_id.email` | ✅ **LENGKAP** |
 | 4 | Kolom NIB/KTP | ✅ Tampilkan nib_or_ktp | ✅ `pending_brands_list.nib_or_ktp` | ✅ **LENGKAP** |
 | 5 | Kolom Tanggal Daftar | ✅ Tampilkan created_at | ✅ `pending_brands_list.created_at` | ✅ **LENGKAP** |
-| 6 | Kolom Status (Badge) | ✅ Badge kuning untuk 'pending' | ✅ `<span class="badge badge-pending">` | ✅ **LENGKAP** |
+| 6 | Kolom Status (Badge) | ✅ Badge kuning untuk 'pending' | ✅ badge status pending dengan label teks | ✅ **LENGKAP** |
 | 7 | Tombol "Setujui" (Hijau) | ✅ POST ke `/admin/approve-seller/<id>/` + CSRF | ✅ `form method="POST" action="{% url 'master_products:approve_seller' %}"` | ✅ **LENGKAP** |
 | 8 | Tombol "Tolak" (Merah) | ✅ POST ke `/admin/reject-seller/<id>/` + CSRF | ✅ `form method="POST" action="{% url 'master_products:reject_seller' %}"` | ✅ **LENGKAP** |
 | 9 | Confirm dialog sebelum approve/reject | ⚠️ Use case: onclick="return confirm(...)" | ✅ `onclick="return confirm('Setujui brand ini?')"` | ✅ **LENGKAP** |
-| 10 | Empty state jika tidak ada pending | ✅ Tampilkan pesan & ikon | ✅ `.empty-state` dengan icon inbox | ✅ **LENGKAP** |
+| 10 | Empty state jika tidak ada pending | ✅ Tampilkan pesan & ikon | ✅ tampilan empty state dengan icon inbox | ✅ **LENGKAP** |
 | 11 | DataTables (sorting, pagination, search) | ✅ Interactive table management | ✅ `$('table').DataTable()` dengan i18n | ✅ **LENGKAP** |
 
 ### Tabel Daftar Brand Aktif (Approved Sellers)
@@ -44,10 +44,10 @@
 | 3 | Kolom User/Owner | ✅ Display username | ✅ `approved_brands_list.user_id.username` | ✅ **LENGKAP** |
 | 4 | Kolom Email | ✅ Display email | ✅ `approved_brands_list.user_id.email` | ✅ **LENGKAP** |
 | 5 | Kolom Rating | ✅ Display rating 0-5 bintang | ✅ `approved_brands_list.rating` dengan star icon | ✅ **LENGKAP** |
-| 6 | Kolom Status (Badge Hijau) | ✅ Badge green untuk 'approved' | ✅ `<span class="badge badge-approved">` | ✅ **LENGKAP** |
+| 6 | Kolom Status (Badge Hijau) | ✅ Badge green untuk 'approved' | ✅ label status 'approved' dengan tampilan badge | ✅ **LENGKAP** |
 | 7 | Kolom Disetujui Oleh | ✅ Display username admin yang approve | ✅ `approved_brands_list.approved_by.username` | ✅ **LENGKAP** |
 | 8 | Kolom Tanggal Persetujuan | ✅ Display approved_at date | ✅ `approved_brands_list.approved_at` | ✅ **LENGKAP** |
-| 9 | Empty state jika tidak ada approved | ✅ Tampilkan pesan | ✅ `.empty-state` dengan icon | ✅ **LENGKAP** |
+| 9 | Empty state jika tidak ada approved | ✅ Tampilkan pesan | ✅ tampilan empty state dengan icon | ✅ **LENGKAP** |
 | 10 | DataTables (sorting, pagination, search) | ✅ Interactive table | ✅ `$('table').DataTable()` | ✅ **LENGKAP** |
 
 ### Sidebar Navigation (Admin Menu)

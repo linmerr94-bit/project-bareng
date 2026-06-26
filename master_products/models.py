@@ -317,6 +317,18 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.product_name} ({self.brand_id.brand_name})"
 
+    @property
+    def image_url(self):
+        """Return a valid image URL for both external URLs and local media paths."""
+        if not self.image:
+            return ''
+
+        name = self.image.name if hasattr(self.image, 'name') else str(self.image)
+        if name.startswith(('http://', 'https://')):
+            return name
+
+        return self.image.url
+
 
 # ============================================================================
 # CART MODEL
