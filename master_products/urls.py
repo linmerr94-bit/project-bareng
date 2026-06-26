@@ -25,6 +25,7 @@ urlpatterns = [
     
     # ==================== CUSTOMER - PRODUCT CATALOG ====================
     path('', views.product_list, name='product_list'),
+    path('shop/', views.shop, name='shop'),
     path('api/search/', views.product_list_ajax, name='product_list_ajax'),
     path('product/<int:product_id>/', views.product_detail_by_id, name='product_detail_by_id'),
     path('product/<slug:slug>/', views.product_detail, name='product_detail'),

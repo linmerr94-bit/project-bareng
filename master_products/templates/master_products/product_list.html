@@ -7,599 +7,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* =========================================================
-           SPRYO / Premium Light E-commerce Homepage Theme
-           ========================================================= */
-
         :root {
-            --bg: #f7f8fc;
+            --bg: #f8fafc;
             --surface: #ffffff;
-            --surface-2: #f4f6ff;
-            --text: #101828;
-            --muted: #667085;
-            --muted-2: #98a2b3;
-            --border: #eaecf0;
-
+            --text: #0f172a;
+            --muted: #64748b;
             --primary: #6d28d9;
-            --primary-2: #7c3aed;
-            --primary-3: #5b21b6;
-            --accent: #4f46e5;
-            --accent-2: #22c55e;
-            --warning: #f59e0b;
             --danger: #ef4444;
-
-            --shadow-sm: 0 2px 10px rgba(16,24,40,.06);
-            --shadow-md: 0 10px 30px rgba(16,24,40,.10);
-            --shadow-lg: 0 20px 50px rgba(16,24,40,.14);
-
-            --radius-sm: 12px;
             --radius-md: 18px;
             --radius-lg: 26px;
             --transition: 180ms ease;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(124,58,237,.08), transparent 26%),
-                radial-gradient(circle at top right, rgba(79,70,229,.06), transparent 20%),
-                var(--bg);
-            color: var(--text);
-            line-height: 1.5;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        img {
-            max-width: 100%;
-            display: block;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        /* Navbar */
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(247, 248, 252, .78);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(234, 236, 240, .9);
-            box-shadow: 0 2px 10px rgba(16, 24, 40, .06);
-        }
-
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -0.04em;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .search-input {
-            border: 1px solid rgba(234, 236, 240, .95);
-            border-radius: 999px;
-            padding: 12px 16px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: var(--surface);
-            color: var(--text);
-            width: 100%;
-        }
-
-        .search-input::placeholder {
-            color: var(--muted-2);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: rgba(124, 58, 237, .28);
-            box-shadow: 0 0 0 4px rgba(109, 40, 217, .08);
-            background: var(--surface);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, #213a9b 0%, #2b2f92 38%, #1d4ed8 100%);
-            color: white;
-            padding: clamp(26px, 3vw, 40px);
-            margin-bottom: 60px;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-            border-radius: var(--radius-lg);
-        }
-
-        .hero-section::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 10% 20%, rgba(255,255,255,.18), transparent 22%),
-                radial-gradient(circle at 82% 18%, rgba(255,255,255,.12), transparent 18%),
-                linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.10));
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1.7fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .hero-text h1 {
-            margin: 0;
-            font-size: clamp(2.1rem, 4vw, 4rem);
-            font-weight: 800;
-            line-height: .95;
-            letter-spacing: -0.06em;
-            margin-bottom: 16px;
-        }
-
-        .hero-text p {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-bottom: 24px;
-            line-height: 1.6;
-            max-width: 480px;
-        }
-
-        .btn-hero {
-            background: #fff;
-            color: var(--primary-3);
-            padding: 12px 28px;
-            border-radius: 999px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 12px 24px rgba(15, 23, 42, .14);
-        }
-
-        .btn-hero:hover {
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-text h1 {
-                font-size: 32px;
-            }
-        }
-
-        /* Mitra Toko Section */
-        .mitra-section {
-            max-width: 1200px;
-            margin: 0 auto 60px;
-            padding: 0 20px;
-        }
-
-        .mitra-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: clamp(1.15rem, 1.1vw + 1rem, 1.7rem);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            margin-bottom: 30px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
             color: var(--text);
         }
 
-        .mitra-title i {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .mitra-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 18px;
-        }
-
-        .mitra-card {
-            background: rgba(255, 255, 255, .9);
-            border: 1px solid rgba(234, 236, 240, .9);
-            border-radius: var(--radius-md);
-            padding: 22px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-            box-shadow: var(--shadow-sm);
-            backdrop-filter: blur(10px);
-        }
-
-        .mitra-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(124, 58, 237, .18);
-        }
-
-        .mitra-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 28px;
-            color: white;
-            box-shadow: 0 10px 20px rgba(109, 40, 217, .22);
-        }
-
-        .mitra-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .mitra-location {
-            font-size: 14px;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .mitra-location i {
-            color: var(--primary);
-        }
-
-        /* Category Pills */
-        .category-section {
-            max-width: 1200px;
-            margin: 0 auto 50px;
-            padding: 0 20px;
-        }
-
-        .category-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: clamp(1.15rem, 1.1vw + 1rem, 1.7rem);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            margin-bottom: 24px;
-            color: var(--text);
-        }
-
-        .category-title i {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .category-card {
-            background: var(--surface);
-            border: 1px solid rgba(234, 236, 240, .95);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .category-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-            border-color: rgba(124, 58, 237, .22);
-        }
-
-        .category-icon {
-            font-size: 32px;
-            color: var(--primary);
-            margin-bottom: 12px;
-        }
-
-        .category-name {
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text);
-        }
-
-        /* Products Grid */
-        .products-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: clamp(1.15rem, 1.1vw + 1rem, 1.7rem);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            margin-bottom: 30px;
-            color: var(--text);
-        }
-
-        .section-title i {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 18px;
-        }
-
-        /* Product Card */
-        .product-card {
-            background: rgba(255, 255, 255, .9);
-            border: 1px solid rgba(234, 236, 240, .95);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(10px);
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(124, 58, 237, .18);
-        }
-
-        .product-image-wrapper {
-            position: relative;
-            aspect-ratio: 1 / 1;
-            background: linear-gradient(180deg, #f8faff, #eef2ff);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .product-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .product-card:hover .product-image-wrapper img {
-            transform: scale(1.08);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            color: #fff;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            box-shadow: 0 10px 20px rgba(109, 40, 217, .22);
-            padding: 8px 12px;
-            border-radius: 999px;
-            font-size: .78rem;
-            font-weight: 700;
-            line-height: 1;
-            white-space: nowrap;
-            max-width: 120px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .product-store-badge {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            background: rgba(255, 255, 255, .98);
-            color: var(--primary-3);
-            padding: 8px 12px;
-            border-radius: 999px;
-            font-size: .78rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            max-width: 160px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            box-shadow: 0 8px 16px rgba(16, 24, 40, .08);
-        }
-
-        .product-info {
-            padding: 14px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-name {
-            margin: 0;
-            font-size: .98rem;
-            line-height: 1.35;
-            font-weight: 700;
-            color: var(--text);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            min-height: 2.7em;
-        }
-
-        .product-store {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .product-store i {
-            color: var(--primary);
-            font-size: 11px;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-            margin-top: 10px;
-            font-weight: 800;
-            color: var(--primary-3);
-            font-size: .98rem;
-        }
-
-        .product-footer {
-            display: flex;
-            gap: 8px;
-            margin-top: auto;
-        }
-
-        .btn-view {
-            flex: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            min-height: 40px;
-            padding: 0 12px;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(234, 236, 240, .95);
-            background: var(--surface);
-            color: var(--primary-3);
-            font-weight: 600;
-            font-size: .88rem;
-            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition);
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .btn-view:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-            border-color: rgba(124, 58, 237, .22);
-            background: rgba(109, 40, 217, .08);
-        }
-
-        .btn-add-cart {
-            flex: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            min-height: 40px;
-            padding: 0 12px;
-            border-radius: var(--radius-sm);
-            border: 0;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #fff;
-            font-weight: 600;
-            font-size: .88rem;
-            transition: transform var(--transition), box-shadow var(--transition);
-            cursor: pointer;
-        }
-
-        .btn-add-cart:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 24px rgba(109, 40, 217, .24);
-        }
-
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Floating Chat Widget */
+        /* Floating Chat Widget & Modal Styles kept for functionality */
         .floating-chat {
             position: fixed;
             bottom: 24px;
             right: 24px;
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: linear-gradient(135deg, #6d28d9, #4f46e5);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 14px 24px rgba(109, 40, 217, .24);
-            transition: transform var(--transition), box-shadow var(--transition);
+            transition: transform var(--transition);
             z-index: 40;
         }
-
-        .floating-chat:hover {
-            transform: scale(1.1);
-            box-shadow: 0 20px 40px rgba(109, 40, 217, .32);
-        }
-
-        .floating-chat i {
-            color: white;
-            font-size: 24px;
-        }
-
-        .chat-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Chat Modal */
+        .floating-chat:hover { transform: scale(1.1); }
         .chat-modal {
             position: fixed;
             bottom: 100px;
@@ -608,423 +51,331 @@
             height: 500px;
             background: var(--surface);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 20px 50px rgba(16,24,40,.14);
             display: flex;
             flex-direction: column;
             z-index: 50;
             animation: slideUp 0.3s ease;
         }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            padding: 16px 20px;
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-header h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .chat-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chat-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 20px;
-            background: var(--surface-2);
-        }
-
-        .chat-messages {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .chat-message {
-            display: flex;
-            margin-bottom: 8px;
-        }
-
-        .chat-message.user {
-            justify-content: flex-end;
-        }
-
-        .chat-message.user p {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            padding: 10px 14px;
-            border-radius: 12px 12px 0 12px;
-            margin: 0;
-            max-width: 80%;
-            font-size: 14px;
-            word-wrap: break-word;
-        }
-
-        .chat-message.bot p {
-            background: white;
-            color: var(--text);
-            padding: 10px 14px;
-            border-radius: 12px 12px 12px 0;
-            margin: 0;
-            max-width: 80%;
-            font-size: 14px;
-            word-wrap: break-word;
-            border: 1px solid rgba(234, 236, 240, .95);
-        }
-
-        .chat-footer {
-            display: flex;
-            gap: 8px;
-            padding: 12px 16px;
-            background: var(--surface);
-            border-top: 1px solid rgba(234, 236, 240, .95);
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-        }
-
-        .chat-input {
-            flex: 1;
-            border: 1px solid rgba(234, 236, 240, .95);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color var(--transition);
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: rgba(124, 58, 237, .28);
-            box-shadow: 0 0 0 4px rgba(109, 40, 217, .08);
-        }
-
-        .chat-send-btn {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 10px 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition);
-        }
-
-        .chat-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(109, 40, 217, .22);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--surface);
-            border-top: 1px solid rgba(234, 236, 240, .9);
-            color: var(--muted);
-            margin-top: 80px;
-            padding: 40px 20px;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-            .chat-modal {
-                width: calc(100% - 32px);
-                bottom: 90px;
-                right: 16px;
-                height: 400px;
-            }
-
-            .hero-content {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-text h1 {
-                font-size: 32px;
-            }
-
-            .category-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .mitra-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-container { display: flex; flex-direction: column; height: 100%; }
+        .chat-header { background: linear-gradient(135deg, #6d28d9, #4f46e5); color: white; padding: 16px 20px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { flex: 1; overflow-y: auto; padding: 16px 20px; background: #f4f6ff; }
+        .chat-messages { display: flex; flex-direction: column; gap: 12px; }
+        .chat-message.user { justify-content: flex-end; display: flex; }
+        .chat-message.user p { background: linear-gradient(135deg, #6d28d9, #4f46e5); color: white; padding: 10px 14px; border-radius: 12px 12px 0 12px; max-width: 80%; font-size: 14px; }
+        .chat-message.bot { display: flex; }
+        .chat-message.bot p { background: white; color: var(--text); padding: 10px 14px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 14px; border: 1px solid #eaecf0; }
+        .chat-footer { display: flex; gap: 8px; padding: 12px 16px; background: var(--surface); border-top: 1px solid #eaecf0; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
     </style>
 </head>
-<body>
+<body class="bg-[#f8fafc]">
 
-    <!-- ==================== NAVBAR ==================== -->
-    <nav class="navbar">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: grid; grid-template-columns: auto minmax(260px, 1fr) auto; gap: 18px; align-items: center; min-height: 82px;">
-            <!-- Brand -->
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #6d28d9, #4f46e5); box-shadow: 0 10px 20px rgba(109,40,217,.25); display: grid; place-items: center; color: #fff; font-size: 1rem; font-weight: 700;">📱</div>
-                <div class="navbar-brand">VOLTA</div>
+    <nav class="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-2">
+                    <span class="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-lg tracking-wider">VOLTA</span>
+                </div>
+                <button onclick="window.location.href='{% url 'master_products:shop' %}'" class="bg-[#7c3aed] text-white font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-bars"></i> Semua Kategori
+                </button>
             </div>
 
-            <!-- Search -->
-            <form method="GET" action="{% url 'master_products:product_list' %}" style="width: 100%;">
-                <input 
-                    type="text" 
-                    name="q" 
-                    value="{{ request.GET.q }}"
-                    placeholder="Cari produk elektronik..." 
-                    class="search-input"
-                    id="search-input"
-                >
-            </form>
+            <div class="w-full md:max-w-md flex-1">
+                <form method="GET" action="{% url 'master_products:product_list' %}" class="relative">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ request.GET.q }}"
+                        placeholder="Cari produk elektronik..." 
+                        class="w-full bg-[#f1f5f9] placeholder-gray-400 text-sm rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all border border-transparent"
+                    >
+                    <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
 
-            <!-- Header Actions -->
-            <div style="display: flex; align-items: center; gap: 10px; position: relative;">
-                {% if user.is_authenticated %}
-                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
-                        <i class="fas fa-user-circle" style="font-size: 1.2rem; color: var(--primary); cursor: pointer;" onclick="toggleProfileMenu()"></i>
-                        <div id="profileMenu" style="position: absolute; top: 40px; right: 0; background: white; border: 1px solid rgba(234,236,240,.95); border-radius: var(--radius-md); box-shadow: var(--shadow-md); min-width: 200px; z-index: 100; display: none;">
-                            <a href="{% url 'master_products:user_profile' %}" style="display: block; padding: 12px 16px; color: var(--text); font-size: 0.95rem; border-bottom: 1px solid rgba(234,236,240,.95); text-decoration: none; transition: background 0.2s ease;" onmouseover="this.style.background='rgba(109,40,217,.08)'" onmouseout="this.style.background=''">
-                                <i class="fas fa-user" style="margin-right: 8px; color: var(--primary);"></i> Profil Saya
-                            </a>
-                            <a href="{% url 'master_products:order_list' %}" style="display: block; padding: 12px 16px; color: var(--text); font-size: 0.95rem; border-bottom: 1px solid rgba(234,236,240,.95); text-decoration: none; transition: background 0.2s ease;" onmouseover="this.style.background='rgba(109,40,217,.08)'" onmouseout="this.style.background=''">
-                                <i class="fas fa-box" style="margin-right: 8px; color: var(--primary);"></i> Pesanan Saya
-                            </a>
-                            <a href="{% url 'master_products:logout' %}" style="display: block; padding: 12px 16px; color: var(--danger); font-size: 0.95rem; text-decoration: none; transition: background 0.2s ease;" onmouseover="this.style.background='rgba(239,68,68,.08)'" onmouseout="this.style.background=''">
-                                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Logout
-                            </a>
+            <div class="flex items-center justify-between w-full md:w-auto gap-6">
+                <div class="text-sm font-medium tracking-wide text-gray-600 uppercase">
+                    <a href="{% url 'master_products:shop' %}" class="text-gray-600 hover:text-indigo-600">Produk</a> &nbsp;&middot;&nbsp; 
+                    <span class="text-red-500 font-bold">HINGGA 60% OFF SEMUA PRODUK</span>
+                </div>
+
+                <div class="flex items-center gap-4 relative">
+                    {% if user.is_authenticated %}
+                        <div class="relative flex items-center gap-2">
+                            <i class="fas fa-user-circle text-2xl text-indigo-600 cursor-pointer" onclick="toggleProfileMenu(event)"></i>
+                            <div id="profileMenu" class="absolute top-10 right-0 bg-white border border-gray-100 rounded-xl shadow-lg min-width-[200px] z-50 hidden">
+                                <a href="{% url 'master_products:user_profile' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 transition-colors border-b border-gray-50">
+                                    <i class="fas fa-user mr-2 text-indigo-600"></i> Profil Saya
+                                </a>
+                                <a href="{% url 'master_products:order_list' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 transition-colors border-b border-gray-50">
+                                    <i class="fas fa-box mr-2 text-indigo-600"></i> Pesanan Saya
+                                </a>
+                                <a href="{% url 'master_products:logout' %}" class="block px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                {% else %}
-                    <a href="{% url 'master_products:login' %}" style="font-size: 0.95rem; color: var(--primary); font-weight: 600; text-decoration: none;">Login</a>
-                {% endif %}
-                <a href="{% url 'master_products:view_cart' %}" style="position: relative; display: flex; align-items: center; justify-content: center; text-decoration: none;">
-                    <i class="fas fa-shopping-cart" style="color: var(--text); font-size: 1.2rem;"></i>
-                    {% if cart_count > 0 %}
-                        <span style="position: absolute; top: -8px; right: -8px; background: var(--danger); color: white; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 999px;">{{ cart_count }}</span>
+                    {% else %}
+                        <a href="{% url 'master_products:login' %}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Login</a>
                     {% endif %}
-                </a>
+
+                    <a href="{% url 'master_products:view_cart' %}" class="relative p-2 text-gray-700 hover:text-indigo-600">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        {% if cart_count > 0 %}
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                </div>
             </div>
+
         </div>
     </nav>
 
-    <!-- ==================== HERO SECTION ==================== -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1>Elektronik Premium Purwokerto</h1>
-                <p>Temukan koleksi lengkap elektronik berkualitas tinggi dari vendor lokal Purwokerto. Produk original, harga kompetitif, dan layanan terpercaya.</p>
-                <button class="btn-hero">
-                    <i class="fas fa-arrow-right"></i> Jelajahi Sekarang
-                </button>
+    <section class="max-w-7xl mx-auto px-4 mt-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 bg-[#1e3a8a] text-white rounded-3xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden shadow-md min-h-[340px]">
+                <div class="max-w-lg z-10">
+                    <span class="text-xs uppercase font-bold tracking-widest text-amber-400 flex items-center gap-1 mb-4">
+                        ⚡ Audio &nbsp;&middot;&nbsp; Unggulan
+                    </span>
+                    <h1 class="text-3xl lg:text-5xl font-extrabold mb-4 leading-tight">Elektronik Premium Purwokerto</h1>
+                    <p class="text-gray-200 text-sm lg:text-base mb-8 leading-relaxed">Koleksi lengkap elektronik berkualitas tinggi dari vendor lokal Purwokerto. Produk original, harga kompetitif.</p>
+                </div>
+                <div class="z-10">
+                    <a href="{% url 'master_products:shop' %}" class="bg-white text-indigo-900 font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2 text-sm">
+                        Jelajahi Sekarang <i class="fas fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+                <div class="absolute right-4 bottom-4 opacity-10 pointer-events-none">
+                    <i class="fas fa-laptop text-[180px]"></i>
+                </div>
             </div>
-            <div style="text-align: center; color: white;">
-                <i class="fas fa-laptop" style="font-size: 120px; opacity: 0.3;"></i>
+
+            <div class="flex flex-col gap-6">
+                <div class="bg-[#7c3aed] text-white rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1 min-h-[160px]">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold tracking-widest opacity-80 block mb-1">Wearables</span>
+                        <h3 class="text-xl font-bold leading-snug">Jelajahi Smartwatch</h3>
+                    </div>
+                    <a href="#" class="text-xs font-semibold underline underline-offset-4 flex items-center gap-1 hover:opacity-80">
+                        Lihat Sekarang &rarr;
+                    </a>
+                </div>
+                <div class="bg-[#115e59] text-white rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1 min-h-[160px]">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold tracking-widest opacity-80 block mb-1">Handphone Terbaru</span>
+                        <h3 class="text-xl font-bold leading-snug">Samsung Galaxy S24 Ultra &bull; 5G</h3>
+                    </div>
+                    <a href="#" class="text-xs font-semibold underline underline-offset-4 flex items-center gap-1 hover:opacity-80">
+                        Lihat Sekarang &rarr;
+                    </a>
+                </div>
             </div>
+
         </div>
     </section>
 
-    <!-- ==================== MITRA TOKO SECTION (MOVED TO FOOTER) ==================== -->
-
-    <!-- ==================== CATEGORY SECTION ==================== -->
-    <section class="category-section">
-        <h2 class="category-title">Kategori Populer</h2>
-        <div class="category-grid">
+    <section class="max-w-7xl mx-auto px-4 mt-12">
+        <h2 class="text-2xl font-extrabold mb-6 tracking-tight">Kategori Populer</h2>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {% for category in categories %}
-                <div class="category-card" onclick="filterByCategory({{ category.category_id }})">
-                    <div class="category-icon">
+                <div onclick="window.location.href='{% url 'master_products:shop' %}?category={{ category.category_id }}'" 
+                     class="cursor-pointer rounded-2xl p-6 text-white text-center shadow-sm hover:scale-[1.02] transition-transform flex flex-col items-center justify-center min-h-[140px]
+                     {% if forloop.counter == 1 %} bg-[#ea580c] 
+                     {% elif forloop.counter == 2 %} bg-[#16a34a] 
+                     {% elif forloop.counter == 3 %} bg-[#1e293b] 
+                     {% elif forloop.counter == 4 %} bg-[#0d9488] 
+                     {% else %} bg-[#7c3aed] {% endif %}">
+                    
+                    <div class="text-3xl mb-3">
                         {% if 'Laptop' in category.category_name or 'Komputer' in category.category_name %}
                             <i class="fas fa-laptop"></i>
                         {% elif 'Handphone' in category.category_name %}
                             <i class="fas fa-mobile-alt"></i>
+                        {% elif 'DSLR' in category.category_name or 'Kamera' in category.category_name %}
+                            <i class="fas fa-camera"></i>
                         {% elif 'Elektronik Rumah' in category.category_name %}
                             <i class="fas fa-tv"></i>
                         {% else %}
                             <i class="fas fa-microchip"></i>
                         {% endif %}
                     </div>
-                    <div class="category-name">{{ category.category_name }}</div>
+                    <div class="font-bold text-sm tracking-wide">{{ category.category_name }}</div>
+                    <div class="text-[11px] opacity-80 mt-1">Shop Now &rarr;</div>
                 </div>
             {% endfor %}
         </div>
     </section>
 
-    <!-- ==================== PRODUCTS SECTION ==================== -->
-    <section class="products-section" style="padding-bottom: 60px;">
-        <h2 class="section-title">Semua Produk</h2>
-        <div class="products-grid" id="products-container">
+    <section class="max-w-7xl mx-auto px-4 mt-12 pb-16">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+            <h2 class="text-2xl font-extrabold tracking-tight">Produk Trending</h2>
+            
+            <div class="flex flex-wrap gap-2 text-sm font-medium text-gray-500">
+                <button onclick="filterTrending('Handphone')" data-trending-button class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-1 font-semibold focus:outline-none">Handphone</button>
+                <button onclick="filterTrending('Laptop')" data-trending-button class="hover:text-gray-800 px-3 py-1 focus:outline-none">Laptop</button>
+                <button onclick="filterTrending('Kamera')" data-trending-button class="hover:text-gray-800 px-3 py-1 focus:outline-none">Kamera</button>
+                <button onclick="filterTrending('Aksesoris')" data-trending-button class="hover:text-gray-800 px-3 py-1 focus:outline-none">Aksesoris</button>
+                <button onclick="filterTrending('Speaker')" data-trending-button class="hover:text-gray-800 px-3 py-1 focus:outline-none">Speaker</button>
+                <a href="#" onclick="filterTrending('all'); return false;" class="text-indigo-600 font-semibold ml-4 self-center hidden sm:inline text-xs">Lihat Semua &rarr;</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-container">
             {% for product in products %}
-                <div class="product-card">
-                    <div class="product-image-wrapper">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/260x220?text=No+Image';">
+                <div data-category="{{ product.brand_id.brand_name }} {{ product.category_id.category_name }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group relative hover:shadow-md transition-shadow">
+                    
+                    <div class="relative bg-gray-50 aspect-square flex items-center justify-center p-4">
+                        
+                        {% if forloop.counter|divisibleby:2 %}
+                            <span class="absolute top-3 left-3 bg-[#16a34a] text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-sm">Baru</span>
                         {% else %}
-                            <i class="fas fa-image" style="font-size: 60px; color: #475569;"></i>
+                            <span class="absolute top-3 left-3 bg-[#ef4444] text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-sm">Sale</span>
                         {% endif %}
-                        <div class="product-badge">{{ product.category_id.category_name }}</div>
-                        <div class="product-store-badge">
-                            <i class="fas fa-store"></i>
-                            {{ product.brand_id.brand_name }}
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <div class="product-name line-clamp-2">{{ product.product_name }}</div>
-                        <a href="{% url 'master_products:store_detail' product.brand_id.brand_id %}" style="text-decoration: none;">
-                            <div class="product-store">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <strong style="color: var(--primary);">{{ product.brand_id.brand_name }}</strong>, Purwokerto
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='https://via.placeholder.com/260x220?text=No+Image';">
+                        {% else %}
+                            <div class="text-center text-gray-300">
+                                <i class="fas fa-image text-5xl mb-2 block"></i>
+                                <span class="text-xs">No Image Available</span>
                             </div>
-                        </a>
-                        <div class="product-price">Rp {{ product.price|floatformat:0|add:0 }}</div>
-                        <div class="product-footer">
-                            <a href="{% url 'master_products:product_detail_by_id' product.product_id %}" class="btn-view">
-                                <i class="fas fa-eye"></i> Lihat
-                            </a>
-                            <form method="POST" action="{% url 'master_products:add_to_cart' product.product_id }}" style="flex: 1;">
-                                {% csrf_token %}
-                                <input type="hidden" name="quantity" value="1">
-                                <input type="hidden" name="next" value="/cart/">
-                                <button type="submit" class="btn-add-cart" style="width: 100%;">
-                                    <i class="fas fa-shopping-cart"></i> Beli
-                                </button>
-                            </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-[11px] text-[#16a34a] font-semibold flex items-center gap-1 mb-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span> Stok ada &bull; {{ forloop.counter|add:20 }} item
+                            </div>
+
+                            <h3 class="font-bold text-gray-900 text-sm md:text-base line-clamp-2 mb-1 min-h-[40px] leading-tight">
+                                {{ product.product_name }}
+                            </h3>
+                            
+                            <p class="text-xs text-gray-400 mb-3">{{ product.brand_id.brand_name }}</p>
                         </div>
+
+                        <div>
+                            <div class="text-indigo-900 font-extrabold text-base md:text-lg mb-4">
+                                Rp {{ product.price|floatformat:0|add:0 }}
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="{% url 'master_products:product_detail_by_id' product.product_id %}" class="border border-gray-200 text-gray-700 text-xs font-bold py-2.5 rounded-xl text-center hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
+                                    <i class="fas fa-eye text-gray-400"></i> Lihat
+                                </a>
+                                <form method="POST" action="{% url 'master_products:add_to_cart' product.product_id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="next" value="/cart/">
+                                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-xl text-center transition-colors flex items-center justify-center gap-1 shadow-sm">
+                                        <i class="fas fa-shopping-cart text-[10px]"></i> Beli
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             {% empty %}
-                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 40px;">
-                    <i class="fas fa-inbox" style="font-size: 60px; color: #475569; margin-bottom: 16px;"></i>
-                    <p style="font-size: 18px; color: #94a3b8;">Tidak ada produk ditemukan</p>
+                <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 p-8">
+                    <i class="fas fa-inbox text-5xl text-gray-300 mb-4 block"></i>
+                    <p class="text-gray-500 font-medium">Tidak ada produk ditemukan</p>
                 </div>
             {% endfor %}
         </div>
     </section>
 
-    <!-- ==================== FLOATING CHAT WIDGET ==================== -->
     <div class="floating-chat" onclick="openChat()" title="Chat dengan penjual">
-        <i class="fas fa-comments"></i>
+        <i class="fas fa-comments text-white text-xl"></i>
         <span class="chat-badge">?</span>
     </div>
 
-    <!-- ==================== CHAT POPUP MODAL ==================== -->
     <div id="chatModal" class="chat-modal" style="display: none;">
         <div class="chat-container">
             <div class="chat-header">
-                <h3>💬 Tanya Penjual</h3>
-                <button class="chat-close" onclick="closeChat()">&times;</button>
+                <h3 class="font-semibold text-sm flex items-center gap-2">💬 Tanya Penjual</h3>
+                <button class="chat-close text-white text-xl focus:outline-none" onclick="closeChat()">&times;</button>
             </div>
             <div class="chat-body">
-                <div class="chat-message bot">
+                <div class="chat-message bot mb-3">
                     <p>Halo! 👋 Ada yang bisa kami bantu?</p>
                 </div>
                 <div id="chatMessages" class="chat-messages"></div>
             </div>
             <div class="chat-footer">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Ketik pesan..." onkeypress="handleChatKeypress(event)">
-                <button onclick="sendChatMessage()" class="chat-send-btn">Kirim</button>
+                <input type="text" id="chatInput" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ketik pesan..." onkeypress="handleChatKeypress(event)">
+                <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors">Kirim</button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div style="margin-bottom: 30px;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 16px;">
-                    <i class="fas fa-store" style="color: var(--primary); margin-right: 8px;"></i>
-                    Mitra Toko Elektronik Purwokerto
+    <footer class="bg-white border-t border-gray-100 text-gray-500 py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-8">
+                <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-store text-indigo-600"></i> Mitra Toko Elektronik Purwokerto
                 </h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-                    <div style="padding: 12px; background: rgba(109,40,217,.05); border-radius: var(--radius-sm); color: var(--text); font-size: 0.95rem;">
-                        <strong>Banyumas Computer</strong><br><span style="font-size: 0.85rem; color: var(--muted);">Purwokerto Utara</span>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
+                        <strong class="block text-gray-900">Banyumas Computer</strong>
+                        <span class="text-xs text-gray-400">Purwokerto Utara</span>
                     </div>
-                    <div style="padding: 12px; background: rgba(109,40,217,.05); border-radius: var(--radius-sm); color: var(--text); font-size: 0.95rem;">
-                        <strong>Moro Elektronik</strong><br><span style="font-size: 0.85rem; color: var(--muted);">Purwokerto Selatan</span>
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
+                        <strong class="block text-gray-900">Moro Elektronik</strong>
+                        <span class="text-xs text-gray-400">Purwokerto Selatan</span>
                     </div>
-                    <div style="padding: 12px; background: rgba(109,40,217,.05); border-radius: var(--radius-sm); color: var(--text); font-size: 0.95rem;">
-                        <strong>Purwokerto Jaya Celular</strong><br><span style="font-size: 0.85rem; color: var(--muted);">Purwokerto Timur</span>
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
+                        <strong class="block text-gray-900">Purwokerto Jaya Celular</strong>
+                        <span class="text-xs text-gray-400">Purwokerto Timur</span>
                     </div>
-                    <div style="padding: 12px; background: rgba(109,40,217,.05); border-radius: var(--radius-sm); color: var(--text); font-size: 0.95rem;">
-                        <strong>Teknik Purwokerto</strong><br><span style="font-size: 0.85rem; color: var(--muted);">Purwokerto Barat</span>
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
+                        <strong class="block text-gray-900">Teknik Purwokerto</strong>
+                        <span class="text-xs text-gray-400">Purwokerto Barat</span>
                     </div>
-                    <div style="padding: 12px; background: rgba(109,40,217,.05); border-radius: var(--radius-sm); color: var(--text); font-size: 0.95rem;">
-                        <strong>Foto & Elektronik</strong><br><span style="font-size: 0.85rem; color: var(--muted);">Purwokerto Pusat</span>
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
+                        <strong class="block text-gray-900">Foto & Elektronik</strong>
+                        <span class="text-xs text-gray-400">Purwokerto Pusat</span>
                     </div>
-                    <div style="padding: 12px; background: rgba(109,40,217,.05); border-radius: var(--radius-sm); color: var(--text); font-size: 0.95rem;">
-                        <strong>Service Elektronik Plus</strong><br><span style="font-size: 0.85rem; color: var(--muted);">Purwokerto Timur</span>
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
+                        <strong class="block text-gray-900">Service Elektronik Plus</strong>
+                        <span class="text-xs text-gray-400">Purwokerto Timur</span>
                     </div>
                 </div>
             </div>
-            <hr style="border: 0; border-top: 1px solid rgba(234,236,240,.9); margin: 24px 0;">
-            <p style="color: var(--muted); font-size: 0.95rem;">
-                &copy; 2026 <strong style="color: var(--text);">VOLTA E-Commerce</strong> Platform. 
+            
+            <hr class="border-gray-100 my-6">
+            
+            <p class="text-sm">
+                &copy; 2026 <strong class="text-gray-800">VOLTA E-Commerce</strong> Platform. 
                 Elektronik Berkualitas Dari Purwokerto.
             </p>
         </div>
     </footer>
 
-    <!-- ==================== SCRIPTS ==================== -->
     <script>
-        // ==================== PROFILE DROPDOWN MENU ====================
-        function toggleProfileMenu() {
+        function toggleProfileMenu(event) {
+            event.stopPropagation();
             const profileMenu = document.getElementById('profileMenu');
-            profileMenu.style.display = profileMenu.style.display === 'none' ? 'block' : 'none';
+            profileMenu.classList.toggle('hidden');
         }
 
-        // Close profile menu when clicking outside
         document.addEventListener('click', function(event) {
             const profileMenu = document.getElementById('profileMenu');
-            const userIcon = document.querySelector('[onclick="toggleProfileMenu()"]');
-            if (profileMenu && !profileMenu.contains(event.target) && event.target !== userIcon) {
-                profileMenu.style.display = 'none';
+            if (profileMenu && !profileMenu.contains(event.target)) {
+                profileMenu.classList.add('hidden');
             }
         });
 
-        // ==================== FLOATING CHAT WIDGET ==================== 
         function openChat() {
             document.getElementById('chatModal').style.display = 'flex';
             document.getElementById('chatInput').focus();
@@ -1037,29 +388,26 @@
         function sendChatMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            
             if (!message) return;
             
-            // Tambah pesan user ke chat
             const messagesDiv = document.getElementById('chatMessages');
             const userMsg = document.createElement('div');
-            userMsg.className = 'chat-message user';
+            userMsg.className = 'chat-message user mb-2';
             userMsg.innerHTML = `<p>${message}</p>`;
             messagesDiv.appendChild(userMsg);
             
             input.value = '';
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
-            // Simulasi respons dari penjual
             setTimeout(() => {
                 const botMsg = document.createElement('div');
-                botMsg.className = 'chat-message bot';
+                botMsg.className = 'chat-message bot mb-2';
                 const responses = [
-                    'Terima kasih atas pertanyaan Anda! 😊',
-                    'Produk ini sangat populer dan berkualitas tinggi! ⭐',
-                    'Kami siap membantu Anda kapan saja! 💪',
+                    'Terima kasih atas pertanyaan Anda! ',
+                    'Produk ini sangat populer dan berkualitas tinggi! 箝',
+                    'Kami siap membantu Anda kapan saja! 潮',
                     'Jika ada pertanyaan lebih lanjut, silakan hubungi admin kami.',
-                    'Stok tersedia dan siap dikirim hari ini! 🚚',
+                    'Stok tersedia dan siap dikirim hari ini! 囹',
                 ];
                 const randomResponse = responses[Math.floor(Math.random() * responses.length)];
                 botMsg.innerHTML = `<p>${randomResponse}</p>`;
@@ -1069,20 +417,41 @@
         }
 
         function handleChatKeypress(event) {
-            if (event.key === 'Enter') {
-                sendChatMessage();
-            }
+            if (event.key === 'Enter') { sendChatMessage(); }
         }
 
         function filterByCategory(categoryId) {
             window.location.href = `?category=${categoryId}`;
         }
 
-        // Close chat modal when clicking outside
+        function filterTrending(category) {
+            const cards = document.querySelectorAll('#products-container > div[data-category]');
+            const normalizedCategory = category.trim().toLowerCase();
+            cards.forEach(card => {
+                const dataCategory = (card.getAttribute('data-category') || '').toLowerCase();
+                const shouldShow = normalizedCategory === 'all' || dataCategory.includes(normalizedCategory);
+                card.style.display = shouldShow ? '' : 'none';
+            });
+
+            const buttons = document.querySelectorAll('[data-trending-button]');
+            buttons.forEach(button => {
+                const buttonText = button.textContent.trim().toLowerCase();
+                if (normalizedCategory === 'all') {
+                    button.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
+                    button.classList.add('hover:text-gray-800');
+                } else if (buttonText === normalizedCategory) {
+                    button.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
+                    button.classList.remove('hover:text-gray-800');
+                } else {
+                    button.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
+                    button.classList.add('hover:text-gray-800');
+                }
+            });
+        }
+
         document.addEventListener('click', function(event) {
             const chatModal = document.getElementById('chatModal');
             const floatingChat = document.querySelector('.floating-chat');
-            
             if (chatModal && !chatModal.contains(event.target) && !floatingChat.contains(event.target)) {
                 chatModal.style.display = 'none';
             }

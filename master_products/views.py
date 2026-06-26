@@ -241,6 +241,53 @@ def product_list(request):
     return render(request, 'master_products/product_list.html', context)
 
 
+def shop(request):
+    from django.core.paginator import Paginator
+    products = Product.objects.filter(is_active=True)
+    categories = Category.objects.all()
+    brands = Brand.objects.filter(status='approved')
+
+    q = request.GET.get('q')
+    if q:
+        products = products.filter(product_name__icontains=q)
+
+    category_id = request.GET.get('category')
+    if category_id:
+        products = products.filter(category_id=category_id)
+
+    brand_id = request.GET.get('brand')
+    if brand_id:
+        products = products.filter(brand_id=brand_id)
+
+    sort = request.GET.get('sort', 'default')
+    if sort == 'price_low':
+        products = products.order_by('price')
+    elif sort == 'price_high':
+        products = products.order_by('-price')
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
+
+    cart_count = 0
+    if request.user.is_authenticated:
+        try:
+            cart = Cart.objects.get(user_id=request.user)
+            cart_count = cart.items.count()
+        except Cart.DoesNotExist:
+            pass
+
+    context = {
+        'products': products,
+        'categories': categories,
+        'brands': brands,
+        'cart_count': cart_count,
+    }
+    return render(request, 'master_products/shop.html', context)
+
+
 def product_list_ajax(request):
     """
     AJAX Endpoint untuk real-time search & filter produk.
@@ -396,6 +443,11 @@ def product_detail_by_id(request, product_id):
     # Hitung average rating
     avg_rating_data = product.reviews.aggregate(avg_rating=Avg('rating'))
     average_rating = avg_rating_data['avg_rating'] or 0
+
+    related_products = Product.objects.filter(
+        category_id=product.category_id,
+        is_active=True
+    ).exclude(product_id=product.product_id)[:10]
     
     # Build context
     context = {
@@ -410,6 +462,7 @@ def product_detail_by_id(request, product_id):
         'stock_quantity': product.stock,
         'reviews': reviews,
         'average_rating': average_rating,
+        'related_products': related_products,
     }
     
     return render(request, 'master_products/product_detail.html', context)

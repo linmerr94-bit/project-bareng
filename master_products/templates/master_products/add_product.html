@@ -45,275 +45,271 @@
         }
     </style>
 </head>
-<body class="bg-slate-900">
-
-    <!-- ==================== MAIN CONTAINER ==================== -->
-    <div class="min-h-screen flex">
-
-        <!-- ==================== LEFT PANEL (BRANDING) ==================== -->
-        <div class="hidden lg:flex lg:w-2/5 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 text-white flex-col items-center justify-center px-8 relative overflow-hidden">
-            
-            <!-- Animated background -->
-            <div class="absolute inset-0 opacity-20">
-                <div class="absolute top-20 right-20 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-                <div class="absolute bottom-20 left-20 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-            </div>
-
-            <div class="relative z-10 text-center max-w-md">
-                <!-- Logo -->
-                <div class="flex justify-center mb-8">
-                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-3xl flex items-center justify-center transform hover:scale-110 transition-transform shadow-2xl">
-                        <i class="fas fa-box text-white text-4xl"></i>
-                    </div>
-                </div>
-
-                <!-- Title -->
-                <h1 class="text-5xl font-bold mb-6 leading-tight">
-                    Tambah Produk
-                </h1>
-
-                <!-- Subtitle -->
-                <h2 class="text-xl font-semibold mb-8 bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">
-                    Kelola Inventori Toko Anda
-                </h2>
-
-                <!-- Description -->
-                <p class="text-lg text-gray-300 leading-relaxed mb-12">
-                    Tambahkan produk elektronik berkualitas ke katalog Anda. Semakin banyak produk, semakin besar peluang penjualan Anda di platform VOLTA.
-                </p>
-
-                <!-- Tips -->
-                <div class="space-y-4">
-                    <div class="flex items-center space-x-4 text-left">
-                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm"></i>
-                        </div>
-                        <p class="text-gray-300">Nama produk yang jelas dan detail</p>
-                    </div>
-
-                    <div class="flex items-center space-x-4 text-left">
-                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm"></i>
-                        </div>
-                        <p class="text-gray-300">Harga kompetitif untuk menarik pembeli</p>
-                    </div>
-
-                    <div class="flex items-center space-x-4 text-left">
-                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check text-white text-sm"></i>
-                        </div>
-                        <p class="text-gray-300">Deskripsi lengkap agar mudah dicari</p>
-                    </div>
-                </div>
-            </div>
+<body class="bg-[#f8fafc] text-slate-900">
+    <nav class="bg-white border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <a href="{% url 'master_products:product_list' %}" class="inline-flex items-center gap-2 bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl shadow-sm">
+                <i class="fas fa-bolt"></i>
+                VOLTA
+            </a>
+            <a href="{% url 'master_products:seller_dashboard' %}" class="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Dashboard
+            </a>
         </div>
+    </nav>
 
-        <!-- ==================== RIGHT PANEL (FORM) ==================== -->
-        <div class="w-full lg:w-3/5 flex flex-col items-center justify-center px-6 sm:px-8 py-12 bg-slate-900">
-            <div class="w-full max-w-2xl">
+    <main class="px-4 py-8 bg-[#f8fafc]">
+        <div class="min-h-[calc(100vh-6rem)] flex flex-col lg:flex-row items-stretch gap-6 max-w-7xl mx-auto bg-[#f8fafc]">
 
-                <!-- Header -->
-                <div class="mb-8">
-                    <a href="{% url 'master_products:seller_dashboard' %}" class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors mb-4">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Kembali ke Dashboard</span>
-                    </a>
-                    <h1 class="text-4xl font-bold text-white mb-2">
-                        Tambah Produk Baru
-                    </h1>
-                    <p class="text-gray-400">
-                        Isi form di bawah untuk menambahkan produk elektronik ke toko Anda
-                    </p>
+            <!-- Left Branding Panel -->
+            <div class="hidden lg:flex lg:w-2/5 bg-[#1e3a8a] text-white flex-col items-center justify-center px-8 relative overflow-visible after:absolute after:right-0 after:top-0 after:h-full after:w-16 after:bg-gradient-to-r after:from-transparent after:to-[#f8fafc]">
+                <div class="absolute inset-0 opacity-40">
+                    <div class="absolute top-16 right-12 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+                    <div class="absolute bottom-16 left-12 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
                 </div>
 
-                <!-- Messages Display (Error/Success) -->
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if message.tags == 'error' %}
-                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-exclamation-circle text-red-600 text-lg mt-1"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold text-red-900 mb-1">Error</h4>
-                                        <p class="text-sm text-red-800">{{ message }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% elif message.tags == 'success' %}
-                            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-check-circle text-green-600 text-lg mt-1"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold text-green-900 mb-1">Berhasil</h4>
-                                        <p class="text-sm text-green-800">{{ message }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
+                <div class="relative z-10 text-center max-w-md">
+                    <div class="flex justify-center mb-8">
+                        <div class="w-20 h-20 bg-gradient-to-br from-[#7c3aed] to-[#4f46e5] rounded-3xl flex items-center justify-center shadow-xl">
+                            <i class="fas fa-box text-white text-4xl"></i>
+                        </div>
+                    </div>
 
-                <!-- Product Form -->
-                <form method="POST" enctype="multipart/form-data" class="space-y-6 bg-slate-800 rounded-xl p-8 border border-slate-700">
-                    {% csrf_token %}
+                    <h1 class="text-5xl font-bold mb-6 leading-tight text-white">
+                        Tambah Produk
+                    </h1>
+                    <h2 class="text-xl font-semibold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300">
+                        Kelola Inventori Toko Anda
+                    </h2>
+                    <p class="text-lg text-white/85 leading-relaxed mb-12">
+                        Tambahkan produk elektronik berkualitas ke katalog Anda. Semakin banyak produk, semakin besar peluang penjualan Anda di platform VOLTA.
+                    </p>
 
-                    <!-- Nama Produk -->
-                    <div>
-                        <label for="name" class="block text-sm font-semibold text-white mb-2">
-                            <i class="fas fa-tag text-indigo-400 mr-2"></i>
-                            Nama Produk Elektronik
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            required
-                            placeholder="Contoh: Samsung Galaxy A53 5G"
-                            class="input-field w-full px-4 py-3 text-gray-900"
-                        >
-                        <p class="text-xs text-gray-400 mt-2">
-                            Masukkan nama produk yang jelas dan detail agar mudah dicari pembeli
+                    <div class="space-y-4 text-left">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-[#7c3aed] rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <p class="text-white/85">Nama produk yang jelas dan detail</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-[#7c3aed] rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <p class="text-white/85">Harga kompetitif untuk menarik pembeli</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-[#7c3aed] rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <p class="text-white/85">Deskripsi lengkap agar mudah dicari</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Form Panel -->
+            <div class="w-full lg:w-3/5 flex flex-col items-center justify-center px-6 sm:px-8 py-12 bg-[#f8fafc]">
+                <div class="w-full bg-[#f8fafc] border border-gray-100 rounded-3xl shadow-sm p-8">
+
+                    <!-- Header -->
+                    <div class="mb-8">
+                        <h1 class="text-4xl font-bold text-slate-900 mb-2">
+                            Tambah Produk Baru
+                        </h1>
+                        <p class="text-slate-500">
+                            Isi form di bawah untuk menambahkan produk elektronik ke toko Anda
                         </p>
                     </div>
 
-                    <!-- Kategori -->
-                    <div>
-                        <label for="category" class="block text-sm font-semibold text-white mb-2">
-                            <i class="fas fa-layer-group text-indigo-400 mr-2"></i>
-                            Kategori Produk
-                        </label>
-                        <select
-                            id="category"
-                            name="category"
-                            required
-                            class="input-field w-full px-4 py-3 text-gray-900"
-                        >
-                            <option value="">-- Pilih Kategori --</option>
-                            {% for cat in categories %}
-                                <option value="{{ cat.id }}">{{ cat.category_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <p class="text-xs text-gray-400 mt-2">
-                            Pilih kategori yang paling sesuai dengan produk Anda
-                        </p>
-                    </div>
+                    <!-- Messages Display (Error/Success) -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-exclamation-circle text-red-600 text-lg mt-1"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-red-900 mb-1">Error</h4>
+                                            <p class="text-sm text-red-800">{{ message }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% elif message.tags == 'success' %}
+                                <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-check-circle text-green-600 text-lg mt-1"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-green-900 mb-1">Berhasil</h4>
+                                            <p class="text-sm text-green-800">{{ message }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 
-                    <!-- Harga Produk -->
-                    <div>
-                        <label for="price" class="block text-sm font-semibold text-white mb-2">
-                            <i class="fas fa-tag text-indigo-400 mr-2"></i>
-                            Harga Produk (B2C / Eceran)
-                        </label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">
-                                Rp.
-                            </span>
+                    <!-- Product Form -->
+                    <form method="POST" enctype="multipart/form-data" class="space-y-6 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+                        {% csrf_token %}
+
+                        <!-- Nama Produk -->
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-slate-900 mb-2">
+                                <i class="fas fa-tag text-indigo-600 mr-2"></i>
+                                Nama Produk Elektronik
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                required
+                                placeholder="Contoh: Samsung Galaxy A53 5G"
+                                class="input-field w-full px-4 py-3 text-slate-900"
+                            >
+                            <p class="text-xs text-slate-500 mt-2">
+                                Masukkan nama produk yang jelas dan detail agar mudah dicari pembeli
+                            </p>
+                        </div>
+
+                        <!-- Kategori -->
+                        <div>
+                            <label for="category" class="block text-sm font-semibold text-slate-900 mb-2">
+                                <i class="fas fa-layer-group text-indigo-600 mr-2"></i>
+                                Kategori Produk
+                            </label>
+                            <select
+                                id="category"
+                                name="category"
+                                required
+                                class="input-field w-full px-4 py-3 text-slate-900"
+                            >
+                                <option value="">-- Pilih Kategori --</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Pilih kategori yang paling sesuai dengan produk Anda
+                            </p>
+                        </div>
+
+                        <!-- Harga Produk -->
+                        <div>
+                            <label for="price" class="block text-sm font-semibold text-slate-900 mb-2">
+                                <i class="fas fa-tag text-indigo-600 mr-2"></i>
+                                Harga Produk (B2C / Eceran)
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 font-semibold">
+                                    Rp.
+                                </span>
+                                <input
+                                    type="number"
+                                    id="price"
+                                    name="price"
+                                    required
+                                    step="1000"
+                                    min="0"
+                                    placeholder="0"
+                                    class="input-field w-full px-4 py-3 pl-12 text-slate-900"
+                                >
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Masukkan harga eceran dalam Rupiah (tanpa titik/koma)
+                            </p>
+                        </div>
+
+                        <!-- Stok Barang -->
+                        <div>
+                            <label for="stock" class="block text-sm font-semibold text-slate-900 mb-2">
+                                <i class="fas fa-boxes text-indigo-600 mr-2"></i>
+                                Stok Barang (Unit)
+                            </label>
                             <input
                                 type="number"
-                                id="price"
-                                name="price"
+                                id="stock"
+                                name="stock"
                                 required
-                                step="1000"
                                 min="0"
                                 placeholder="0"
-                                class="input-field w-full px-4 py-3 pl-12 text-gray-900"
+                                class="input-field w-full px-4 py-3 text-slate-900"
                             >
+                            <p class="text-xs text-slate-500 mt-2">
+                                Jumlah unit stok produk yang tersedia di gudang Anda
+                            </p>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">
-                            Masukkan harga eceran dalam Rupiah (tanpa titik/koma)
-                        </p>
-                    </div>
 
-                    <!-- Stok Barang -->
-                    <div>
-                        <label for="stock" class="block text-sm font-semibold text-white mb-2">
-                            <i class="fas fa-boxes text-indigo-400 mr-2"></i>
-                            Stok Barang (Unit)
-                        </label>
-                        <input
-                            type="number"
-                            id="stock"
-                            name="stock"
-                            required
-                            min="0"
-                            placeholder="0"
-                            class="input-field w-full px-4 py-3 text-gray-900"
-                        >
-                        <p class="text-xs text-gray-400 mt-2">
-                            Jumlah unit stok produk yang tersedia di gudang Anda
-                        </p>
-                    </div>
+                        <!-- Deskripsi Produk -->
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-slate-900 mb-2">
+                                <i class="fas fa-align-left text-indigo-600 mr-2"></i>
+                                Deskripsi Produk
+                            </label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                required
+                                rows="5"
+                                placeholder="Jelaskan spesifikasi, fitur, keunggulan, dan detail produk Anda. Semakin detail, semakin mudah menarik pembeli."
+                                class="input-field w-full px-4 py-3 resize-none text-slate-900"
+                            ></textarea>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Deskripsi yang lengkap akan meningkatkan peluang produk Anda ditemukan pembeli
+                            </p>
+                        </div>
 
-                    <!-- Deskripsi Produk -->
-                    <div>
-                        <label for="description" class="block text-sm font-semibold text-white mb-2">
-                            <i class="fas fa-align-left text-indigo-400 mr-2"></i>
-                            Deskripsi Produk
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            required
-                            rows="5"
-                            placeholder="Jelaskan spesifikasi, fitur, keunggulan, dan detail produk Anda. Semakin detail, semakin mudah menarik pembeli."
-                            class="input-field w-full px-4 py-3 resize-none text-gray-900"
-                        ></textarea>
-                        <p class="text-xs text-gray-400 mt-2">
-                            Deskripsi yang lengkap akan meningkatkan peluang produk Anda ditemukan pembeli
-                        </p>
-                    </div>
+                        <!-- Foto Produk -->
+                        <div>
+                            <label for="image" class="block text-sm font-semibold text-slate-900 mb-2">
+                                <i class="fas fa-image text-indigo-600 mr-2"></i>
+                                Foto Produk (opsional)
+                            </label>
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/*"
+                                class="input-field w-full px-4 py-3 text-slate-900"
+                            >
+                            <p class="text-xs text-slate-500 mt-2">Unggah foto produk untuk meningkatkan daya tarik listing Anda (opsional).</p>
+                        </div>
 
-                    <!-- Foto Produk -->
-                    <div>
-                        <label for="image" class="block text-sm font-semibold text-white mb-2">
-                            <i class="fas fa-image text-indigo-400 mr-2"></i>
-                            Foto Produk (opsional)
-                        </label>
-                        <input
-                            type="file"
-                            id="image"
-                            name="image"
-                            accept="image/*"
-                            class="input-field w-full px-4 py-3 text-gray-900"
-                        >
-                        <p class="text-xs text-gray-400 mt-2">Unggah foto produk untuk meningkatkan daya tarik listing Anda (opsional).</p>
-                    </div>
+                        <!-- Submit Button -->
+                        <div class="pt-4">
+                            <button
+                                type="submit"
+                                class="btn-primary w-full py-3 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all"
+                            >
+                                <i class="fas fa-save"></i>
+                                <span>Simpan Produk</span>
+                            </button>
+                        </div>
 
-                    <!-- Submit Button -->
-                    <div class="pt-4">
-                        <button
-                            type="submit"
-                            class="btn-primary w-full py-3 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all"
-                        >
-                            <i class="fas fa-save"></i>
-                            <span>Simpan Produk</span>
-                        </button>
-                    </div>
+                        <!-- Info Box -->
+                        <div class="p-4 bg-slate-100 rounded-lg border border-gray-200">
+                            <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                                <i class="fas fa-info-circle text-indigo-600"></i>
+                                Tips Menambah Produk
+                            </h4>
+                            <ul class="text-sm text-slate-600 space-y-1">
+                                <li>✓ Gunakan nama produk yang spesifik dan mudah diingat</li>
+                                <li>✓ Tetapkan harga yang kompetitif dengan pasar</li>
+                                <li>✓ Pastikan stok sesuai dengan persediaan nyata</li>
+                                <li>✓ Tulis deskripsi yang menarik dan detail</li>
+                            </ul>
+                        </div>
 
-                    <!-- Info Box -->
-                    <div class="p-4 bg-slate-700 rounded-lg border border-slate-600">
-                        <h4 class="font-semibold text-white mb-2 flex items-center gap-2">
-                            <i class="fas fa-info-circle text-indigo-400"></i>
-                            Tips Menambah Produk
-                        </h4>
-                        <ul class="text-sm text-gray-300 space-y-1">
-                            <li>✓ Gunakan nama produk yang spesifik dan mudah diingat</li>
-                            <li>✓ Tetapkan harga yang kompetitif dengan pasar</li>
-                            <li>✓ Pastikan stok sesuai dengan persediaan nyata</li>
-                            <li>✓ Tulis deskripsi yang menarik dan detail</li>
-                        </ul>
-                    </div>
+                    </form>
 
-                </form>
-
+                </div>
             </div>
         </div>
-
-    </div>
-
+    </main>
 </body>
 </html>
