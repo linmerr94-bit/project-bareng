@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VOLTA Platform B2B2C Elektronik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #f7f8fc;
+            --surface: #ffffff;
+            --surface-2: #f4f6ff;
+            --text: #101828;
+            --muted: #667085;
+            --muted-2: #98a2b3;
+            --border: #eaecf0;
+            --primary: #6d28d9;
+            --primary-2: #7c3aed;
+            --primary-3: #5b21b6;
+            --accent: #4f46e5;
+            --shadow-sm: 0 2px 10px rgba(16,24,40,.06);
+            --shadow-md: 0 12px 28px rgba(16,24,40,.10);
+            --shadow-lg: 0 20px 50px rgba(16,24,40,.16);
+            --radius-md: 18px;
+            --radius-lg: 28px;
+            --radius-xl: 36px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* ==================== ANIMATED BACKGROUND ==================== */
+        .animated-bg {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .animated-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        /* ==================== GLASSMORPHISM ==================== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+        }
+
+        /* ==================== INPUT STYLING ==================== */
+        .input-field {
+            background: white;
+            border: 2px solid #e2e8f0;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .input-field::placeholder {
+            color: #cbd5e1;
+        }
+
+        /* ==================== BUTTON STYLING ==================== */
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 0;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3), 0 0 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.1); }
+            50% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+        }
+
+        .animate-in {
+            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Global smooth transitions for all interactive elements */
+        button, input, textarea, select, a {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        /* Prevent double transitions */
+        * {
+            -webkit-transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            -moz-transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            -o-transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==================== CHECKBOX STYLING ==================== */
+        .checkbox-custom {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .checkbox-custom:hover {
+            border-color: #6366f1;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.2);
+        }
+
+        .checkbox-custom:checked {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 11-1.06-1.06l7.25-7.25a.75.75 0 011.06 0Z'/%3E%3C/svg%3E");
+            background-size: 80%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .left-panel {
+                display: none;
+            }
+        }
+
+        /* ==================== LINK STYLING ==================== */
+        a {
+            color: #6366f1;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        a:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+
+        /* ==================== CARD INTERACTIONS ==================== */
+        .glass-card {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Registration cards hover */
+        div[class*="border"][class*="rounded-lg"]:hover {
+            transform: translateY(-2px);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==================== SCROLLBAR STYLING ==================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+            transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* ==================== VOLTA CARE HUB WIDGET ==================== */
+        .volta-care-hub {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .care-hub-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .care-hub-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .care-hub-button:active {
+            transform: scale(0.95);
+        }
+
+        .care-hub-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .care-hub-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            width: 420px;
+            max-height: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .care-hub-header {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .care-hub-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .care-hub-close {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .care-hub-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .care-hub-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .care-hub-intro {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: #667085;
+            font-weight: 500;
+        }
+
+        .care-hub-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .accordion-item {
+            border: 1px solid #eaecf0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-item:hover {
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 14px 16px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            font-weight: 600;
+            color: #101828;
+            font-size: 14px;
+        }
+
+        .accordion-header:hover {
+            background: #f7f8fc;
+        }
+
+        .accordion-item.active .accordion-header {
+            background: #f7f8fc;
+            color: #6366f1;
+        }
+
+        .accordion-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            color: #6366f1;
+        }
+
+        .accordion-title {
+            flex: 1;
+        }
+
+        .accordion-arrow {
+            font-size: 12px;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #667085;
+        }
+
+        .accordion-item.active .accordion-arrow {
+            transform: rotate(180deg);
+            color: #6366f1;
+        }
+
+        .accordion-body {
+            max-height: 500px;
+            overflow: hidden;
+        }
+
+        .accordion-content {
+            padding: 12px 16px 16px 16px;
+            background: #f7f8fc;
+            color: #667085;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .accordion-content ul, .accordion-content ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .accordion-content li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .accordion-help {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .accordion-link {
+            color: #6366f1;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-link:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+
+        .care-hub-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #eaecf0;
+            background: #f7f8fc;
+            text-align: center;
+            font-size: 13px;
+            color: #667085;
+        }
+
+        .care-hub-contact {
+            color: #6366f1;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .care-hub-contact:hover {
+            color: #4f46e5;
+        }
+
+        .care-hub-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @media (max-width: 640px) {
+            .care-hub-panel {
+                width: calc(100vw - 48px);
+                bottom: 100px;
+                left: 24px;
+                right: auto;
+                max-height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="min-h-screen flex">
+
+        <!-- ==================== LEFT PANEL (BRANDING) ==================== -->
+        <div class="left-panel hidden md:flex md:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 relative text-white animated-bg flex flex-col items-center justify-center px-8">
+            <div class="relative z-10 text-center max-w-md">
+                <!-- Logo -->
+                <div class="flex justify-center mb-8">
+                    <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-3xl flex items-center justify-center transform hover:scale-110 transition-transform shadow-2xl">
+                        <i class="fas fa-bolt text-white text-5xl"></i>
+                    </div>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="text-5xl font-bold mb-6 leading-tight">
+                    VOLTA
+                </h1>
+
+                <!-- Subtitle -->
+                <h2 class="text-2xl font-semibold mb-8 bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">
+                    B2B2C Platform
+                </h2>
+
+                <!-- Description -->
+                <p class="text-lg text-gray-300 leading-relaxed mb-12">
+                    Platform distribusi elektronik terpadu yang menghubungkan Brand Resmi, Mitra Grosir, dan Konsumen Retail dalam satu ekosistem yang powerful.
+                </p>
+
+                <!-- Features -->
+                <div class="space-y-4 mb-12">
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-indigo-300">Harga Kompetitif</p>
+                            <p class="text-sm text-gray-400">Sistem pricing B2B & B2C yang fleksibel</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-indigo-300">Produk Berkualitas</p>
+                            <p class="text-sm text-gray-400">2000+ produk elektronik premium</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-indigo-300">Pengiriman Cepat</p>
+                            <p class="text-sm text-gray-400">Ke seluruh Indonesia dengan tracking</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="mt-12 pt-8 border-t border-slate-700">
+                    <p class="text-sm text-gray-400 mb-4">Dipercaya oleh</p>
+                    <div class="flex justify-center items-center space-x-3">
+                        <span class="text-3xl font-bold text-indigo-400">5000+</span>
+                        <span class="text-gray-400">pengguna aktif di seluruh Indonesia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== RIGHT PANEL (FORM) ==================== -->
+        <div class="right-panel w-full md:w-1/2 bg-gray-50 flex flex-col items-center justify-center px-4 py-12 md:py-0">
+            <div class="w-full max-w-md animate-in">
+
+                <!-- Messages Display -->
+                {% if messages %}
+                    <div class="mb-6 space-y-3">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} p-4 rounded-lg flex items-start space-x-3 {% if 'error' in message.tags %}bg-red-50 border border-red-200{% elif 'warning' in message.tags %}bg-yellow-50 border border-yellow-200{% elif 'success' in message.tags %}bg-green-50 border border-green-200{% else %}bg-blue-50 border border-blue-200{% endif %}" role="alert">
+                                <div class="flex-shrink-0">
+                                    {% if 'error' in message.tags %}
+                                        <i class="fas fa-exclamation-circle text-red-600 text-lg"></i>
+                                    {% elif 'warning' in message.tags %}
+                                        <i class="fas fa-exclamation-triangle text-yellow-600 text-lg"></i>
+                                    {% elif 'success' in message.tags %}
+                                        <i class="fas fa-check-circle text-green-600 text-lg"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle text-blue-600 text-lg"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1">
+                                    <p class="{% if 'error' in message.tags %}text-red-700{% elif 'warning' in message.tags %}text-yellow-700{% elif 'success' in message.tags %}text-green-700{% else %}text-blue-700{% endif %} text-sm font-medium">
+                                        {{ message|safe }}
+                                    </p>
+                                </div>
+                                <button type="button" class="text-gray-400 hover:text-gray-600" onclick="this.parentElement.style.display='none';">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <!-- Mobile Logo -->
+                    <div class="md:hidden flex justify-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-bolt text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Selamat Datang</h2>
+                    <p class="text-gray-600">Masuk ke akun VOLTA Anda</p>
+                </div>
+
+                <!-- LOGIN FORM CARD -->
+                <div class="glass-card p-8 rounded-2xl mb-8">
+                    <form method="POST" action="{% url 'master_products:login' %}" class="space-y-6">
+                        {% csrf_token %}
+
+                        <!-- Username/Email Input -->
+                        <div>
+                            <label for="username" class="block text-sm font-semibold text-slate-700 mb-2">
+                                <i class="fas fa-user mr-2 text-indigo-600"></i>Username atau Email
+                            </label>
+                            <input 
+                                type="text" 
+                                id="username"
+                                name="username" 
+                                placeholder="Masukkan username atau email Anda"
+                                class="input-field w-full px-4 py-3 text-slate-900"
+                                required
+                                autofocus
+                            >
+                        </div>
+
+                        <!-- Password Input -->
+                        <div>
+                            <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-indigo-600"></i>Password
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="password" 
+                                    id="password"
+                                    name="password" 
+                                    placeholder="Masukkan password Anda"
+                                    class="input-field w-full px-4 py-3 text-slate-900"
+                                    required
+                                >
+                                <button 
+                                    type="button" 
+                                    onclick="togglePasswordVisibility()"
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
+                                >
+                                    <i class="fas fa-eye" id="password-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    name="remember_me" 
+                                    class="checkbox-custom"
+                                >
+                                <span class="text-sm text-gray-700">Ingat Saya</span>
+                            </label>
+                            <a href="#" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
+                                Lupa Password?
+                            </a>
+                        </div>
+
+                        <!-- Sign In Button -->
+                        <button 
+                            type="submit" 
+                            class="btn-primary w-full text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center space-x-2 mt-8"
+                        >
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Masuk ke VOLTA</span>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="relative my-8">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-600">atau</span>
+                        </div>
+                    </div>
+
+                    <!-- Social Login -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" class="py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 text-gray-700 bg-white border-2 border-gray-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all">
+                            <i class="fab fa-google text-red-600"></i>
+                            <span class="text-sm">Google</span>
+                        </button>
+                        <button type="button" class="py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 text-gray-700 bg-white border-2 border-gray-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all">
+                            <i class="fab fa-microsoft text-blue-600"></i>
+                            <span class="text-sm">Microsoft</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Registration Options -->
+                <div class="space-y-3">
+                    <!-- Option 1: Customer Registration -->
+                    <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-indigo-300 transition-all">
+                        <p class="text-sm text-gray-700 mb-2">
+                            <strong>Belum punya akun?</strong>
+                        </p>
+                        <a href="{% url 'master_products:register_customer' %}" class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 font-semibold text-sm">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Daftar sebagai Customer/Pembeli</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+
+                    <!-- Option 2: Vendor Registration -->
+                    <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-lg hover:shadow-lg hover:shadow-indigo-200 transition-all">
+                        <p class="text-sm text-indigo-700 mb-2">
+                            <strong>Untuk Mitra Bisnis</strong>
+                        </p>
+                        <a href="{% url 'master_products:register_vendor' %}" class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 font-semibold text-sm">
+                            <i class="fas fa-store"></i>
+                            <span>Ajukan Kemitraan Brand Resmi/Supplier</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Footer Help Text -->
+                <p class="text-center text-xs text-gray-600 mt-8">
+                    <i class="fas fa-lock mr-1 text-green-600"></i>
+                    Akun Anda dijamin aman dengan enkripsi tingkat enterprise
+                </p>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== VOLTA CARE HUB WIDGET ==================== -->
+    <div id="volta-care-hub" class="volta-care-hub">
+        <!-- Floating Button -->
+        <button id="care-hub-toggle" class="care-hub-button" title="VOLTA Care Center - Bantuan & Dukungan">
+            <i class="fas fa-headset"></i>
+            <span class="care-hub-badge">?</span>
+        </button>
+
+        <!-- Popup Panel -->
+        <div id="care-hub-panel" class="care-hub-panel" style="display: none;">
+            <!-- Header -->
+            <div class="care-hub-header">
+                <h3 class="care-hub-title">
+                    <i class="fas fa-life-ring"></i> VOLTA Care Center
+                </h3>
+                <button id="care-hub-close" class="care-hub-close" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="care-hub-content">
+                <p class="care-hub-intro">Pilih topik untuk melihat panduan dan solusi cepat:</p>
+
+                <!-- Accordion Menu -->
+                <div class="care-hub-accordion">
+                    <!-- Item 1: Checkout -->
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </span>
+                            <span class="accordion-title">🛒 Panduan & Kendala Checkout</span>
+                            <i class="fas fa-chevron-down accordion-arrow"></i>
+                        </button>
+                        <div class="accordion-body" style="display: none;">
+                            <div class="accordion-content">
+                                <ul>
+                                    <li><strong>Produk tidak bisa ditambah ke keranjang?</strong> Pastikan produk masih stok dan toko penjual aktif.</li>
+                                    <li><strong>Kupon tidak bisa digunakan?</strong> Cek tanggal berlaku dan minimal pembelian kupon.</li>
+                                    <li><strong>Pengiriman tidak tersedia ke alamat saya?</strong> Hubungi CS kami untuk area spesial.</li>
+                                    <li><strong>Berapa lama proses checkout?</strong> Maksimal 15 menit. Jika timeout, refresh halaman.</li>
+                                </ul>
+                                <p class="accordion-help">Masih ada masalah? <a href="javascript:void(0)" class="accordion-link">Hubungi Tim Support →</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Login & Account -->
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-icon">
+                                <i class="fas fa-key"></i>
+                            </span>
+                            <span class="accordion-title">🔑 Masalah Login & Akun</span>
+                            <i class="fas fa-chevron-down accordion-arrow"></i>
+                        </button>
+                        <div class="accordion-body" style="display: none;">
+                            <div class="accordion-content">
+                                <ul>
+                                    <li><strong>Lupa password?</strong> Klik "Lupa Password?" di halaman login untuk reset via email.</li>
+                                    <li><strong>Email tidak diterima?</strong> Cek folder spam atau tunggu 5 menit, kemudian coba lagi.</li>
+                                    <li><strong>Akun terblokir?</strong> Login gagal 5x akan memicu keamanan. Hubungi CS untuk unlock.</li>
+                                    <li><strong>Ingin ubah password?</strong> Masuk ke Profile > Keamanan > Ubah Password.</li>
+                                    <li><strong>Dua akun dengan email sama?</strong> Satu email = satu akun. Konsolidasikan dengan CS.</li>
+                                </ul>
+                                <p class="accordion-help">Belum terselesaikan? <a href="javascript:void(0)" class="accordion-link">Chat dengan Support →</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Returns -->
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-icon">
+                                <i class="fas fa-undo"></i>
+                            </span>
+                            <span class="accordion-title">📦 Prosedur Pengembalian Barang</span>
+                            <i class="fas fa-chevron-down accordion-arrow"></i>
+                        </button>
+                        <div class="accordion-body" style="display: none;">
+                            <div class="accordion-content">
+                                <ol>
+                                    <li><strong>Periksa Barang:</strong> Cek barang dalam 3 hari setelah diterima.</li>
+                                    <li><strong>Buat Permintaan Return:</strong> Masuk ke Order → Detail → Klik "Minta Return".</li>
+                                    <li><strong>Alasan Pengembalian:</strong> Pilih alasan (Rusak, Tidak Sesuai, dll) dan berikan foto.</li>
+                                    <li><strong>Persetujuan Penjual:</strong> Tunggu penjual approve (1-3 hari kerja).</li>
+                                    <li><strong>Pengiriman Kembali:</strong> Kirim paket dengan label yang sudah disediakan.</li>
+                                    <li><strong>Verifikasi & Refund:</strong> Kami verifikasi barang, kemudian proses refund dalam 7 hari.</li>
+                                </ol>
+                                <p class="accordion-help">Status return tidak jelas? <a href="javascript:void(0)" class="accordion-link">Periksa Track Return →</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="care-hub-footer">
+                <p>Butuh bantuan lebih lanjut? 
+                    <a href="javascript:void(0)" class="care-hub-contact" onclick="showCareHubForm()">Hubungi Support 24/7</a>
+                </p>
+            </div>
+            
+            <!-- Care Hub Form Modal -->
+            <div id="care-hub-form-modal" style="display: none; position: fixed; bottom: 100px; right: 20px; width: 350px; background: white; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); z-index: 9999; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h4 style="margin: 0; color: #101828; font-weight: 600;">📝 Kirim Pertanyaan</h4>
+                    <button onclick="closeCareHubForm()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #667085;">&times;</button>
+                </div>
+                
+                <form id="care-hub-form" style="display: flex; flex-direction: column; gap: 12px;">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: #667085; display: block; margin-bottom: 4px;">Topik:</label>
+                        <select name="topic" required style="width: 100%; padding: 10px; border: 1px solid #eaecf0; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                            <option value="">Pilih topik...</option>
+                            <option value="checkout">🛒 Masalah Checkout</option>
+                            <option value="login">🔑 Masalah Login</option>
+                            <option value="product">📦 Pertanyaan Produk</option>
+                            <option value="order">📋 Status Pesanan</option>
+                            <option value="payment">💳 Masalah Pembayaran</option>
+                            <option value="shipping">🚚 Pengiriman</option>
+                            <option value="other">❓ Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: #667085; display: block; margin-bottom: 4px;">Email:</label>
+                        <input type="email" name="email" placeholder="email@example.com" required style="width: 100%; padding: 10px; border: 1px solid #eaecf0; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                    </div>
+                    
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: #667085; display: block; margin-bottom: 4px;">Pesan:</label>
+                        <textarea name="message" placeholder="Deskripsikan pertanyaan atau masalah Anda..." required rows="3" style="width: 100%; padding: 10px; border: 1px solid #eaecf0; border-radius: 8px; font-size: 14px; font-family: inherit; resize: none;"></textarea>
+                    </div>
+                    
+                    <button type="submit" style="background: linear-gradient(135deg, #6d28d9, #7c3aed); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: transform 0.2s;">Kirim Pertanyaan</button>
+                </form>
+                
+                <div id="care-hub-message" style="margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div id="care-hub-overlay" class="care-hub-overlay" style="display: none;" onclick="closeCareHub()"></div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ==================== VOLTA CARE HUB FUNCTIONALITY ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const careHubToggle = document.getElementById('care-hub-toggle');
+            const careHubPanel = document.getElementById('care-hub-panel');
+            const careHubClose = document.getElementById('care-hub-close');
+            const careHubOverlay = document.getElementById('care-hub-overlay');
+
+            // Toggle Care Hub Panel
+            if (careHubToggle) {
+                careHubToggle.addEventListener('click', function() {
+                    const isHidden = careHubPanel.style.display === 'none';
+                    careHubPanel.style.display = isHidden ? 'flex' : 'none';
+                    careHubOverlay.style.display = isHidden ? 'block' : 'none';
+                });
+            }
+
+            // Close Care Hub Panel
+            if (careHubClose) {
+                careHubClose.addEventListener('click', closeCareHub);
+            }
+
+            if (careHubOverlay) {
+                careHubOverlay.addEventListener('click', closeCareHub);
+            }
+        });
+
+        // Close Care Hub Function
+        function closeCareHub() {
+            document.getElementById('care-hub-panel').style.display = 'none';
+            document.getElementById('care-hub-overlay').style.display = 'none';
+        }
+
+        // Toggle Accordion
+        function toggleAccordion(headerElement) {
+            const accordionItem = headerElement.closest('.accordion-item');
+            const accordionBody = accordionItem.querySelector('.accordion-body');
+            const isActive = accordionItem.classList.contains('active');
+
+            // Close all other accordions
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                if (item !== accordionItem) {
+                    item.classList.remove('active');
+                    item.querySelector('.accordion-body').style.display = 'none';
+                }
+            });
+
+            // Toggle current accordion
+            if (isActive) {
+                accordionItem.classList.remove('active');
+                accordionBody.style.display = 'none';
+            } else {
+                accordionItem.classList.add('active');
+                accordionBody.style.display = 'block';
+            }
+        }
+
+        // ==================== PASSWORD VISIBILITY TOGGLE ====================
+        // Toggle Password Visibility
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const passwordIcon = document.getElementById('password-icon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                passwordIcon.classList.add('fa-eye');
+                passwordIcon.classList.remove('fa-eye-slash');
+            }
+        }
+
+        // Focus animation on inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.input-field').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Setup Care Hub Form Submission
+            const careHubForm = document.getElementById('care-hub-form');
+            if (careHubForm) {
+                careHubForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    await submitCareHubForm();
+                });
+            }
+        });
+        
+        // Show Care Hub Form Modal
+        function showCareHubForm() {
+            document.getElementById('care-hub-form-modal').style.display = 'block';
+            document.getElementById('care-hub-form').reset();
+            document.getElementById('care-hub-message').style.display = 'none';
+        }
+        
+        // Close Care Hub Form Modal
+        function closeCareHubForm() {
+            document.getElementById('care-hub-form-modal').style.display = 'none';
+        }
+        
+        // Submit Care Hub Form via AJAX
+        async function submitCareHubForm() {
+            const form = document.getElementById('care-hub-form');
+            const messageDiv = document.getElementById('care-hub-message');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            const formData = new FormData(form);
+            const csrfToken = form.querySelector('[name="csrfmiddlewaretoken"]').value;
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Mengirim...';
+                
+                const response = await fetch('/api/care-hub/submit/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: formData.get('topic'),
+                        email: formData.get('email'),
+                        message: formData.get('message'),
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.style.backgroundColor = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.border = '1px solid #a7f3d0';
+                    messageDiv.textContent = `✅ Pertanyaan Anda terkirim! Ref: ${data.reference_code}`;
+                    messageDiv.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => closeCareHubForm(), 3000);
+                } else {
+                    messageDiv.style.backgroundColor = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.border = '1px solid #fecaca';
+                    messageDiv.textContent = `❌ Error: ${data.message || 'Terjadi kesalahan. Silakan coba lagi.'}`;
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.style.backgroundColor = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.border = '1px solid #fecaca';
+                messageDiv.textContent = `❌ Terjadi kesalahan: ${error.message}`;
+                messageDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kirim Pertanyaan';
+            }
+        }
+    </script>
+
+</body>
+</html>

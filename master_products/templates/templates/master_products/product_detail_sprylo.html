@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.product_name }} - VOLTA E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a202c;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Product Detail Container */
+        .detail-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        /* Image Column */
+        .image-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-image-large {
+            width: 100%;
+            height: 500px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .product-image-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Info Column */
+        .info-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+
+        .breadcrumb a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            width: fit-content;
+        }
+
+        .product-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .product-brand-name {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .product-brand-name i {
+            color: #6366f1;
+            margin-right: 8px;
+        }
+
+        /* Rating Section */
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* Price Section */
+        .price-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .price-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .price-value {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Stock Status */
+        .stock-status {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .stock-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stock-low {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stock-unavailable {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Description */
+        .description-section {
+            margin-bottom: 24px;
+        }
+
+        .description-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+
+        .description-text {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* Quantity Selector */
+        .quantity-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quantity-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+            color: #6366f1;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .quantity-input input {
+            width: 60px;
+            height: 40px;
+            border: none;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn-add-cart {
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-add-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-wishlist {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #6366f1;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-wishlist:hover {
+            border-color: #6366f1;
+            background: #f1f5f9;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            gap: 12px;
+        }
+
+        /* Floating Chat */
+        .floating-chat {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 40;
+        }
+
+        .floating-chat:hover {
+            transform: scale(1.1);
+        }
+
+        .floating-chat i {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: #cbd5e1;
+            margin-top: 60px;
+            padding: 40px 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 24px;
+            }
+
+            .product-title {
+                font-size: 24px;
+            }
+
+            .price-value {
+                font-size: 32px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div class="navbar-brand">VOLTA</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                {% if user.is_authenticated %}
+                    <span style="font-size: 14px; color: #64748b;">{{ user.username }}</span>
+                    <a href="{% url 'master_products:logout' %}" style="font-size: 14px; color: #ef4444; text-decoration: none;">Logout</a>
+                {% else %}
+                    <a href="{% url 'master_products:login' %}" style="font-size: 14px; color: #6366f1; text-decoration: none; font-weight: 600;">Login</a>
+                {% endif %}
+                <a href="{% url 'master_products:view_cart' %}" style="position: relative;">
+                    <i class="fas fa-shopping-cart" style="color: #475569; font-size: 20px;"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== BREADCRUMB & BACK ==================== -->
+    <div style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+        <a href="{% url 'master_products:product_list' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Kembali ke Katalog
+        </a>
+    </div>
+
+    <!-- ==================== PRODUCT DETAIL ==================== -->
+    <div class="detail-container">
+        <div class="detail-grid">
+            
+            <!-- LEFT COLUMN: IMAGE -->
+            <div class="image-column">
+                <div class="product-image-large">
+                    {% if product.image %}
+                        <img src="{% if "http" in product.image.name %}{{ product.image.name }}{% else %}{{ product.image.url }}{% endif %}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://placehold.co/500x500?text=No+Image';">
+                    {% else %}
+                        <img src="https://placehold.co/500x500?text=No+Image" alt="No Image Available" class="object-contain">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: INFO -->
+            <div class="info-column">
+                
+                <!-- Category Badge -->
+                <div class="product-category">
+                    <i class="fas fa-tag"></i> {{ product.category_id.category_name }}
+                </div>
+
+                <!-- Title -->
+                <h1 class="product-title">{{ product.product_name }}</h1>
+
+                <!-- Brand -->
+                <div class="product-brand-name">
+                    <i class="fas fa-store"></i> Toko {{ product.brand_id.brand_name }}
+                </div>
+
+                <!-- Rating -->
+                <div class="rating-section">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <div class="rating-text">4.5 ({{ product.brand_id.rating }}) • 234 Ulasan</div>
+                </div>
+
+                <!-- Price -->
+                <div class="price-section">
+                    <div class="price-label">Harga</div>
+                    <div class="price-value">Rp {{ product.price|floatformat:0|add:0 }}</div>
+                </div>
+
+                <!-- Stock Status -->
+                {% if product.stock > 10 %}
+                    <div class="stock-status stock-available">
+                        <i class="fas fa-check-circle"></i> Stok Tersedia ({{ product.stock }} unit)
+                    </div>
+                {% elif product.stock > 0 %}
+                    <div class="stock-status stock-low">
+                        <i class="fas fa-exclamation-circle"></i> Stok Terbatas ({{ product.stock }} unit)
+                    </div>
+                {% else %}
+                    <div class="stock-status stock-unavailable">
+                        <i class="fas fa-times-circle"></i> Tidak Tersedia
+                    </div>
+                {% endif %}
+
+                <!-- Description -->
+                <div class="description-section">
+                    <div class="description-title">Deskripsi Produk</div>
+                    <div class="description-text">{{ product.description }}</div>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="quantity-section">
+                    <div class="quantity-label">Jumlah:</div>
+                    <div class="quantity-input">
+                        <button class="quantity-btn" onclick="decreaseQty()">−</button>
+                        <input type="number" id="quantity" value="1" min="1" max="{{ product.stock }}">
+                        <button class="quantity-btn" onclick="increaseQty({{ product.stock }})">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-add-cart" onclick="addToCart({{ product.product_id }})">
+                        <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
+                    </button>
+                    <button class="btn-wishlist" onclick="addToWishlist()">
+                        <i class="fas fa-heart"></i> Favorit
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== FLOATING CHAT WIDGET ==================== -->
+    <div class="floating-chat" onclick="openChat()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p>&copy; 2026 VOLTA E-Commerce Platform. Elektronik Berkualitas dari Purwokerto.</p>
+        </div>
+    </footer>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        function decreaseQty() {
+            const qty = document.getElementById('quantity');
+            if (qty.value > 1) qty.value = parseInt(qty.value) - 1;
+        }
+
+        function increaseQty(maxStock) {
+            const qty = document.getElementById('quantity');
+            if (parseInt(qty.value) < maxStock) qty.value = parseInt(qty.value) + 1;
+        }
+
+        function addToCart(productId) {
+            const quantity = document.getElementById('quantity').value;
+            fetch(`/add_to_cart/${productId}/?qty=${quantity}`, {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('✓ Produk ditambahkan ke keranjang!');
+                setTimeout(() => window.location.href = '{% url "master_products:product_list" %}', 1000);
+            })
+            .catch(error => {
+                alert('Terjadi kesalahan!');
+                console.error(error);
+            });
+        }
+
+        function addToWishlist() {
+            alert('♡ Produk ditambahkan ke favorit!');
+        }
+
+        function openChat() {
+            alert('💬 Chat dengan penjual - Coming soon!');
+        }
+    </script>
+
+</body>
+</html>

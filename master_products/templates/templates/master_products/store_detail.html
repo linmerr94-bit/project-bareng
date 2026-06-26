@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ store_name }} - VOLTA E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* =========================================================
+           SPRYO / Premium Light E-commerce Store Detail Theme
+           ========================================================= */
+
+        :root {
+            --bg: #f7f8fc;
+            --surface: #ffffff;
+            --surface-2: #f4f6ff;
+            --text: #101828;
+            --muted: #667085;
+            --muted-2: #98a2b3;
+            --border: #eaecf0;
+
+            --primary: #6d28d9;
+            --primary-2: #7c3aed;
+            --primary-3: #5b21b6;
+            --accent: #4f46e5;
+            --accent-2: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            --shadow-sm: 0 2px 10px rgba(16,24,40,.06);
+            --shadow-md: 0 10px 30px rgba(16,24,40,.10);
+            --shadow-lg: 0 20px 50px rgba(16,24,40,.14);
+
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 26px;
+            --transition: 180ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, rgba(124,58,237,.08), transparent 26%),
+                        radial-gradient(circle at top right, rgba(79,70,229,.06), transparent 20%),
+                        var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* ==================== NAVBAR ==================== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(247, 248, 252, .78);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(234, 236, 240, .9);
+            box-shadow: 0 2px 10px rgba(16, 24, 40, .06);
+            padding: 12px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, .8);
+            border: 1px solid rgba(234, 236, 240, .95);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: all var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: var(--muted-2);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(124, 58, 237, .28);
+            box-shadow: 0 0 0 4px rgba(109, 40, 217, .08);
+        }
+
+        /* ==================== STORE HERO BANNER ==================== */
+        .store-hero {
+            background: linear-gradient(135deg, rgba(109,40,217,.1), rgba(79,70,229,.08));
+            border-bottom: 1px solid rgba(234, 236, 240, .9);
+            padding: 40px 20px;
+            margin: 20px 0 40px 0;
+        }
+
+        .store-hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .store-info h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -0.04em;
+        }
+
+        .store-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 16px;
+        }
+
+        .store-location i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .store-description {
+            color: var(--muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .store-badges {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .store-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(34, 197, 94, .15);
+            border: 1px solid rgba(34, 197, 94, .3);
+            color: var(--accent-2);
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .store-badge i {
+            font-size: 1rem;
+        }
+
+        .store-contact-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 14px 24px rgba(109, 40, 217, .24);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .store-contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(109, 40, 217, .32);
+        }
+
+        @media (max-width: 768px) {
+            .store-hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .store-info h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* ==================== PRODUCT GRID ==================== */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+            padding: 20px 0;
+        }
+
+        .product-card {
+            background: var(--surface);
+            border: 1px solid rgba(234, 236, 240, .95);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(124, 58, 237, .18);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(180deg, #f8faff, #eef2ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition);
+        }
+
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(109, 40, 217, .9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            color: var(--primary-3);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .product-footer {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .btn-view, .btn-add-cart {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-view {
+            background: rgba(109, 40, 217, .1);
+            color: var(--primary);
+            border: 1px solid rgba(109, 40, 217, .2);
+        }
+
+        .btn-view:hover {
+            background: rgba(109, 40, 217, .15);
+            transform: translateY(-1px);
+        }
+
+        .btn-add-cart {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 10px 20px rgba(109, 40, 217, .22);
+        }
+
+        .btn-add-cart:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 15px 30px rgba(109, 40, 217, .28);
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ==================== MAIN CONTAINER ==================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==================== EMPTY STATE ==================== */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(247, 248, 252, .5);
+            border-radius: var(--radius-md);
+            border: 1px dashed rgba(234, 236, 240, .95);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            color: var(--muted);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all var(--transition);
+        }
+
+        .back-link:hover {
+            transform: translateX(-4px);
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            background: var(--surface);
+            border-top: 1px solid rgba(234, 236, 240, .9);
+            color: var(--muted);
+            margin-top: 60px;
+            padding: 40px 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center;">
+            <!-- Brand -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #6d28d9, #4f46e5); box-shadow: 0 10px 20px rgba(109,40,217,.25); display: grid; place-items: center; color: #fff; font-size: 1rem; font-weight: 700;">📱</div>
+                <div class="navbar-brand">VOLTA</div>
+            </div>
+
+            <!-- Back Link -->
+            <a href="{% url 'master_products:product_list' %}" style="text-decoration: none; display: flex; align-items: center; gap: 6px; color: var(--primary); font-weight: 600; transition: all var(--transition);" onmouseover="this.style.transform='translateX(-4px)'" onmouseout="this.style.transform='translateX(0)'">
+                <i class="fas fa-arrow-left"></i> Kembali ke Katalog
+            </a>
+
+            <!-- Cart -->
+            <a href="{% url 'master_products:view_cart' %}" style="position: relative; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                <i class="fas fa-shopping-cart" style="color: var(--text); font-size: 1.2rem;"></i>
+                {% if cart_count > 0 %}
+                    <span style="position: absolute; top: -8px; right: -8px; background: var(--danger); color: white; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 999px;">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+        </div>
+    </nav>
+
+    <!-- ==================== STORE HERO BANNER ==================== -->
+    <div class="store-hero">
+        <div class="store-hero-content">
+            <div class="store-info">
+                <h1>{{ store_name }}</h1>
+                <div class="store-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ store_location }}
+                </div>
+                <p class="store-description">
+                    {{ store_description }}
+                </p>
+                <div class="store-badges">
+                    {% if is_verified %}
+                        <div class="store-badge">
+                            <i class="fas fa-check-circle"></i>
+                            Mitra Terverifikasi VOLTA
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <button onclick="openStoreWhatsApp()" class="store-contact-btn">
+                <i class="fas fa-comments"></i> Hubungi Toko
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="container">
+        <a href="{% url 'master_products:product_list' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Kembali ke Semua Toko
+        </a>
+
+        <!-- ==================== SECTION: PRODUK TOKO ==================== -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-box"></i>
+                Produk dari {{ store_name }}
+                <span style="color: var(--muted); font-size: 0.9rem; font-weight: 500;">({{ total_products }} produk)</span>
+            </h2>
+
+            <div class="product-grid">
+                {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-image-wrapper">
+                            {% if product.image %}
+                                <img src="{% if "http" in product.image.name %}{{ product.image.name }}{% else %}{{ product.image.url }}{% endif %}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://placehold.co/260x220/1e293b/94a3b8?text=No+Image';">
+                            {% else %}
+                                <i class="fas fa-image" style="font-size: 60px; color: #475569;"></i>
+                            {% endif %}
+                            <div class="product-badge">{{ product.category_id.category_name }}</div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name line-clamp-2">{{ product.product_name }}</div>
+                            <div class="product-price">Rp {{ product.price|floatformat:0|add:0 }}</div>
+                            <div class="product-footer">
+                                <a href="{% url 'master_products:product_detail_by_id' product.product_id %}" class="btn-view">
+                                    <i class="fas fa-eye"></i> Lihat
+                                </a>
+                                <form method="POST" action="{% url 'master_products:add_to_cart' product.product_id %}" style="flex: 1;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="next" value="/cart/">
+                                    <button type="submit" class="btn-add-cart" style="width: 100%;">
+                                        <i class="fas fa-shopping-cart"></i> Beli
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Toko ini belum memiliki produk yang terdaftar.</p>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">Kembali ke <a href="{% url 'master_products:product_list' %}" style="color: var(--primary); text-decoration: underline;">katalog produk</a> untuk melihat penawaran lainnya.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <p>&copy; 2026 VOLTA E-Commerce Platform. Elektronik Berkualitas dari Purwokerto.</p>
+    </footer>
+
+    <script>
+        // Dynamic WhatsApp Button Handler
+        function openStoreWhatsApp() {
+            const storeId = {{ store_id }};
+            
+            // Fetch dynamic WhatsApp URL from backend
+            fetch(`/api/store/${storeId}/whatsapp/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.whatsapp_url) {
+                        window.open(data.whatsapp_url, '_blank');
+                    } else {
+                        alert('Nomor WhatsApp toko tidak tersedia. Silakan hubungi support.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching WhatsApp URL:', error);
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                });
+        }
+    </script>
+
+</body>
+</html>

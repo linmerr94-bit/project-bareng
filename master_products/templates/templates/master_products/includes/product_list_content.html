@@ -1,0 +1,311 @@
+<!-- ==================== HEADER ==================== -->
+<header class="header-glass sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-bolt text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl">VOLTA</h1>
+                    <p class="text-slate-400 text-xs">B2B2C Platform</p>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex flex-1 mx-8">
+                <form method="GET" action="{% url 'master_products:product_list' %}" class="w-full search-rounded flex items-center px-5 py-2" id="search-form">
+                    <i class="fas fa-search text-slate-400 mr-3"></i>
+                    <input 
+                        type="text" 
+                        name="q" 
+                        id="search-input"
+                        value="{{ search_query }}"
+                        placeholder="Cari produk elektronik..." 
+                        class="flex-1 bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                    >
+                </form>
+            </div>
+
+            <!-- Right Menu -->
+            <div class="flex items-center gap-6">
+                {% if user.is_authenticated %}
+                    <!-- Login State: Icons & Profile -->
+                    <div class="flex items-center gap-4">
+                        
+                        <!-- Shopping Cart Icon -->
+                        <button class="relative text-slate-300 hover:text-indigo-400 transition-colors">
+                            <i class="fas fa-shopping-cart text-2xl"></i>
+                            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center badge-pulse">
+                                2
+                            </span>
+                        </button>
+
+                        <!-- Orders Icon -->
+                        <button class="text-slate-300 hover:text-indigo-400 transition-colors">
+                            <i class="fas fa-box-open text-2xl"></i>
+                        </button>
+
+                        <!-- Chat Icon -->
+                        <button class="text-slate-300 hover:text-indigo-400 transition-colors">
+                            <i class="fas fa-comments text-2xl"></i>
+                        </button>
+
+                        <!-- Divider -->
+                        <div class="w-px h-8 bg-slate-600"></div>
+
+                        <!-- User Profile & Logout -->
+                        <div class="flex items-center gap-3">
+                            <span class="text-slate-300 text-sm font-medium hidden sm:inline">
+                                Halo, <span class="text-indigo-400">{{ user.username }}</span>
+                            </span>
+                            <form method="POST" action="{% url 'master_products:logout' %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-slate-700 hover:bg-red-500/20 text-slate-300 hover:text-red-400 px-3 py-1 rounded-lg text-xs font-semibold transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-1"></i>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                {% else %}
+                    <!-- Not Login State: Auth Buttons -->
+                    <a href="{% url 'master_products:login' %}" class="text-slate-300 hover:text-white font-semibold transition-colors">
+                        Masuk
+                    </a>
+                    <a href="{% url 'master_products:register_customer' %}" class="btn-primary px-6 py-2 text-white font-semibold rounded-lg">
+                        Daftar
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="md:hidden mt-4">
+            <form method="GET" action="{% url 'master_products:product_list' %}" class="search-rounded flex items-center px-5 py-2" id="search-form-mobile">
+                <i class="fas fa-search text-slate-400 mr-3"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    id="search-input-mobile"
+                    value="{{ search_query }}"
+                    placeholder="Cari produk..." 
+                    class="flex-1 bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                >
+            </form>
+        </div>
+
+    </div>
+</header>
+
+<!-- ==================== BANNER & KATEGORI (HIDDEN KETIKA ADA SEARCH) ==================== -->
+{% if not search_query %}
+
+<!-- ==================== BANNER HERO ==================== -->
+<section class="banner-gradient py-16 md:py-24 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 right-20 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div class="absolute bottom-10 left-20 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            Solusi Distribusi Elektronik Terpadu
+        </h2>
+        <p class="text-lg md:text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+            Temukan ribuan produk elektronik berkualitas dari brand terpercaya. Harga B2B untuk grosir, B2C untuk retail. Semua dalam satu platform.
+        </p>
+    </div>
+</section>
+
+<!-- ==================== KATEGORI PILIHAN ==================== -->
+<section class="max-w-7xl mx-auto px-6 py-12">
+    <h3 class="text-white text-2xl font-bold mb-6 flex items-center gap-2">
+        <i class="fas fa-layer-group text-indigo-400"></i>
+        Kategori Populer
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {% for category in categories %}
+            <a href="{% url 'master_products:product_list' %}?category={{ category.category_id }}" class="category-btn py-4 px-4 rounded-xl text-center hover:scale-105 transition-transform" {% if selected_category == category.category_id %}style="border: 2px solid #6366f1;"{% endif %}>
+                <div class="text-3xl mb-2">📦</div>
+                <span class="text-white font-semibold block text-sm">{{ category.category_name }}</span>
+            </a>
+        {% empty %}
+            <p class="text-slate-400 col-span-full text-center">Belum ada kategori tersedia</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endif %}
+
+<!-- ==================== GRID PRODUK ==================== -->
+<section class="max-w-7xl mx-auto px-6 py-12" id="products-container">
+    <div class="flex items-center justify-between mb-8">
+        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
+            <i class="fas fa-star text-indigo-400"></i>
+            Produk Unggulan
+        </h3>
+        {% if search_query or selected_category %}
+            <div class="text-slate-400 text-sm">
+                Ditemukan <span class="text-indigo-400 font-semibold">{{ total_products }}</span> produk
+            </div>
+        {% endif %}
+    </div>
+
+    {% if products %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+                <div class="card-hover bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-indigo-500">
+                    
+                    <!-- Product Image -->
+                    <div class="product-image h-48 bg-gradient-to-br from-slate-700 to-slate-900 relative">
+                        {% if product.image %}
+                            <img src="{% if "http" in product.image.name %}{{ product.image.name }}{% else %}{{ product.image.url }}{% endif %}" alt="{{ product.product_name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-6xl opacity-30">
+                                {% with category_lower=product.category_id.category_name|lower %}
+                                    {% if "smartphone" in category_lower %}
+                                        📱
+                                    {% elif "laptop" in category_lower %}
+                                        💻
+                                    {% elif "komponen" in category_lower %}
+                                        🔧
+                                    {% elif "smart" in category_lower %}
+                                        🏠
+                                    {% elif "audio" in category_lower %}
+                                        🎧
+                                    {% else %}
+                                        📦
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Stock Badge -->
+                        {% if product.stock > 0 %}
+                            <div class="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                Ready
+                            </div>
+                        {% else %}
+                            <div class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                Habis
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="p-4">
+                        
+                        <!-- Category -->
+                        <p class="text-indigo-400 text-xs font-semibold mb-2">
+                            {{ product.category_id.category_name }}
+                        </p>
+
+                        <!-- Product Name (Clickable) -->
+                        <a href="{% url 'master_products:product_detail' product.slug %}" class="block">
+                            <h4 class="text-white font-bold text-sm mb-3 line-clamp-2 hover:text-indigo-400 transition-colors">
+                                {{ product.product_name }}
+                            </h4>
+                        </a>
+
+                        <!-- Price Section -->
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-slate-400 text-xs">Harga:</span>
+                            </div>
+                            <div class="px-3 py-2 rounded-lg text-white font-bold text-lg">
+                                Rp {{ product.price|floatformat:0|stringformat:",,.0f" }}
+                            </div>
+                        </div>
+
+                        <!-- Stock Info -->
+                        <p class="text-slate-400 text-xs mb-4">
+                            Stok: <span class="text-white font-semibold">{{ product.stock }} unit</span>
+                        </p>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3">
+                            <a href="{% url 'master_products:product_detail' product.slug %}" class="flex-1 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white py-2 rounded-lg text-sm font-semibold transition-all flex items-center justify-center">
+                                <i class="fas fa-eye mr-1"></i>
+                                Lihat Detail
+                            </a>
+                            <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white py-2 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-phone mr-1"></i>
+                                Hubungi
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-16">
+            <div class="text-6xl mb-4 opacity-50">📦</div>
+            <h3 class="text-white text-2xl font-bold mb-2">Produk Tidak Ditemukan</h3>
+            <p class="text-slate-400 mb-6">
+                {% if search_query %}
+                    Maaf, tidak ada produk yang cocok dengan pencarian "{{ search_query }}"
+                {% elif selected_category_name %}
+                    Maaf, tidak ada produk di kategori {{ selected_category_name }}
+                {% else %}
+                    Belum ada produk yang tersedia
+                {% endif %}
+            </p>
+            <a href="{% url 'master_products:product_list' %}" class="btn-primary px-6 py-3 text-white font-semibold rounded-lg inline-block">
+                Lihat Semua Produk
+            </a>
+        </div>
+    {% endif %}
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="bg-slate-900 border-t border-slate-700 py-12 mt-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-bolt text-white"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg">VOLTA</h3>
+                </div>
+                <p class="text-slate-400 text-sm">Platform B2B2C terpadu untuk distribusi elektronik</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Tentang Kami</h4>
+                <ul class="space-y-2 text-slate-400 text-sm">
+                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Tentang VOLTA</a></li>
+                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Karir</a></li>
+                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Blog</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Bantuan</h4>
+                <ul class="space-y-2 text-slate-400 text-sm">
+                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Pusat Bantuan</a></li>
+                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Kebijakan Privasi</a></li>
+                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Syarat & Ketentuan</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Hubungi Kami</h4>
+                <ul class="space-y-2 text-slate-400 text-sm">
+                    <li><i class="fas fa-phone mr-2"></i> +62-XXX-XXXXX</li>
+                    <li><i class="fas fa-envelope mr-2"></i> support@volta.id</li>
+                    <li><i class="fas fa-map-marker-alt mr-2"></i> Jakarta, Indonesia</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-slate-700 pt-8">
+            <p class="text-slate-400 text-sm text-center">
+                &copy; 2026 VOLTA Platform. Semua hak dilindungi.
+            </p>
+        </div>
+    </div>
+</footer>

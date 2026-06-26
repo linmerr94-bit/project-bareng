@@ -1,0 +1,746 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Order - VOLTA E-Commerce</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-bottom: 2px solid #334155;
+            padding: 16px 0;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-top: 2px solid #334155;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        
+        .success-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: 2px solid #34d399;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .card-order {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-confirmed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .status-paid {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .order-item-display {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .item-image {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #f1f5f9;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 14px 28px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #334155;
+            color: #94a3b8;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-right: 12px;
+        }
+        
+        .btn-secondary:hover {
+            background: #334155;
+            color: #cbd5e1;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #1e3a2f 0%, #0f2520 100%);
+            border: 2px solid #2d5a52;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #a7f3d0;
+        }
+        
+        .info-box i {
+            flex-shrink: 0;
+            margin-top: 2px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                    <i class="fas fa-box"></i> VOLTA
+                </h1>
+                <a href="{% url 'product_list' %}" class="btn-secondary">
+                    <i class="fas fa-shopping-bag"></i>
+                    Lanjut Belanja
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- SUCCESS MESSAGE -->
+        <div class="text-center mb-12">
+            <div class="success-badge">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-4">Pesanan Berhasil Dibuat!</h1>
+            <p class="text-gray-400 text-lg mb-2">Terima kasih telah berbelanja di VOLTA</p>
+            <p class="text-indigo-400 font-semibold">Order akan diproses dan segera dikirim ke alamat Anda</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- LEFT SECTION: ORDER DETAILS -->
+            <div class="lg:col-span-2">
+                <!-- SECTION 1: ORDER INFORMATION -->
+                <div class="card-order">
+                    <div class="section-title">
+                        <i class="fas fa-receipt"></i>
+                        Informasi Pesanan
+                    </div>
+
+                    <div class="info-row">
+                        <div>
+                            <div class="info-label">Kode Order</div>
+                            <div class="info-value" style="font-family: monospace;">{{ order_code }}</div>
+                        </div>
+                        <div>
+                            <div class="info-label">Tanggal Order</div>
+                            <div class="info-value">{{ order_date }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div>
+                            <div class="info-label">Status Pesanan</div>
+                            <div class="status-badge status-{{ order.status|lower }}">
+                                {{ order_status_display }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-label">Status Pembayaran</div>
+                            <div class="status-badge status-{{ order.payment_status|lower }}">
+                                {{ payment_status_display }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: DELIVERY INFORMATION -->
+                <div class="card-order">
+                    <div class="section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Informasi Pengiriman
+                    </div>
+
+                    <div class="info-row">
+                        <div>
+                            <div class="info-label">Nama Penerima</div>
+                            <div class="info-value">{{ receiver_name }}</div>
+                        </div>
+                        <div>
+                            <div class="info-label">Nomor Telepon</div>
+                            <div class="info-value">{{ phone }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div style="grid-column: 1 / -1;">
+                            <div class="info-label">Alamat Pengiriman</div>
+                            <div class="info-value">{{ shipping_address }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div>
+                            <div class="info-label">Metode Pembayaran</div>
+                            <div class="info-value">{{ payment_method_display }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: ORDER ITEMS -->
+                <div class="card-order">
+                    <div class="section-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Daftar Produk ({{ order_items|length }} item)
+                    </div>
+
+                    <div class="space-y-4">
+                        {% for item in order_items %}
+                            <div class="order-item-display">
+                                {% if item.product_id.image %}
+                                    <div class="item-image">
+                                        <img src="{% if "http" in item.product_id.image.name %}{{ item.product_id.image.name }}{% else %}{{ item.product_id.image.url }}{% endif %}" alt="{{ item.product_id.product_name }}">
+                                    </div>
+                                {% else %}
+                                    <div class="item-image">
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-700">
+                                            <i class="fas fa-image text-gray-500 text-2xl"></i>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="item-details flex-1">
+                                    <div class="item-name">{{ item.product_id.product_name }}</div>
+                                    <div style="font-size: 14px; color: #94a3b8; margin-bottom: 8px;">
+                                        <i class="fas fa-tag"></i> {{ item.product_id.brand_id.brand_name }}
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+                                        <span style="background: #334155; padding: 4px 10px; border-radius: 4px; color: #cbd5e1;">
+                                            {{ item.qty }} item
+                                        </span>
+                                        <span style="color: #94a3b8;">@</span>
+                                        <span style="font-weight: 600; color: #cbd5e1;">Rp {{ item.price|floatformat:0 }}/item</span>
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <div style="font-size: 18px; font-weight: bold; color: #6366f1;">
+                                        Rp {{ item.price|add:0|mul:item.qty|floatformat:0 }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- SECTION 4: NEXT STEPS -->
+                <div class="info-box">
+                    <i class="fas fa-tasks"></i>
+                    <div>
+                        <strong>Langkah Berikutnya:</strong>
+                        <ul style="margin-top: 8px; margin-left: 20px; line-height: 1.8;">
+                            <li>✓ Order Anda telah dibuat dan sedang diproses</li>
+                            <li>⏳ Kami akan menyiapkan barang Anda untuk pengiriman</li>
+                            <li>📦 Anda akan menerima notifikasi tracking saat barang dikirim</li>
+                            <li>🚚 Lacak pesanan Anda secara real-time</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="mb-8">
+                    <a href="{% url 'product_list' %}" class="btn-primary">
+                        <i class="fas fa-shopping-bag"></i>
+                        Lanjut Belanja
+                    </a>
+                    <a href="{% url 'order_detail' order_id=order.order_id %}" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Status
+                    </a>
+                </div>
+            </div>
+
+            <!-- RIGHT SECTION: PAYMENT SUMMARY -->
+            <div>
+                <div class="card-order" style="position: sticky; top: 20px;">
+                    <div class="section-title">
+                        <i class="fas fa-calculator"></i>
+                        Ringkasan Pembayaran
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #334155; font-size: 15px;">
+                        <span style="color: #94a3b8;">Subtotal:</span>
+                        <span style="color: #cbd5e1; font-weight: 500;">Rp {{ total_amount|add:-50000|floatformat:0 }}</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #334155; font-size: 15px;">
+                        <span style="color: #94a3b8;">Ongkos Kirim:</span>
+                        <span style="color: #cbd5e1; font-weight: 500;">Rp 50.000</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 2px solid #334155; font-size: 15px;">
+                        <span style="color: #94a3b8;">Diskon:</span>
+                        <span style="color: #cbd5e1; font-weight: 500;">- Rp 0</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 20px; font-weight: 700;">
+                        <span style="color: #f1f5f9;">Total:</span>
+                        <span style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                            {{ total_amount_formatted }}
+                        </span>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #1a3a2f 0%, #0f2520 100%); border: 2px solid #2d5a52; border-radius: 8px; padding: 12px; text-align: center; color: #a7f3d0; font-size: 12px;">
+                        <i class="fas fa-check-circle" style="margin-right: 6px;"></i>
+                        Pembayaran Dikonfirmasi
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="font-bold text-indigo-400 mb-4">
+                        <i class="fas fa-shopping-cart"></i> VOLTA
+                    </h3>
+                    <p class="text-gray-400 text-sm">Platform e-commerce B2B2C terpercaya</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-300 mb-4">Tentang Kami</h4>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li><a href="#" class="hover:text-indigo-400">Tentang VOLTA</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Karir</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-300 mb-4">Bantuan</h4>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li><a href="#" class="hover:text-indigo-400">Hubungi Kami</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">FAQ</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-300 mb-4">Ikuti Kami</h4>
+                    <div class="flex gap-4 text-xl text-gray-400">
+                        <a href="#" class="hover:text-indigo-400"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="hover:text-indigo-400"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-indigo-400"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 VOLTA E-Commerce. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    <!-- ==================== HEADER ==================== -->
+    <header class="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-indigo-500/30 py-4">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-indigo-400">
+                    <i class="fas fa-receipt mr-2"></i>Detail Pesanan
+                </h1>
+                <a href="{% url 'master_products:order_list' %}" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Riwayat
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if message.tags %}bg-{{ message.tags }}-500/20 border border-{{ message.tags }}-500{% else %}bg-blue-500/20 border border-blue-500{% endif %}">
+                    <p class="text-sm">{{ message|safe }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- ==================== LEFT SIDE: ORDER INFO ==================== -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Header Info -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <p class="text-slate-400 text-sm mb-1">Kode Order</p>
+                            <p class="font-bold text-indigo-400">{{ order_code }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm mb-1">Tanggal</p>
+                            <p class="font-semibold">{{ order_date|date:"d M Y" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm mb-1">Status</p>
+                            <p class="inline-block px-3 py-1 rounded-full text-xs font-bold
+                                {% if order.status == 'pending' %}bg-yellow-500/20 text-yellow-400
+                                {% elif order.status == 'confirmed' %}bg-blue-500/20 text-blue-400
+                                {% elif order.status == 'processing' %}bg-blue-500/20 text-blue-400
+                                {% elif order.status == 'shipped' %}bg-purple-500/20 text-purple-400
+                                {% elif order.status == 'delivered' %}bg-green-500/20 text-green-400
+                                {% endif %}">
+                                {{ status_display }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm mb-1">Pembayaran</p>
+                            <p class="inline-block px-3 py-1 rounded-full text-xs font-bold
+                                {% if order.payment_status == 'paid' %}bg-green-500/20 text-green-400
+                                {% elif order.payment_status == 'pending' %}bg-yellow-500/20 text-yellow-400
+                                {% elif order.payment_status == 'failed' %}bg-red-500/20 text-red-400
+                                {% endif %}">
+                                {{ payment_status_display }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Status -->
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-slate-400 text-sm mb-3">Status Pengiriman:</p>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span>✓ Pesanan Dikonfirmasi</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 {% if order.status in 'confirmed,processing,shipped,delivered' %}bg-green-500{% else %}bg-slate-600{% endif %} rounded-full"></div>
+                                <span>Diproses Penjual</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 {% if order.status in 'shipped,delivered' %}bg-green-500{% else %}bg-slate-600{% endif %} rounded-full"></div>
+                                <span>Dalam Pengiriman</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 {% if order.status == 'delivered' %}bg-green-500{% else %}bg-slate-600{% endif %} rounded-full"></div>
+                                <span>Diterima</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-map-pin mr-2"></i>Alamat Pengiriman
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-slate-400 text-sm">Penerima</p>
+                            <p class="font-semibold text-lg">{{ receiver_name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm">Nomor Telepon</p>
+                            <p class="font-semibold">{{ phone }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm">Alamat Lengkap</p>
+                            <p class="font-semibold">{{ shipping_address }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-box mr-2"></i>Item Pesanan ({{ order_items|length }})
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        {% for item in order_items %}
+                            <div class="flex gap-4 pb-4 {% if not forloop.last %}border-b border-slate-700{% endif %}">
+                                <!-- Product Image Placeholder -->
+                                <div class="w-24 h-24 bg-slate-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    {% if item.product_id.image %}
+                                        <img src="{% if "http" in item.product_id.image.name %}{{ item.product_id.image.name }}{% else %}{{ item.product_id.image.url }}{% endif %}" alt="{{ item.product_id.product_name }}" class="w-full h-full object-cover rounded-lg">
+                                    {% else %}
+                                        <i class="fas fa-image text-slate-600 text-3xl"></i>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Product Info -->
+                                <div class="flex-1">
+                                    <p class="font-bold text-lg">{{ item.product_id.product_name }}</p>
+                                    <p class="text-sm text-slate-400 mb-2">{{ item.product_id.description|truncatewords:10 }}</p>
+                                    <p class="text-sm text-slate-400">Brand: <span class="text-indigo-400">{{ item.product_id.brand_id.brand_name }}</span></p>
+                                    <p class="text-sm text-slate-400">Kategori: {{ item.product_id.category_id.category_name }}</p>
+                                </div>
+                                
+                                <!-- Quantity & Price -->
+                                <div class="text-right flex flex-col justify-center">
+                                    <p class="text-slate-400 text-sm">Jumlah</p>
+                                    <p class="font-bold text-lg">{{ item.qty }} unit</p>
+                                    <div class="mt-3 pt-3 border-t border-slate-700">
+                                        <p class="text-slate-400 text-xs mb-1">Harga /unit</p>
+                                        <p class="font-semibold">Rp{{ item.price|floatformat:0 }}</p>
+                                        <p class="text-indigo-400 font-bold text-lg">Rp{{ item.price|add:0|mul:item.qty|floatformat:0 }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Payment Info -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-credit-card mr-2"></i>Informasi Pembayaran
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Metode Pembayaran</span>
+                            <span class="font-semibold">{{ payment_method_display }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Status Pembayaran</span>
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">
+                                {{ payment_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== RIGHT SIDE: SUMMARY ==================== -->
+            <div>
+                <!-- Payment Summary -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 sticky top-8 mb-6">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-calculator mr-2"></i>Ringkasan Pembayaran
+                    </h3>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Total Item:</span>
+                            <span class="font-semibold">{{ order_items|length }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Subtotal:</span>
+                            <span class="font-semibold">{{ total_amount_formatted }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Pajak:</span>
+                            <span class="font-semibold">Rp0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Ongkir:</span>
+                            <span class="font-semibold">Rp0 (Gratis)</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-lg p-4 border border-indigo-500/30">
+                        <p class="text-slate-400 text-xs mb-1">Total Pembayaran</p>
+                        <p class="text-3xl font-bold text-indigo-400">{{ total_amount_formatted }}</p>
+                    </div>
+                </div>
+
+                <!-- Brand Info -->
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-bold mb-4 text-indigo-400">
+                        <i class="fas fa-store mr-2"></i>Informasi Penjual
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-slate-400 text-sm">Brand/Toko</p>
+                            <p class="font-bold text-lg">{{ brand.brand_name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm">Status</p>
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">
+                                {{ brand.get_status_display }}
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-sm">Rating</p>
+                            <p class="font-semibold">⭐ {{ brand.rating|default:"Belum ada" }}</p>
+                        </div>
+                    </div>
+
+                    <button class="w-full mt-4 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                        <i class="fas fa-message mr-2"></i>Hubungi Penjual
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                        <i class="fas fa-download mr-2"></i>Download Invoice
+                    </button>
+                    <a 
+                        href="{% url 'master_products:product_list' %}"
+                        class="block text-center bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg text-sm"
+                    >
+                        <i class="fas fa-shopping-bag mr-2"></i>Belanja Lagi
+                    </a>
+                </div>
+
+                <!-- Help -->
+                <div class="mt-6 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                    <p class="text-blue-400 font-bold text-sm mb-2">
+                        <i class="fas fa-info-circle mr-2"></i>Butuh Bantuan?
+                    </p>
+                    <p class="text-xs text-slate-300 mb-3">
+                        Hubungi tim customer service VOLTA
+                    </p>
+                    <p class="text-indigo-400 font-semibold text-sm">
+                        support@volta.id
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-gradient-to-r from-slate-900 to-slate-800 border-t border-slate-700 mt-16 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
+            <p>&copy; 2024 VOLTA E-Commerce Platform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

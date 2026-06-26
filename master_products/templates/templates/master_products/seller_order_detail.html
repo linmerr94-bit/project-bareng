@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pesanan - Seller Dashboard VOLTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #f7f8fc;
+            --surface: #ffffff;
+            --surface-2: #f4f6ff;
+            --text: #101828;
+            --muted: #667085;
+            --border: #eaecf0;
+            --primary: #6d28d9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow-md: 0 12px 28px rgba(16,24,40,.10);
+            --radius-md: 14px;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 12px 24px;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover { background: var(--surface-2); }
+        .sidebar-item.active { border-left-color: var(--primary); background: var(--surface-2); color: var(--primary); font-weight: 600; }
+
+        .main-content { margin-left: 280px; padding: 24px; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+        }
+
+        .card-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+
+        .product-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 16px;
+            align-items: center;
+            padding: 16px;
+            background: var(--surface-2);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+        }
+
+        .product-image { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-processing { background: #dbeafe; color: #1e40af; }
+        .badge-shipped { background: #e9d5ff; color: #6b21a8; }
+        .badge-delivered { background: #d1fae5; color: #065f46; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3); }
+
+        .input-field {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-family: inherit;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); display: flex; }
+            .main-content { margin-left: 0; }
+            .sidebar-item { flex: 1; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <a href="/" style="font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none;">
+            <i class="fas fa-bolt"></i> VOLTA
+        </a>
+        <div></div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <span style="font-size: 14px; color: var(--muted);">{{ seller_brand.brand_name }}</span>
+            <a href="{% url 'master_products:logout' %}" style="color: var(--danger); text-decoration: none;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="flex">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div style="padding: 24px; border-bottom: 1px solid var(--border); margin-bottom: 12px;">
+                <div style="font-weight: 700; font-size: 16px;">{{ seller_brand.brand_name }}</div>
+                <div style="font-size: 12px; color: var(--muted);">Toko Anda</div>
+            </div>
+
+            <a href="{% url 'master_products:seller_dashboard' %}" class="sidebar-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'master_products:seller_products' %}" class="sidebar-item">
+                <i class="fas fa-cube"></i>
+                <span>Produk</span>
+            </a>
+            <a href="{% url 'master_products:seller_orders' %}" class="sidebar-item active">
+                <i class="fas fa-box"></i>
+                <span>Pesanan</span>
+            </a>
+            <a href="/" class="sidebar-item">
+                <i class="fas fa-home"></i>
+                <span>Lihat Toko</span>
+            </a>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content" style="flex: 1;">
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 16px; border-radius: var(--radius-md); margin-bottom: 16px; {% if 'error' in message.tags %}background: #fee2e2; border-left: 4px solid var(--danger);{% elif 'success' in message.tags %}background: #f0fdf4; border-left: 4px solid var(--success);{% else %}background: #f0f9ff; border-left: 4px solid var(--primary);{% endif %}">
+                        {{ message|safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Header -->
+            <div style="margin-bottom: 24px;">
+                <a href="{% url 'master_products:seller_orders' %}" style="color: var(--primary); text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Pesanan
+                </a>
+                <h1 style="font-size: 28px; font-weight: 700; margin-top: 8px;">Detail Pesanan</h1>
+            </div>
+
+            <div class="grid-2">
+                <!-- Order Info Card -->
+                <div class="card">
+                    <h3 class="card-title"><i class="fas fa-info-circle" style="color: var(--primary); margin-right: 8px;"></i>Informasi Pesanan</h3>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Kode Pesanan</div>
+                        <div style="font-weight: 700; font-size: 16px;">{{ order.order_code }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Pembeli</div>
+                        <div style="font-weight: 600;">{{ order.user_id.get_full_name|default:order.user_id.username }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Status</div>
+                        {% if order.status == 'pending' %}
+                            <span class="badge badge-pending">Menunggu</span>
+                        {% elif order.status == 'confirmed' %}
+                            <span class="badge badge-processing">Dikonfirmasi</span>
+                        {% elif order.status == 'processing' %}
+                            <span class="badge badge-processing">Diproses</span>
+                        {% elif order.status == 'shipped' %}
+                            <span class="badge badge-shipped">Dikirim</span>
+                        {% elif order.status == 'delivered' %}
+                            <span class="badge badge-delivered">Terkirim</span>
+                        {% else %}
+                            <span class="badge" style="background: #fee2e2; color: #991b1b;">{{ order.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Tanggal</div>
+                        <div>{{ order.order_date|date:"d F Y H:i" }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Total</div>
+                        <div style="font-weight: 700; font-size: 20px; color: var(--primary);">Rp{{ order.total_amount|floatformat:0 }}</div>
+                    </div>
+                </div>
+
+                <!-- Shipping Info Card -->
+                <div class="card">
+                    <h3 class="card-title"><i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 8px;"></i>Alamat Pengiriman</h3>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Penerima</div>
+                        <div style="font-weight: 600;">{{ order.receiver_name }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">No. Telepon</div>
+                        <div>{{ order.phone }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Alamat</div>
+                        <div>{{ order.shipping_address }}</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Metode Pembayaran</div>
+                        <div style="text-transform: capitalize;">{{ order.get_payment_method_display }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items Card -->
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-shopping-cart" style="color: var(--primary); margin-right: 8px;"></i>Item Pesanan</h3>
+
+                {% for item in order_items %}
+                    <div class="product-item">
+                        <div>
+                            {% if item.product_id.image %}
+                                <img src="{% if "http" in item.product_id.image.name %}{{ item.product_id.image.name }}{% else %}{{ item.product_id.image.url }}{% endif %}" alt="{{ item.product_id.product_name }}" class="product-image">
+                            {% else %}
+                                <div style="width: 80px; height: 80px; background: var(--surface-2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted);">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">{{ item.product_id.product_name }}</div>
+                            <div style="font-size: 12px; color: var(--muted);">Qty: {{ item.quantity }} × Rp{{ item.product_id.price|floatformat:0 }}</div>
+                        </div>
+                        <div style="text-align: right; font-weight: 700;">
+                            Rp{{ item.total_price|floatformat:0 }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Order Status Update Card -->
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-tasks" style="color: var(--primary); margin-right: 8px;"></i>Kelola Status Pesanan</h3>
+
+                {% if order.status != 'delivered' and order.status != 'cancelled' %}
+                    <form method="POST" action="{% url 'master_products:seller_order_update' order.order_id %}" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Current Status Info -->
+                        <div style="padding: 12px 16px; background: #f7f8fc; border-radius: 10px; margin-bottom: 20px;">
+                            <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px;">Status Saat Ini</div>
+                            <div style="font-weight: 700; font-size: 16px;">{{ order.get_status_display }}</div>
+                        </div>
+
+                        <!-- Status Selection -->
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Ubah Status Pesanan</label>
+                            <select name="status" required style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; cursor: pointer;">
+                                <option value="">-- Pilih Status Baru --</option>
+                                {% if order.status == 'pending' %}
+                                    <option value="confirmed">Konfirmasi Pesanan</option>
+                                {% endif %}
+                                {% if order.status == 'confirmed' or order.status == 'processing' %}
+                                    <option value="processing">Sedang Diproses</option>
+                                {% endif %}
+                                {% if order.status == 'confirmed' or order.status == 'processing' or order.status == 'shipped' %}
+                                    <option value="shipped">Pesanan Dikirim</option>
+                                {% endif %}
+                                <option value="cancelled">Batalkan Pesanan</option>
+                            </select>
+                        </div>
+
+                        <!-- Tracking Number Input (for shipped status) -->
+                        <div style="margin-bottom: 20px;">
+                            <label for="tracking" style="display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Nomor Resi Pengiriman (opsional)</label>
+                            <input type="text" name="tracking_number" id="tracking" placeholder="Contoh: JNE-1234567890" style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit;">
+                        </div>
+
+                        <!-- Reason for Cancellation (if applicable) -->
+                        <div style="margin-bottom: 20px;">
+                            <label for="reason" style="display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Alasan (jika dibatalkan)</label>
+                            <textarea name="cancel_reason" id="reason" placeholder="Jelaskan alasan pembatalan..." style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; resize: vertical; min-height: 80px;"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" style="width: 100%; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);" onmouseover="this.style.boxShadow='0 10px 20px rgba(79, 70, 229, 0.3)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow=''; this.style.transform='';">
+                            <i class="fas fa-save"></i> Simpan Perubahan Status
+                        </button>
+                    </form>
+                {% else %}
+                    <div style="padding: 16px; background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px;">
+                        <p style="margin: 0; color: #16a34a; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-check-circle"></i>
+                            Pesanan ini telah {{ order.get_status_display|lower }}. Tidak perlu update status lagi.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

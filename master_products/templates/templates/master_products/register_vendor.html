@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengajuan Kemitraan Toko UMKM Purwokerto - VOLTA Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* ==================== ANIMATED BACKGROUND ==================== */
+        .animated-bg {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .animated-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        /* ==================== INPUT STYLING ==================== */
+        .input-field {
+            background: white;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #cbd5e1;
+        }
+
+        /* ==================== BUTTON STYLING ==================== */
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .left-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="min-h-screen flex">
+
+        <!-- ==================== LEFT PANEL (BRANDING) ==================== -->
+        <div class="left-panel hidden md:flex md:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 relative text-white animated-bg flex flex-col items-center justify-center px-8">
+            <div class="relative z-10 text-center max-w-md">
+                <!-- Logo -->
+                <div class="flex justify-center mb-8">
+                    <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-3xl flex items-center justify-center transform hover:scale-110 transition-transform shadow-2xl">
+                        <i class="fas fa-bolt text-white text-5xl"></i>
+                    </div>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="text-5xl font-bold mb-6 leading-tight">VOLTA</h1>
+
+                <!-- Subtitle -->
+                <h2 class="text-2xl font-semibold mb-8 bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">
+                    Kemitraan Toko Lokal Purwokerto
+                </h2>
+
+                <!-- Description -->
+                <p class="text-lg text-gray-300 leading-relaxed mb-12">
+                    Ajukan pendaftaran toko elektronik UMKM Anda. Sistem kurasi VOLTA memastikan seluruh mitra ruko yang bergabung terverifikasi demi keamanan transaksi bersama.
+                </p>
+
+                <!-- Benefits / Steps -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-file-alt text-white text-sm"></i>
+                        </div>
+                        <p class="text-gray-300">1. Isi Formulir Data Toko Lengkap</p>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-shield text-white text-sm"></i>
+                        </div>
+                        <p class="text-gray-300">2. Review Dokumen oleh Admin VOLTA</p>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-left">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-envelope-open-text text-white text-sm"></i>
+                        </div>
+                        <p class="text-gray-300">3. Terima Email Aktivasi Akun</p>
+                    </div>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="mt-12 pt-8 border-t border-slate-700 text-sm text-gray-400">
+                    <p>Proses peninjauan berkas maksimal 2x24 jam hari kerja</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== RIGHT PANEL (FORM) ==================== -->
+        <div class="w-full md:w-1/2 flex flex-col items-center justify-center px-6 sm:px-8 py-12">
+            <div class="w-full max-w-lg animate-in">
+                
+                <!-- Mobile Logo -->
+                <div class="md:hidden flex justify-center mb-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-bolt text-white text-3xl"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+                        Form Pengajuan Mitra
+                    </h1>
+                    <p class="text-gray-600">
+                        Isi data ruko elektronik Anda di Purwokerto dengan benar untuk proses verifikasi
+                    </p>
+                </div>
+
+                <!-- Messages Display (Error/Success) -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="mb-6 p-4 {% if message.tags == 'error' %}bg-red-50 border-red-200 text-red-800{% else %}bg-green-50 border-green-200 text-green-800{% endif %} border rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle text-red-600{% else %}fa-check-circle text-green-600{% endif %} text-lg mt-1"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">{% if message.tags == 'error' %}Error{% else %}Berhasil{% endif %}</h4>
+                                    <p class="text-sm">{{ message }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Registration Form -->
+                <form method="POST" action="{% url 'master_products:register_vendor' %}" class="space-y-5">
+                    {% csrf_token %}
+
+                    <!-- Kontak Pemilik (Paling Penting untuk Notifikasi Email) -->
+                    <div class="p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
+                        <h3 class="text-sm font-bold text-indigo-900 uppercase tracking-wider">
+                            <i class="fas fa-address-card mr-1"></i> Kontak Penanggung Jawab
+                        </h3>
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email Aktif Pemilik</label>
+                            <input type="email" id="email" name="email" required placeholder="Contoh: tokosaya@email.com" class="input-field w-full px-4 py-2.5">
+                            <p class="text-xs text-gray-500 mt-1">Link set-up password login akan dikirim ke email ini setelah disetujui.</p>
+                        </div>
+                    </div>
+
+                    <!-- Profil Ruko / Toko -->
+                    <div class="space-y-4 pt-2">
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">
+                            <i class="fas fa-store mr-1"></i> Informasi Detail Toko
+                        </h3>
+
+                        <!-- Nama Toko -->
+                        <div>
+                            <label for="vendor_name" class="block text-sm font-semibold text-gray-700 mb-1">Nama Toko Elektronik</label>
+                            <input type="text" id="vendor_name" name="vendor_name" required placeholder="Contoh: Berkah Elektronik Purwokerto" class="input-field w-full px-4 py-2.5">
+                        </div>
+
+                        <!-- NIB / KTP -->
+                        <div>
+                            <label for="nib" class="block text-sm font-semibold text-gray-700 mb-1">Nomor NIB / No. KTP Pemilik</label>
+                            <input type="text" id="nib" name="nib" required placeholder="Masukkan NIB atau Nomor KTP untuk validasi berkas" class="input-field w-full px-4 py-2.5">
+                        </div>
+
+                        <!-- Kategori Utama -->
+                        <div>
+                            <label for="category" class="block text-sm font-semibold text-gray-700 mb-1">Kategori Utama Elektronik</label>
+                            <select id="category" name="category" required class="input-field w-full px-4 py-2.5">
+                                <option value="">-- Pilih Kategori Utama --</option>
+                                <option value="smartphone">Smartphone & Aksesoris</option>
+                                <option value="laptop">Laptop & Notebook</option>
+                                <option value="components">Komponen & Hardware</option>
+                                <option value="smart_home">Smart Home & IoT</option>
+                                <option value="audio">Audio & Multimedia</option>
+                                <option value="gaming">Gaming Devices</option>
+                                <option value="lainnya">Kategori Lainnya</option>
+                            </select>
+                        </div>
+
+                        <!-- Alamat Lengkap Toko -->
+                        <div>
+                            <label for="address" class="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap Ruko / Toko</label>
+                            <textarea id="address" name="address" required rows="2" placeholder="Masukkan nama jalan, kelurahan, kecamatan di Purwokerto secara detail" class="input-field w-full px-4 py-2.5 resize-none"></textarea>
+                        </div>
+
+                        <!-- Deskripsi Toko -->
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Deskripsi Singkat Usaha</label>
+                            <textarea id="description" name="description" required rows="2" placeholder="Jelaskan spesialisasi produk elektronik yang Anda pasarkan" class="input-field w-full px-4 py-2.5 resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Terms & Conditions -->
+                    <div class="flex items-start space-x-2 pt-2">
+                        <input type="checkbox" id="terms" name="terms" required class="mt-1">
+                        <label for="terms" class="text-sm text-gray-700">
+                            Saya menjamin data pengajuan ini valid dan bersedia dihubungi oleh Admin VOLTA untuk verifikasi lapangan jika diperlukan.
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary w-full py-3 text-white font-semibold rounded-lg mt-4 flex items-center justify-center space-x-2">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Kirim Proposal Kemitraan</span>
+                    </button>
+                </form>
+
+                <!-- Divider Line -->
+                <div class="h-px bg-gray-300 my-8"></div>
+
+                <!-- Footer Nav -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Kembali ke <a href="/" class="font-semibold text-indigo-600 hover:text-indigo-700">Halaman Utama</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

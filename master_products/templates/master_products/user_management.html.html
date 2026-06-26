@@ -1,0 +1,708 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - VOLTA Admin</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <style>
+        :root {
+            --volta-dark: #0f172a;
+            --volta-darker: #0a0f1a;
+            --volta-card: #1e293b;
+            --volta-border: #334155;
+            --volta-primary: #6366f1;
+            --volta-purple: #8b5cf6;
+            --volta-success: #10b981;
+            --volta-warning: #f59e0b;
+            --volta-danger: #ef4444;
+            --volta-info: #0ea5e9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--volta-dark);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: linear-gradient(135deg, var(--volta-dark) 0%, var(--volta-darker) 100%);
+            border-bottom: 2px solid var(--volta-border);
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--volta-primary) 0%, var(--volta-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, var(--volta-warning) 0%, #d97706 100%);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0f172a;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, var(--volta-danger) 0%, #c2185b 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(239,68,68,0.3);
+            color: white;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: linear-gradient(180deg, var(--volta-card) 0%, var(--volta-darker) 100%);
+            border-right: 2px solid var(--volta-border);
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        .sidebar .nav-link {
+            color: #94a3b8;
+            padding: 0.75rem 1.5rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(99,102,241,0.1);
+            border-left-color: var(--volta-primary);
+            color: var(--volta-primary);
+        }
+
+        .sidebar .nav-link i { width: 1.5rem; text-align: center; }
+
+        .sidebar-title {
+            padding: 0 1.5rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            background-color: var(--volta-dark);
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--volta-border);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title i { color: var(--volta-primary); font-size: 2.5rem; }
+        .page-subtitle { color: #94a3b8; font-size: 1rem; }
+
+        /* ===== STAT CARDS ===== */
+        .stat-card {
+            background: linear-gradient(135deg, var(--volta-card) 0%, rgba(30,41,59,0.8) 100%);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            border-color: var(--volta-primary);
+            box-shadow: 0 10px 30px rgba(99,102,241,0.15);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .stat-icon.primary { color: var(--volta-primary); background: rgba(99,102,241,0.1); }
+        .stat-icon.success { color: var(--volta-success); background: rgba(16,185,129,0.1); }
+        .stat-icon.warning { color: var(--volta-warning); background: rgba(245,158,11,0.1); }
+        .stat-icon.info    { color: var(--volta-info);    background: rgba(14,165,233,0.1); }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value { font-size: 2rem; font-weight: 700; color: white; }
+
+        /* ===== TABLE CARD ===== */
+        .table-card {
+            background: linear-gradient(135deg, var(--volta-card) 0%, rgba(30,41,59,0.8) 100%);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--volta-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .table-header h5 { margin: 0; color: white; font-weight: 700; font-size: 1.25rem; }
+        .table-header i  { color: var(--volta-primary); font-size: 1.5rem; }
+
+        .table { color: #cbd5e1; margin-bottom: 0; }
+
+        .table thead th {
+            background-color: rgba(99,102,241,0.05);
+            border-color: var(--volta-border);
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            border-color: var(--volta-border);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr { transition: all 0.3s ease; border-bottom: 1px solid var(--volta-border); }
+        .table tbody tr:hover { background-color: rgba(99,102,241,0.05); }
+
+        /* ===== BADGES ===== */
+        .badge { padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .badge-admin    { background: rgba(139,92,246,0.2); color: var(--volta-purple); }
+        .badge-brand    { background: rgba(14,165,233,0.2); color: var(--volta-info); }
+        .badge-customer { background: rgba(16,185,129,0.2); color: var(--volta-success); }
+        .badge-active   { background: rgba(16,185,129,0.2); color: var(--volta-success); }
+        .badge-inactive { background: rgba(239,68,68,0.2);  color: var(--volta-danger); }
+
+        /* ===== BUTTONS ===== */
+        .btn-edit {
+            background: linear-gradient(135deg, var(--volta-primary) 0%, var(--volta-purple) 100%);
+            border: none; color: white;
+            padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 4px;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(99,102,241,0.3);
+            color: white; text-decoration: none;
+        }
+
+        .btn-toggle-active {
+            background: linear-gradient(135deg, var(--volta-warning) 0%, #d97706 100%);
+            border: none; color: #0f172a;
+            padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 4px;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+
+        .btn-toggle-active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(245,158,11,0.3);
+        }
+
+        .btn-toggle-inactive {
+            background: linear-gradient(135deg, var(--volta-success) 0%, #059669 100%);
+            border: none; color: white;
+            padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 4px;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+
+        .btn-toggle-inactive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16,185,129,0.3);
+            color: white;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--volta-danger) 0%, #dc2626 100%);
+            border: none; color: white;
+            padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 4px;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239,68,68,0.3);
+            color: white;
+        }
+
+        .btn-action-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        /* ===== SEARCH BOX ===== */
+        .search-box {
+            background: rgba(15,23,42,0.8);
+            border: 1px solid var(--volta-border);
+            border-radius: 8px;
+            color: white;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--volta-primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+            background: rgba(15,23,42,1);
+            color: white;
+        }
+
+        .search-box::placeholder { color: #64748b; }
+
+        /* ===== MODAL ===== */
+        .modal-content {
+            background-color: var(--volta-card);
+            border: 2px solid var(--volta-border);
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            border-bottom: 2px solid var(--volta-border);
+            background: rgba(99,102,241,0.05);
+        }
+
+        .modal-header .modal-title { color: white; font-weight: 700; }
+        .modal-footer { border-top: 2px solid var(--volta-border); }
+
+        .form-label { color: #94a3b8; font-size: 0.875rem; font-weight: 600; }
+
+        .form-control, .form-select {
+            background-color: rgba(15,23,42,0.8);
+            border: 1px solid var(--volta-border);
+            color: white;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(15,23,42,1);
+            border-color: var(--volta-primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+            color: white;
+        }
+
+        .form-select option { background-color: var(--volta-card); color: white; }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state { text-align: center; padding: 3rem 1rem; }
+        .empty-icon  { font-size: 3rem; color: #475569; margin-bottom: 1rem; }
+        .empty-message { color: #94a3b8; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar { border-right: none; border-bottom: 2px solid var(--volta-border); min-height: auto; }
+            .main-content { padding: 1rem; }
+            .page-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'master_products:admin_platform_dashboard' %}">
+            <i class="fas fa-shield-alt" style="color: var(--volta-primary);"></i> VOLTA ADMIN
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <li class="nav-item">
+                    <span class="admin-badge">
+                        <i class="fas fa-crown"></i> ADMINISTRATOR
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link" style="cursor: default; color: #94a3b8;">
+                        {{ request.user.username }}
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-logout btn-sm" href="{% url 'master_products:logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTAINER ===== -->
+<div class="container-fluid">
+    <div class="row g-0">
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-2 sidebar d-none d-lg-block">
+            <nav class="nav flex-column">
+                <a class="nav-link" href="{% url 'master_products:admin_platform_dashboard' %}">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+
+                <div class="sidebar-title">Manajemen</div>
+                <a class="nav-link" href="{% url 'master_products:admin_platform_dashboard' %}#approvals">
+                    <i class="fas fa-check-circle"></i> Persetujuan Brand
+                </a>
+                <a class="nav-link active" href="{% url 'master_products:user_management' %}">
+                    <i class="fas fa-users"></i> Manajemen User
+                </a>
+
+                <hr style="border-color: var(--volta-border); margin: 1rem 0;">
+
+                <div class="sidebar-title">Akses Cepat</div>
+                <a class="nav-link" href="{% url 'master_products:product_list' %}">
+                    <i class="fas fa-store"></i> Toko
+                </a>
+                <a class="nav-link" href="{% url 'master_products:logout' %}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="col-lg-10 main-content">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-users"></i> User Management
+                </h1>
+                <p class="page-subtitle">Kelola akun customer, brand vendor, dan administrator VOLTA</p>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if 'error' in message.tags %}danger{% elif 'warning' in message.tags %}warning{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message|safe }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Stat Cards -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-label">Total User</div>
+                        <div class="stat-value">{{ users|length }}</div>
+                        <small class="text-muted">terdaftar</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="stat-label">Admin</div>
+                        <div class="stat-value" style="color: var(--volta-purple);">{{ total_admin }}</div>
+                        <small class="text-muted">administrator</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stat-label">Brand Vendor</div>
+                        <div class="stat-value" style="color: var(--volta-info);">{{ total_brand }}</div>
+                        <small class="text-muted">penjual</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="stat-label">Customer</div>
+                        <div class="stat-value" style="color: var(--volta-success);">{{ total_customer }}</div>
+                        <small class="text-muted">pembeli</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-list"></i>
+                        <h5>Daftar Pengguna</h5>
+                    </div>
+                    <!-- Search -->
+                    <form method="GET" action="{% url 'master_products:user_management' %}" class="d-flex gap-2">
+                        <input
+                            type="text"
+                            name="q"
+                            class="search-box"
+                            placeholder="Cari username / email..."
+                            value="{{ search }}"
+                        >
+                        <button type="submit" class="btn btn-sm" style="background: var(--volta-primary); color: white; border-radius: 8px; padding: 0.5rem 1rem;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        {% if search %}
+                            <a href="{% url 'master_products:user_management' %}" class="btn btn-sm" style="background: var(--volta-border); color: white; border-radius: 8px; padding: 0.5rem 1rem;">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table" id="userTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Bergabung</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                            <tr>
+                                <td style="color: #64748b;">{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--volta-primary), var(--volta-purple)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; color: white; flex-shrink: 0;">
+                                            {{ u.username|first|upper }}
+                                        </div>
+                                        <div>
+                                            <div style="color: white; font-weight: 600;">{{ u.username }}</div>
+                                            {% if u.get_full_name %}
+                                                <div style="color: #64748b; font-size: 0.75rem;">{{ u.get_full_name }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="color: #94a3b8;">{{ u.email|default:"-" }}</td>
+                                <td>
+                                    {% if u.role == 'admin' %}
+                                        <span class="badge badge-admin"><i class="fas fa-crown me-1"></i>Admin</span>
+                                    {% elif u.role == 'brand' %}
+                                        <span class="badge badge-brand"><i class="fas fa-store me-1"></i>Brand</span>
+                                    {% else %}
+                                        <span class="badge badge-customer"><i class="fas fa-user me-1"></i>Customer</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if u.is_active %}
+                                        <span class="badge badge-active"><i class="fas fa-check-circle me-1"></i>Aktif</span>
+                                    {% else %}
+                                        <span class="badge badge-inactive"><i class="fas fa-ban me-1"></i>Nonaktif</span>
+                                    {% endif %}
+                                </td>
+                                <td style="color: #64748b; font-size: 0.875rem;">
+                                    {{ u.date_joined|date:"d M Y" }}
+                                </td>
+                                <td>
+                                    <div class="btn-action-group">
+                                        <!-- Edit Button -->
+                                        {% if u != request.user %}
+                                            <button
+                                                class="btn-edit"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editModal"
+                                                data-user-id="{{ u.user_id }}"
+                                                data-username="{{ u.username }}"
+                                                data-email="{{ u.email }}"
+                                                data-role="{{ u.role }}"
+                                            >
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+
+                                            <!-- Toggle Active -->
+                                            <form method="POST" action="{% url 'master_products:user_toggle_active' u.user_id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                {% if u.is_active %}
+                                                    <button type="submit" class="btn-toggle-active" onclick="return confirm('Nonaktifkan user {{ u.username }}?')">
+                                                        <i class="fas fa-ban"></i> Nonaktifkan
+                                                    </button>
+                                                {% else %}
+                                                    <button type="submit" class="btn-toggle-inactive" onclick="return confirm('Aktifkan user {{ u.username }}?')">
+                                                        <i class="fas fa-check"></i> Aktifkan
+                                                    </button>
+                                                {% endif %}
+                                            </form>
+
+                                            <!-- Delete -->
+                                            <form method="POST" action="{% url 'master_products:user_delete' u.user_id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn-delete" onclick="return confirm('Hapus user {{ u.username }}? Tindakan ini tidak bisa dibatalkan!')">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span style="color: #475569; font-size: 0.75rem; font-style: italic;">
+                                                <i class="fas fa-lock me-1"></i>Akun kamu
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <div class="empty-icon"><i class="fas fa-users-slash"></i></div>
+                                        <p class="empty-message">
+                                            {% if search %}
+                                                Tidak ada user yang cocok dengan pencarian "<strong>{{ search }}</strong>"
+                                            {% else %}
+                                                Belum ada user terdaftar
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div><!-- end main-content -->
+    </div>
+</div>
+
+<!-- ===== MODAL EDIT USER ===== -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2" style="color: var(--volta-primary);"></i>Edit User</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="" id="editForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" id="editUsername" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" id="editEmail" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="role" id="editRole" class="form-select">
+                            <option value="customer">Customer</option>
+                            <option value="brand">Brand Vendor</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, var(--volta-primary), var(--volta-purple)); color: white; border: none;">
+                        <i class="fas fa-save me-1"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+
+<script>
+    // Set form action + isi data di modal edit
+    const editModal = document.getElementById('editModal');
+    editModal.addEventListener('show.bs.modal', function(event) {
+        const btn = event.relatedTarget;
+        const userId   = btn.getAttribute('data-user-id');
+        const username = btn.getAttribute('data-username');
+        const email    = btn.getAttribute('data-email');
+        const role     = btn.getAttribute('data-role');
+
+        document.getElementById('editForm').action = `/platform-admin/user/${userId}/edit/`;
+        document.getElementById('editUsername').value = username;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editRole').value = role;
+    });
+</script>
+
+</body>
+</html>

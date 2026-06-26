@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja - VOLTA E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a202c;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Page Container */
+        .page-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Cart Section */
+        .cart-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cart-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .cart-content {
+            padding: 20px;
+        }
+
+        /* Cart Item */
+        .cart-item {
+            display: grid;
+            grid-template-columns: 120px 1fr 100px 40px;
+            gap: 16px;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            background: #f8f9fa;
+            padding: 16px;
+            margin: 0 -16px;
+            border-radius: 8px;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 120px;
+            height: 120px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 16px;
+        }
+
+        .cart-item-brand {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: #6366f1;
+            font-size: 16px;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            color: #6366f1;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .qty-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .qty-display {
+            width: 40px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            background: white;
+        }
+
+        .cart-item-remove {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #fee2e2;
+            color: #ef4444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-item-remove:hover {
+            background: #fecaca;
+        }
+
+        /* Empty Cart Message */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-cart i {
+            font-size: 80px;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .empty-cart p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .btn-continue-shopping {
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-continue-shopping:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Order Summary (Right Column) */
+        .summary-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .summary-row.total {
+            padding: 16px 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            border-bottom: none;
+            border-top: 2px solid #e2e8f0;
+            margin-top: 16px;
+        }
+
+        .summary-row.total .price {
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Floating Chat */
+        .floating-chat {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 40;
+        }
+
+        .floating-chat:hover {
+            transform: scale(1.1);
+        }
+
+        .floating-chat i {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: #cbd5e1;
+            margin-top: 60px;
+            padding: 40px 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .cart-item {
+                grid-template-columns: 100px 1fr;
+                gap: 12px;
+            }
+
+            .cart-item-qty,
+            .cart-item-remove {
+                grid-column: 2;
+                justify-self: end;
+                width: auto;
+            }
+
+            .summary-section {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div class="navbar-brand">VOLTA</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                {% if user.is_authenticated %}
+                    <span style="font-size: 14px; color: #64748b;">{{ user.username }}</span>
+                    <a href="{% url 'master_products:logout' %}" style="font-size: 14px; color: #ef4444; text-decoration: none;">Logout</a>
+                {% else %}
+                    <a href="{% url 'master_products:login' %}" style="font-size: 14px; color: #6366f1; text-decoration: none; font-weight: 600;">Login</a>
+                {% endif %}
+                <a href="{% url 'master_products:product_list' %}" style="text-decoration: none;">
+                    <i class="fas fa-arrow-left" style="color: #6366f1; font-size: 18px;"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="page-container">
+
+        <!-- LEFT COLUMN: CART ITEMS -->
+        <div class="cart-section">
+            <div class="cart-header">
+                <i class="fas fa-shopping-cart" style="color: #6366f1; font-size: 20px;"></i>
+                <h2>Keranjang Belanja</h2>
+                {% if cart_items %}
+                    <span style="margin-left: auto; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: #64748b;">{{ cart_items|length }} item</span>
+                {% endif %}
+            </div>
+
+            <div class="cart-content">
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                {% if item.product.image %}
+                                    <img src="{% if "http" in item.product.image.name %}{{ item.product.image.name }}{% else %}{{ item.product.image.url }}{% endif %}" alt="{{ item.product.product_name }}" onerror="this.onerror=null; this.src='https://placehold.co/120x120?text=No+Image';">
+                                {% else %}
+                                    <i class="fas fa-image" style="font-size: 40px; color: #cbd5e1;"></i>
+                                {% endif %}
+                            </div>
+
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">{{ item.product.product_name }}</div>
+                                <div class="cart-item-brand">{{ item.product.brand_id.brand_name }}</div>
+                                <div class="cart-item-price">Rp {{ item.product.price|floatformat:0|add:0 }}</div>
+                            </div>
+
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateQty({{ item.cart_item_id }}, -1)">−</button>
+                                <input type="number" class="qty-display" value="{{ item.quantity }}" readonly>
+                                <button class="qty-btn" onclick="updateQty({{ item.cart_item_id }}, 1)">+</button>
+                            </div>
+
+                            <button class="cart-item-remove" onclick="removeItem({{ item.cart_item_id }})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-bag"></i>
+                        <p>Keranjang Anda kosong</p>
+                        <a href="{% url 'master_products:product_list' %}" class="btn-continue-shopping">
+                            <i class="fas fa-arrow-left"></i> Lanjutkan Belanja
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: ORDER SUMMARY -->
+        {% if cart_items %}
+            <div class="summary-section">
+                <div class="summary-title">
+                    <i class="fas fa-receipt"></i> Order Summary
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal ({{ cart_items|length }} item)</span>
+                    <span class="price">Rp {{ subtotal|floatformat:0|add:0 }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Biaya Pengiriman</span>
+                    <span class="price">Rp 25.000</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Diskon</span>
+                    <span class="price" style="color: #22c55e;">- Rp 0</span>
+                </div>
+
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span class="price">Rp {{ total|floatformat:0|add:0 }}</span>
+                </div>
+
+                <button class="checkout-btn" onclick="proceedCheckout()">
+                    <i class="fas fa-lock"></i> Lanjut ke Pembayaran
+                </button>
+
+                <a href="{% url 'master_products:product_list' %}" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; color: #6366f1; text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i class="fas fa-arrow-left"></i> Lanjutkan Belanja
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ==================== FLOATING CHAT WIDGET ==================== -->
+    <div class="floating-chat" onclick="openChat()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p>&copy; 2026 VOLTA E-Commerce Platform. Elektronik Berkualitas dari Purwokerto.</p>
+        </div>
+    </footer>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        function updateQty(itemId, change) {
+            // Get current quantity
+            const input = event.target.parentElement.querySelector('.qty-display');
+            const currentQty = parseInt(input.value);
+            const newQty = Math.max(1, currentQty + change);
+            
+            // Update cart via AJAX
+            fetch(`/update_cart/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    item_id: itemId,
+                    quantity: newQty
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function removeItem(itemId) {
+            if (confirm('Hapus item dari keranjang?')) {
+                fetch(`/remove_from_cart/${itemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function proceedCheckout() {
+            window.location.href = '{% url "master_products:checkout_view" %}';
+        }
+
+        function openChat() {
+            alert('💬 Chat dengan penjual - Coming soon!');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+</body>
+</html>
