@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Chat Penjual - VOLTA{% endblock %}
+
+{% block extra_head %}
+<style>
+    .msg-row {
+        display: flex;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .msg-row.mine {
+        justify-content: flex-end;
+    }
+
+    .msg-row.other {
+        justify-content: flex-start;
+    }
+
+    .msg-bubble {
+        max-width: 78%;
+        padding: 12px 14px;
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .msg-row.mine .msg-bubble {
+        margin-left: auto;
+        background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+        color: white;
+        border-bottom-right-radius: 6px;
+    }
+
+    .msg-row.other .msg-bubble {
+        margin-right: auto;
+        background: #f8fafc;
+        color: #0f172a;
+        border: 1px solid #e2e8f0;
+        border-bottom-left-radius: 6px;
+    }
+
+    .msg-meta {
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+        opacity: 0.75;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">Ruang Chat</h1>
+            <p class="text-sm text-slate-500 mt-2">Balas pesan dari {{ room.customer.full_name|default:room.customer.username }}.</p>
+        </div>
+        <a href="{% url 'master_products:brand_chat_inbox' %}" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            <i class="fas fa-arrow-left"></i> Kembali ke Inbox
+        </a>
+    </div>
+
+    <div class="bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
+        <div class="border-b border-gray-100 px-6 py-5">
+            <div class="font-semibold text-slate-900">{{ room.customer.full_name|default:room.customer.username }}</div>
+            <div class="text-sm text-slate-500">{{ room.brand.brand_name }}</div>
+        </div>
+
+        <div class="p-6 space-y-3 bg-slate-50 min-h-[360px]">
+            
+{% for message in messages %}
+    <div class="flex {% if message.sender == request.user %}justify-end{% else %}justify-start{% endif %} mb-4">
+        <div class="max-w-[70%] p-4 rounded-2xl shadow-sm 
+            {% if message.sender == request.user %}
+                bg-indigo-600 text-white rounded-br-none
+            {% else %}
+                bg-gray-200 text-gray-800 rounded-bl-none
+            {% endif %}">
+            
+            <p>{{ message.content }}</p>
+            <p class="text-[10px] opacity-70 mt-2 text-right">
+                {{ message.timestamp|date:"H:i" }}
+            </p>
+        </div>
+    </div>
+{% endfor %}
+
+        <form method="post" class="border-t border-gray-100 p-6 flex gap-3">
+            {% csrf_token %}
+            <input type="text" name="text" placeholder="Tulis balasan..." required class="flex-1 rounded-full border border-gray-200 px-4 py-3 focus:border-indigo-500 focus:outline-none">
+            <button type="submit" class="rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition">
+                <i class="fas fa-paper-plane"></i> Kirim
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

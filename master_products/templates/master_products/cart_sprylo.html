@@ -468,9 +468,9 @@
     </div>
 
     <!-- ==================== FLOATING CHAT WIDGET ==================== -->
-    <div class="floating-chat" onclick="openChat()">
+    <a href="{% url 'master_products:chat_view' %}" class="floating-chat" title="Chat dengan penjual">
         <i class="fas fa-comments"></i>
-    </div>
+    </a>
 
     <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
@@ -524,10 +524,6 @@
 
         function proceedCheckout() {
             window.location.href = '{% url "master_products:checkout_view" %}';
-        }
-
-        function openChat() {
-            alert('💬 Chat dengan penjual - Coming soon!');
         }
 
         function getCookie(name) {

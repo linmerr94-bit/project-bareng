@@ -23,7 +23,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from master_products.models import (
     Product, Category, VendorRequest, Cart, CartItem, 
-    Order, OrderItem, Brand, Review,
+    Order, OrderItem, Brand, Review, ChatRoom, ChatMessage,
     UserTwoFactor, LoginSession, EmailOTP
 )
 from master_products.decorators import seller_required, customer_required
@@ -74,6 +74,52 @@ def dashboard_redirect_view(request):
     # ==================== CUSTOMER ====================
     else:  # customer atau default
         return redirect('master_products:product_list')
+
+
+@login_required(login_url='master_products:login')
+@seller_required
+def brand_chat_inbox(request):
+    """Daftar percakapan masuk untuk toko/brand yang sedang login."""
+    current_toko = getattr(request.user, 'toko', None)
+    rooms = ChatRoom.objects.filter(brand__user_id=request.user).select_related('customer', 'brand').order_by('-updated_at')
+
+    context = {
+        'toko': current_toko,
+        'rooms': rooms,
+        'active_nav': 'chat',
+    }
+    return render(request, 'brand_admin/chat_inbox.html', context)
+
+
+@login_required(login_url='master_products:login')
+@seller_required
+def brand_chat_detail(request, room_id):
+    """Ruang chat khusus untuk toko/brand yang sedang login."""
+    current_toko = getattr(request.user, 'toko', None)
+    room = get_object_or_404(ChatRoom, room_id=room_id, brand__user_id=request.user)
+
+    if request.method == 'POST':
+        text = str(request.POST.get('text', '')).strip()
+        if text:
+            ChatMessage.objects.create(
+                room=room,
+                sender=request.user,
+                text=text,
+                is_read=True,
+            )
+            room.updated_at = timezone.now()
+            room.save(update_fields=['updated_at'])
+            return redirect('master_products:brand_chat_detail', room_id=room.room_id)
+
+    room.messages.exclude(sender=request.user).filter(is_read=False).update(is_read=True)
+
+    context = {
+        'toko': current_toko,
+        'room': room,
+        'messages': room.messages.select_related('sender').order_by('created_at'),
+        'active_nav': 'chat',
+    }
+    return render(request, 'brand_admin/chat_detail.html', context)
 
 
 @login_required(login_url='master_products:login')
@@ -394,6 +440,18 @@ def product_detail(request, slug):
         stock_badge_bg = 'bg-orange-500/20'
     
     # ==================== 3. BUILD CONTEXT ====================
+    # Chat rooms untuk customer ke brand ini
+    chat_rooms = []
+    active_room = None
+    initial_chat_text = ''
+
+    if request.user.is_authenticated and request.user.role == 'customer':
+        chat_rooms = ChatRoom.objects.filter(
+            customer=request.user
+        ).select_related('brand').order_by('-updated_at')
+        active_room = chat_rooms.filter(brand=product.brand_id).first()
+        initial_chat_text = f'Halo, saya ingin bertanya tentang produk {product.product_name}.'
+
     context = {
         # Data produk
         'product': product,
@@ -409,6 +467,11 @@ def product_detail(request, slug):
         'stock_color': stock_color,
         'stock_badge_bg': stock_badge_bg,
         'stock_quantity': product.stock,
+        
+        # Customer service chat
+        'chat_rooms': chat_rooms,
+        'active_chat_room': active_room,
+        'initial_chat_text': initial_chat_text,
     }
     
     return render(request, 'master_products/product_detail.html', context)
@@ -448,6 +511,17 @@ def product_detail_by_id(request, product_id):
         category_id=product.category_id,
         is_active=True
     ).exclude(product_id=product.product_id)[:10]
+
+    chat_rooms = []
+    active_room = None
+    initial_chat_text = ''
+
+    if request.user.is_authenticated and request.user.role == 'customer':
+        chat_rooms = ChatRoom.objects.filter(
+            customer=request.user
+        ).select_related('brand').order_by('-updated_at')
+        active_room = chat_rooms.filter(brand=product.brand_id).first()
+        initial_chat_text = f'Halo, saya ingin bertanya tentang produk {product.product_name}.'
     
     # Build context
     context = {
@@ -463,9 +537,202 @@ def product_detail_by_id(request, product_id):
         'reviews': reviews,
         'average_rating': average_rating,
         'related_products': related_products,
+        'chat_rooms': chat_rooms,
+        'active_chat_room': active_room,
+        'initial_chat_text': initial_chat_text,
     }
     
     return render(request, 'master_products/product_detail.html', context)
+
+
+def get_or_create_room(customer, brand):
+    """Return room chat existing atau buat baru antara customer dan brand."""
+    room, _ = ChatRoom.objects.get_or_create(
+        customer=customer,
+        brand=brand,
+        defaults={'status': 'open'}
+    )
+    return room
+
+
+def send_message(room, sender, text):
+    """Buat ChatMessage baru dan update timestamp room."""
+    message = ChatMessage.objects.create(
+        room=room,
+        sender=sender,
+        text=text,
+        is_read=True
+    )
+    room.updated_at = timezone.now()
+    room.save(update_fields=['updated_at'])
+    return message
+
+
+@login_required(login_url='master_products:login')
+def chat_view(request, brand_id=None):
+    """Render halaman chat penuh dengan daftar room dan riwayat pesan."""
+    if request.user.role != 'customer':
+        messages.error(request, 'Hanya customer yang dapat mengakses chat pelanggan.')
+        return redirect('master_products:product_list')
+
+    if request.method == 'POST':
+        text = str(request.POST.get('text', '')).strip()
+        store_id = request.POST.get('store_id')
+        if text and store_id:
+            brand = get_object_or_404(Brand, brand_id=store_id, status='approved')
+            room = get_or_create_room(request.user, brand)
+            send_message(room, request.user, text)
+            return redirect('master_products:chat_room_detail', brand_id=brand.brand_id)
+
+    rooms = ChatRoom.objects.filter(customer=request.user).select_related('brand').order_by('-updated_at')
+    active_room = None
+
+    if brand_id is not None:
+        active_room = rooms.filter(brand__brand_id=brand_id).first()
+        if active_room is None:
+            brand = get_object_or_404(Brand, brand_id=brand_id, status='approved')
+            active_room = get_or_create_room(request.user, brand)
+            rooms = rooms | ChatRoom.objects.filter(room_id=active_room.room_id)
+            rooms = rooms.distinct().order_by('-updated_at')
+    elif rooms.exists():
+        active_room = rooms[0]
+
+    if active_room:
+        active_room.messages.exclude(sender=request.user).filter(is_read=False).update(is_read=True)
+
+    context = {
+        'rooms': rooms,
+        'active_room': active_room,
+        'messages': active_room.messages.select_related('sender').order_by('created_at') if active_room else [],
+    }
+    return render(request, 'master_products/chat_rooms.html', context)
+
+
+@login_required(login_url='master_products:login')
+def chat_api(request):
+    """API untuk chat functional: get_chat_history, get_specific_chat, get_or_create_room, send_message."""
+    if request.method == 'GET':
+        rooms = ChatRoom.objects.filter(customer=request.user).select_related('brand').order_by('-updated_at')
+        room_list = [
+            {
+                'room_id': room.room_id,
+                'brand_id': room.brand.brand_id,
+                'brand_name': room.brand.brand_name,
+                'status': room.status,
+                'updated_at': room.updated_at.isoformat(),
+            }
+            for room in rooms
+        ]
+
+        recent_orders = Order.objects.filter(user_id=request.user).order_by('-created_at')[:3]
+        order_notifications = [
+            {
+                'order_id': order.order_id,
+                'status': order.status,
+                'created_at': order.created_at.isoformat(),
+                'summary': f'Order #{order.order_id} - {order.get_status_display()}'
+            }
+            for order in recent_orders
+        ]
+        return JsonResponse({'rooms': room_list, 'notifications': order_notifications})
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method Not Allowed'}, status=405)
+
+    if request.user.role != 'customer':
+        return JsonResponse({'error': 'Only customers can use chat'}, status=403)
+
+    try:
+        payload = json.loads(request.body.decode('utf-8') or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON payload'}, status=400)
+
+    action = payload.get('action')
+    if action not in ['get_or_create_room', 'send_message', 'get_specific_chat', 'get_chat_history']:
+        return JsonResponse({'error': 'Invalid action'}, status=400)
+
+    if action == 'get_chat_history':
+        rooms = ChatRoom.objects.filter(customer=request.user).select_related('brand').order_by('-updated_at')
+        room_list = [
+            {
+                'room_id': room.room_id,
+                'brand_id': room.brand.brand_id,
+                'brand_name': room.brand.brand_name,
+                'status': room.status,
+                'updated_at': room.updated_at.isoformat(),
+            }
+            for room in rooms
+        ]
+        return JsonResponse({'rooms': room_list})
+
+    if action == 'get_specific_chat':
+        room_id = payload.get('room_id')
+        if not room_id:
+            return JsonResponse({'error': 'room_id is required'}, status=400)
+
+        room = get_object_or_404(ChatRoom, room_id=room_id, customer=request.user)
+        messages = [
+            {
+                'message_id': msg.message_id,
+                'sender': msg.sender.username,
+                'text': msg.text,
+                'created_at': msg.created_at.isoformat(),
+            }
+            for msg in room.messages.select_related('sender').order_by('created_at')
+        ]
+        return JsonResponse({
+            'room_id': room.room_id,
+            'brand': {
+                'brand_id': room.brand.brand_id,
+                'brand_name': room.brand.brand_name,
+            },
+            'messages': messages,
+        })
+
+    store_id = payload.get('store_id')
+    if not store_id:
+        return JsonResponse({'error': 'store_id is required'}, status=400)
+
+    brand = get_object_or_404(Brand, brand_id=store_id, status='approved')
+    room = get_or_create_room(request.user, brand)
+
+    if action == 'get_or_create_room':
+        messages = [
+            {
+                'message_id': msg.message_id,
+                'sender': msg.sender.username,
+                'text': msg.text,
+                'created_at': msg.created_at.isoformat(),
+            }
+            for msg in room.messages.select_related('sender').order_by('created_at')
+        ]
+        return JsonResponse({
+            'room_id': room.room_id,
+            'brand': {
+                'brand_id': brand.brand_id,
+                'brand_name': brand.brand_name,
+            },
+            'messages': messages,
+        })
+
+    text = str(payload.get('text', '')).strip()
+    if not text:
+        return JsonResponse({'error': 'text is required'}, status=400)
+
+    message = send_message(room, request.user, text)
+    return JsonResponse({
+        'room_id': room.room_id,
+        'message': {
+            'message_id': message.message_id,
+            'sender': request.user.username,
+            'text': message.text,
+            'created_at': message.created_at.isoformat(),
+        },
+        'brand': {
+            'brand_id': brand.brand_id,
+            'brand_name': brand.brand_name,
+        }
+    })
 
 
 def store_detail(request, brand_id):

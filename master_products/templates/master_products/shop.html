@@ -667,10 +667,10 @@
     </div>
 
     <!-- FLOATING CHAT -->
-    <div class="floating-chat" onclick="openChat()" title="Chat dengan penjual">
+    <a href="{% url 'master_products:chat_view' %}" class="floating-chat" title="Chat dengan penjual">
         <i class="fas fa-comments"></i>
         <span class="chat-badge">?</span>
-    </div>
+    </a>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -711,10 +711,6 @@
             url.searchParams.set('sort', val);
             url.searchParams.delete('page');
             window.location.href = url.toString();
-        }
-
-        function openChat() {
-            alert('Fitur chat segera hadir! 💬');
         }
     </script>
 </body>

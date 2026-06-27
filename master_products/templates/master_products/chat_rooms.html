@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat Penjual - VOLTA E-Commerce{% endblock %}
+
+{% block extra_head %}
+<style>
+    .chat-shell {
+        display: grid;
+        grid-template-columns: 320px minmax(0, 1fr);
+        gap: 20px;
+        min-height: 70vh;
+    }
+
+    .chat-list-card,
+    .chat-thread-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+    }
+
+    .chat-list-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-list-header,
+    .chat-thread-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .chat-room-item {
+        display: block;
+        width: 100%;
+        padding: 16px 20px;
+        border: 0;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.2s ease;
+    }
+
+    .chat-room-item:hover,
+    .chat-room-item.active {
+        background: #f8fafc;
+    }
+
+    .chat-thread-body {
+        padding: 20px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        height: 480px;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
+
+    .chat-bubble-row {
+        display: flex;
+        width: 100%;
+    }
+
+    .chat-bubble-row.mine {
+        justify-content: flex-end;
+    }
+
+    .chat-bubble-row.other {
+        justify-content: flex-start;
+    }
+
+    .chat-bubble {
+        max-width: 78%;
+        padding: 12px 14px;
+        border-radius: 18px;
+        line-height: 1.5;
+        word-break: break-word;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .chat-bubble.mine {
+        background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+        color: white;
+        border-bottom-right-radius: 6px;
+    }
+
+    .chat-bubble.other {
+        background: white;
+        color: #0f172a;
+        border: 1px solid #e2e8f0;
+        border-bottom-left-radius: 6px;
+    }
+
+    .chat-meta {
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+        opacity: 0.75;
+    }
+
+    .chat-input-row {
+        display: flex;
+        gap: 12px;
+        padding: 16px 24px 24px;
+        border-top: 1px solid #e2e8f0;
+        background: white;
+    }
+
+    .chat-input-row input {
+        flex: 1;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        padding: 12px 16px;
+    }
+
+    .chat-input-row button {
+        border: 0;
+        background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+        color: white;
+        border-radius: 999px;
+        padding: 12px 18px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+        .chat-shell {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-slate-900">Chat Penjual</h1>
+        <p class="text-sm text-slate-500 mt-2">Pantau percakapan dengan toko yang Anda hubungi.</p>
+    </div>
+
+    <div class="chat-shell">
+        <aside class="chat-list-card">
+            <div class="chat-list-header">
+                <h2 class="text-lg font-semibold text-slate-900">Daftar Chat</h2>
+            </div>
+            <div class="overflow-y-auto">
+                {% for room in rooms %}
+                    <a href="{% url 'master_products:chat_room_detail' room.brand.brand_id %}" class="chat-room-item {% if active_room and active_room.room_id == room.room_id %}active{% endif %}">
+                        <div class="font-semibold text-slate-900">{{ room.brand.brand_name }}</div>
+                        <div class="text-sm text-slate-500">{{ room.updated_at|date:'d M Y H:i' }}</div>
+                    </a>
+                {% empty %}
+                    <div class="p-6 text-sm text-slate-500">Belum ada percakapan. Mulai chat dari halaman produk.</div>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <section class="chat-thread-card">
+            {% if active_room %}
+                <div class="chat-thread-header">
+                    <h2 class="text-lg font-semibold text-slate-900">{{ active_room.brand.brand_name }}</h2>
+                    <p class="text-sm text-slate-500">Percakapan aktif</p>
+                </div>
+                <div class="chat-thread-body">
+    {% for message in messages %}
+    <div class="chat-bubble-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
+        <div class="chat-bubble {% if message.sender == request.user %}mine{% else %}other{% endif %}">
+            {{ message.text }}
+        </div>
+    </div>
+{% endfor %}
+</div> <!-- Pastikan penutup div body ada di sini -->
+
+<!-- HAPUS BARIS 176 SAMPAI 178 KARENA ITU PENYEBAB ERROR-NYA -->
+                </div>
+                <form class="chat-input-row" method="post" action="{% url 'master_products:chat_room_detail' active_room.brand.brand_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="store_id" value="{{ active_room.brand.brand_id }}">
+                    <input type="text" name="text" placeholder="Tulis pesan..." required>
+                    <button type="submit">Kirim</button>
+                </form>
+            {% else %}
+                <div class="p-10 text-center text-slate-500">
+                    Pilih toko di sisi kiri untuk melihat percakapan.
+                </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

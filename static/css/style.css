@@ -1,0 +1,28 @@
+/* Chat container */
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Pesan dari SAYA (Kanan) */
+.message-sent {
+    align-self: flex-end;
+    background-color: #6366f1;
+    color: white;
+    border-radius: 15px 15px 0 15px;
+    margin-bottom: 10px;
+    padding: 10px;
+    max-width: 70%;
+}
+
+/* Pesan dari TOKO (Kiri) */
+.message-received {
+    align-self: flex-start;
+    background-color: #e5e7eb;
+    color: black;
+    border-radius: 15px 15px 15px 0;
+    margin-bottom: 10px;
+    padding: 10px;
+    max-width: 70%;
+}

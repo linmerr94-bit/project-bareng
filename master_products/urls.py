@@ -54,6 +54,8 @@ urlpatterns = [
     # ==================== SELLER - DASHBOARD & PRODUCT MANAGEMENT ====================
     path('toko/dashboard/', views.seller_dashboard, name='seller_dashboard'),
     path('seller/dashboard/', views.seller_dashboard),
+    path('toko/chat/', views.brand_chat_inbox, name='brand_chat_inbox'),
+    path('toko/chat/<int:room_id>/', views.brand_chat_detail, name='brand_chat_detail'),
     path('toko/produk/', views.seller_products, name='seller_products'),
     path('seller/products/', views.seller_products),
     path('toko/pesanan/', views.seller_orders, name='seller_orders'),
@@ -84,6 +86,9 @@ urlpatterns = [
     # ==================== CUSTOMER SERVICE API ====================
     path('api/store/<int:store_id>/whatsapp/', views.get_store_whatsapp, name='get_store_whatsapp'),
     path('api/care-hub/submit/', views.submit_care_hub_inquiry, name='submit_care_hub_inquiry'),
+    path('chat/', views.chat_view, name='chat_view'),
+    path('chat/<int:brand_id>/', views.chat_view, name='chat_room_detail'),
+    path('api/chat/', views.chat_api, name='chat_api'),
     
     # ==================== USER PROFILE MANAGEMENT ====================
     path('profile/edit/', views.edit_profile, name='edit_profile'),

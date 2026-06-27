@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Inbox Chat Penjual - VOLTA{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">Inbox Chat Penjual</h1>
+            <p class="text-sm text-slate-500 mt-2">Lihat pesan dari pembeli yang masuk ke toko Anda.</p>
+        </div>
+        <a href="{% url 'master_products:seller_dashboard' %}" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+        </a>
+    </div>
+
+    <div class="bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
+        {% if rooms %}
+            <div class="divide-y divide-gray-100">
+                {% for room in rooms %}
+                    <a href="{% url 'master_products:brand_chat_detail' room.room_id %}" class="flex items-start justify-between gap-4 px-6 py-5 hover:bg-slate-50 transition">
+                        <div>
+                            <div class="font-semibold text-slate-900">{{ room.customer.full_name|default:room.customer.username }}</div>
+                            <div class="text-sm text-slate-500 mt-1">{{ room.brand.brand_name }}</div>
+                            <div class="text-sm text-slate-500 mt-2">{{ room.updated_at|date:'d M Y H:i' }}</div>
+                        </div>
+                        <div class="text-sm text-indigo-600 font-semibold">Buka Chat</div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="p-10 text-center text-slate-500">
+                <i class="fas fa-inbox text-3xl mb-4"></i>
+                <p>Belum ada percakapan masuk untuk toko Anda.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

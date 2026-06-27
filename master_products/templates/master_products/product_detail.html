@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.product_name }} - VOLTA E-Commerce</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}{{ product.product_name }} - VOLTA E-Commerce{% endblock %}
+
+{% block extra_head %}
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -17,25 +14,6 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f8f9fa;
             color: #1a202c;
-        }
-
-        /* Navbar */
-        .navbar {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 24px;
-            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         /* Product Detail Container */
@@ -817,35 +795,15 @@
             }
         }
     </style>
-</head>
-<body>
+{% endblock %}
 
-    <!-- ==================== NAVBAR ==================== -->
-    <nav class="navbar">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
-            <div class="navbar-brand">VOLTA</div>
-            <div style="display: flex; align-items: center; gap: 16px;">
-                {% if user.is_authenticated %}
-                    <span style="font-size: 14px; color: #64748b;">{{ user.username }}</span>
-                    <a href="{% url 'master_products:logout' %}" style="font-size: 14px; color: #ef4444; text-decoration: none;">Logout</a>
-                {% else %}
-                    <a href="{% url 'master_products:login' %}" style="font-size: 14px; color: #6366f1; text-decoration: none; font-weight: 600;">Login</a>
-                {% endif %}
-                <a href="{% url 'master_products:view_cart' %}" style="position: relative;">
-                    <i class="fas fa-shopping-cart" style="color: #475569; font-size: 20px;"></i>
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- ==================== BREADCRUMB & BACK ==================== -->
+{% block content %}
     <div style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
         <a href="{% url 'master_products:product_list' %}" class="btn-back">
             <i class="fas fa-arrow-left"></i> Kembali ke Katalog
         </a>
     </div>
 
-    <!-- ==================== PRODUCT DETAIL ==================== -->
     <div class="detail-container">
         <div class="detail-grid">
             
@@ -930,9 +888,9 @@
                     <button class="btn-add-cart" onclick="addToCart({{ product.product_id }})">
                         <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
                     </button>
-                    <button class="btn-wishlist" onclick="addToWishlist()">
-                        <i class="fas fa-heart"></i> Favorit
-                    </button>
+                    <a href="{% url 'master_products:chat_room_detail' product.brand_id.brand_id %}" class="btn-wishlist" style="display:inline-flex; text-decoration:none;">
+                        <i class="fas fa-comments"></i> Chat Penjual
+                    </a>
                 </div>
 
             </div>
@@ -940,7 +898,6 @@
         </div>
     </div>
 
-    <!-- ==================== REVIEWS & RATINGS SECTION ==================== -->
     <section class="reviews-section">
         <div class="reviews-container">
             <h2 class="reviews-title">
@@ -1023,7 +980,6 @@
 
             </div>
 
-            <!-- REVIEWS LIST -->
             {% if reviews %}
                 <div class="reviews-list">
                     <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px; color: #1a202c;">
@@ -1077,40 +1033,9 @@
         </div>
     </section>
 
-    <!-- ==================== FLOATING CHAT WIDGET ==================== -->
-    <div class="floating-chat" onclick="openChat()" title="Chat dengan penjual">
-        <i class="fas fa-comments"></i>
-        <span class="chat-badge">?</span>
-    </div>
+{% endblock %}
 
-    <!-- ==================== CHAT POPUP MODAL ==================== -->
-    <div id="chatModal" class="chat-modal" style="display: none;">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h3>💬 Tanya Penjual</h3>
-                <button class="chat-close" onclick="closeChat()">&times;</button>
-            </div>
-            <div class="chat-body">
-                <div class="chat-message bot">
-                    <p>Halo! 👋 Ada yang bisa kami bantu?</p>
-                </div>
-                <div id="chatMessages" class="chat-messages"></div>
-            </div>
-            <div class="chat-footer">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Ketik pesan..." onkeypress="handleChatKeypress(event)">
-                <button onclick="sendChatMessage()" class="chat-send-btn">Kirim</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="footer">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <p>&copy; 2026 VOLTA E-Commerce Platform. Elektronik Berkualitas dari Purwokerto.</p>
-        </div>
-    </footer>
-
-    <!-- ==================== SCRIPTS ==================== -->
+{% block extra_scripts %}
     <script>
         // ==================== QUANTITY BUTTONS ====================
         function decreaseQty() {
@@ -1157,94 +1082,40 @@
         const stars = document.querySelectorAll('.star-rating .star');
         const ratingInput = document.getElementById('ratingInput');
 
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                const rating = this.dataset.value;
-                ratingInput.value = rating;
-                
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
+        if (stars.length > 0 && ratingInput) {
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.dataset.value;
+                    ratingInput.value = rating;
+                    
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseover', function() {
+                    const rating = this.dataset.value;
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.style.opacity = '1';
+                        } else {
+                            s.style.opacity = '0.5';
+                        }
+                    });
                 });
             });
 
-            star.addEventListener('mouseover', function() {
-                const rating = this.dataset.value;
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.style.opacity = '1';
-                    } else {
-                        s.style.opacity = '0.5';
-                    }
+            const starRatingContainer = document.querySelector('.star-rating');
+            if (starRatingContainer) {
+                starRatingContainer.addEventListener('mouseout', function() {
+                    stars.forEach(s => s.style.opacity = '1');
                 });
-            });
-        });
-
-        document.querySelector('.star-rating').addEventListener('mouseout', function() {
-            stars.forEach(s => s.style.opacity = '1');
-        });
-
-        // ==================== FLOATING CHAT WIDGET ====================
-        function openChat() {
-            document.getElementById('chatModal').style.display = 'flex';
-            document.getElementById('chatInput').focus();
-        }
-
-        function closeChat() {
-            document.getElementById('chatModal').style.display = 'none';
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            const messagesDiv = document.getElementById('chatMessages');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-message user';
-            userMsg.innerHTML = `<p>${message}</p>`;
-            messagesDiv.appendChild(userMsg);
-            
-            input.value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
-            setTimeout(() => {
-                const botMsg = document.createElement('div');
-                botMsg.className = 'chat-message bot';
-                const responses = [
-                    'Terima kasih atas pertanyaan Anda! 😊',
-                    'Produk ini sangat populer dan berkualitas tinggi! ⭐',
-                    'Kami siap membantu Anda kapan saja! 💪',
-                    'Jika ada pertanyaan lebih lanjut, silakan hubungi admin kami.',
-                    'Stok tersedia dan siap dikirim hari ini! 🚚',
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                botMsg.innerHTML = `<p>${randomResponse}</p>`;
-                messagesDiv.appendChild(botMsg);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 500);
-        }
-
-        function handleChatKeypress(event) {
-            if (event.key === 'Enter') {
-                sendChatMessage();
             }
         }
 
-        // Close chat modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const chatModal = document.getElementById('chatModal');
-            const floatingChat = document.querySelector('.floating-chat');
-            
-            if (chatModal && chatModal.style.display === 'flex' && !chatModal.contains(event.target) && !floatingChat.contains(event.target)) {
-                chatModal.style.display = 'none';
-            }
-        });
     </script>
-
-</body>
-</html>
+{% endblock %}

@@ -139,6 +139,107 @@ class Brand(models.Model):
         return self.status == 'approved'
 
 
+class ChatRoom(models.Model):
+    """
+    Ruang chat antara customer dan brand.
+    """
+
+    ROOM_STATUS_CHOICES = (
+        ('open', 'Open'),
+        ('closed', 'Closed'),
+    )
+
+    room_id = models.AutoField(primary_key=True)
+    customer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='chat_rooms',
+        help_text='Customer yang memulai percakapan'
+    )
+    brand = models.ForeignKey(
+        Brand,
+        on_delete=models.CASCADE,
+        related_name='chat_rooms',
+        help_text='Toko/brand yang menjadi lawan bicara'
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=ROOM_STATUS_CHOICES,
+        default='open',
+        help_text='Status percakapan chat'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Waktu percakapan dibuat'
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        help_text='Waktu percakapan terakhir diperbarui'
+    )
+
+    class Meta:
+        verbose_name = 'Chat Room'
+        verbose_name_plural = 'Chat Rooms'
+        db_table = 'chat_rooms'
+        ordering = ['-updated_at']
+        indexes = [
+            models.Index(fields=['customer']),
+            models.Index(fields=['brand']),
+            models.Index(fields=['updated_at']),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['customer', 'brand'], name='unique_customer_brand_chatroom')
+        ]
+
+    def __str__(self):
+        return f'Chat {self.customer.username} → {self.brand.brand_name}'
+
+
+class ChatMessage(models.Model):
+    """
+    Pesan individual dalam ruang chat.
+    """
+
+    message_id = models.AutoField(primary_key=True)
+    room = models.ForeignKey(
+        ChatRoom,
+        on_delete=models.CASCADE,
+        related_name='messages',
+        help_text='Ruang chat yang memuat pesan ini'
+    )
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='chat_messages',
+        help_text='Pengguna yang mengirim pesan'
+    )
+    text = models.TextField(
+        help_text='Konten pesan chat'
+    )
+    is_read = models.BooleanField(
+        default=False,
+        help_text='Tandai jika pesan sudah dibaca oleh penerima'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Waktu pesan dibuat'
+    )
+
+    class Meta:
+        verbose_name = 'Chat Message'
+        verbose_name_plural = 'Chat Messages'
+        db_table = 'chat_messages'
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['room']),
+            models.Index(fields=['sender']),
+            models.Index(fields=['created_at']),
+        ]
+
+    def __str__(self):
+        return f'[{self.sender.username}] {self.text[:50]}...'
+
+
 # ============================================================================
 # CATEGORY MODEL
 # ============================================================================

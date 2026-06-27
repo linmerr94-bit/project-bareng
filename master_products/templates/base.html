@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VOLTA E-Commerce{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --border: #e2e8f0;
+            --radius: 18px;
+            --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-actions button,
+        .navbar-actions a {
+            background: transparent;
+            border: none;
+            color: #475569;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .navbar-actions button:hover,
+        .navbar-actions a:hover {
+            color: var(--primary-dark);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            min-height: 20px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            background: #ef4444;
+            color: white;
+            padding: 0 6px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 60;
+        }
+
+        .modal-card {
+            width: min(100%, 980px);
+            background: white;
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            max-height: calc(100vh - 80px);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1px;
+            background: #f8fafc;
+            min-height: 420px;
+        }
+
+        .modal-panel {
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-panel h4 {
+            margin: 0 0 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        .modal-room {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 16px;
+            text-align: left;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            background: #fafbff;
+            cursor: pointer;
+        }
+
+        .modal-room:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .modal-room-title {
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .modal-room-meta {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .notifications-card {
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 18px;
+            background: #f8fafc;
+        }
+
+        .notifications-card p {
+            margin: 0;
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-[#f8fafc]">
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a class="navbar-brand" href="{% url 'master_products:product_list' %}">VOLTA</a>
+
+            <div class="navbar-actions">
+                {% if user.is_authenticated %}
+                    <button type="button" onclick="toggleProfileMenu(event)">
+                        <i class="fas fa-user-circle"></i>
+                        Profil
+                    </button>
+                {% else %}
+                    <a href="{% url 'master_products:login' %}">Login</a>
+                {% endif %}
+
+                {% if user.is_authenticated and user.role == 'brand' %}
+                    <a href="{% url 'master_products:brand_chat_inbox' %}" title="Pesan & Inbox" class="relative">
+                        <i class="fas fa-comments"></i>
+                        Pesan
+                        {% if unread_count > 0 %}
+                            <span class="badge absolute -top-2 -right-2">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'master_products:chat_view' %}" title="Pesan & Inbox" class="relative">
+                        <i class="fas fa-comments"></i>
+                        Pesan
+                        {% if unread_count > 0 %}
+                            <span class="badge absolute -top-2 -right-2">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+
+                <a href="{% url 'master_products:view_cart' %}" title="Keranjang Belanja">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% if cart_count|default:0 > 0 %}
+                        <span class="badge">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="profileMenu" class="hidden absolute right-6 top-20 bg-white border border-var(--border) rounded-2xl shadow-2xl w-60 overflow-hidden z-50">
+        {% if user.is_authenticated %}
+            <a href="{% url 'master_products:user_profile' %}" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50">Profil Saya</a>
+            <a href="{% url 'master_products:order_list' %}" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50">Pesanan Saya</a>
+            <a href="{% url 'master_products:logout' %}" class="block px-4 py-3 text-sm text-red-600 hover:bg-slate-50">Logout</a>
+        {% endif %}
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 text-gray-500 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-sm text-center">
+            &copy; 2026 VOLTA E-Commerce Platform. Elektronik Berkualitas dari Purwokerto.
+        </div>
+    </footer>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i += 1) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === `${name}=`) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function toggleProfileMenu(event) {
+            event.stopPropagation();
+            const profileMenu = document.getElementById('profileMenu');
+            profileMenu.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            if (profileMenu && !profileMenu.contains(event.target) && !event.target.closest('[onclick="toggleProfileMenu(event)"]')) {
+                profileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

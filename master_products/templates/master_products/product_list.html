@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Produk - VOLTA E-Commerce</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}Katalog Produk - VOLTA E-Commerce{% endblock %}
+
+{% block extra_head %}
+<style>
         :root {
             --bg: #f8fafc;
             --surface: #ffffff;
@@ -19,136 +16,106 @@
             --transition: 180ms ease;
         }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        .product-list-body {
             background-color: var(--bg);
-            color: var(--text);
         }
 
-        /* Floating Chat Widget & Modal Styles kept for functionality */
-        .floating-chat {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #6d28d9, #4f46e5);
-            border-radius: 50%;
+        .category-card {
+            border-radius: 24px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.75rem;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .product-image-frame {
+            min-height: 220px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        .product-image-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .product-button {
+            transition: transform 0.2s ease;
+        }
+
+        .product-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .clickable-card {
+            position: relative;
             cursor: pointer;
-            box-shadow: 0 14px 24px rgba(109, 40, 217, .24);
-            transition: transform var(--transition);
-            z-index: 40;
+            isolation: isolate;
         }
-        .floating-chat:hover { transform: scale(1.1); }
-        .chat-modal {
-            position: fixed;
-            bottom: 100px;
-            right: 24px;
-            width: 380px;
-            height: 500px;
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            box-shadow: 0 20px 50px rgba(16,24,40,.14);
-            display: flex;
-            flex-direction: column;
-            z-index: 50;
-            animation: slideUp 0.3s ease;
+
+        .card-overlay-link {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: block;
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .chat-container { display: flex; flex-direction: column; height: 100%; }
-        .chat-header { background: linear-gradient(135deg, #6d28d9, #4f46e5); color: white; padding: 16px 20px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; display: flex; justify-content: space-between; align-items: center; }
-        .chat-body { flex: 1; overflow-y: auto; padding: 16px 20px; background: #f4f6ff; }
-        .chat-messages { display: flex; flex-direction: column; gap: 12px; }
-        .chat-message.user { justify-content: flex-end; display: flex; }
-        .chat-message.user p { background: linear-gradient(135deg, #6d28d9, #4f46e5); color: white; padding: 10px 14px; border-radius: 12px 12px 0 12px; max-width: 80%; font-size: 14px; }
-        .chat-message.bot { display: flex; }
-        .chat-message.bot p { background: white; color: var(--text); padding: 10px 14px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 14px; border: 1px solid #eaecf0; }
-        .chat-footer { display: flex; gap: 8px; padding: 12px 16px; background: var(--surface); border-top: 1px solid #eaecf0; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
-    </style>
-</head>
-<body class="bg-[#f8fafc]">
 
-    <nav class="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            
-            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
-                <div class="flex items-center gap-2">
-                    <span class="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl text-lg tracking-wider">VOLTA</span>
-                </div>
-                <button onclick="window.location.href='{% url 'master_products:shop' %}'" class="bg-[#7c3aed] text-white font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-indigo-700 transition-colors">
-                    <i class="fas fa-bars"></i> Semua Kategori
-                </button>
-            </div>
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
 
-            <div class="w-full md:max-w-md flex-1">
-                <form method="GET" action="{% url 'master_products:product_list' %}" class="relative">
-                    <input 
-                        type="text" 
-                        name="q" 
-                        value="{{ request.GET.q }}"
-                        placeholder="Cari produk elektronik..." 
-                        class="w-full bg-[#f1f5f9] placeholder-gray-400 text-sm rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all border border-transparent"
-                    >
-                    <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-            </div>
+        .card-cta {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+</style>
+{% endblock %}
 
-            <div class="flex items-center justify-between w-full md:w-auto gap-6">
-                <div class="text-sm font-medium tracking-wide text-gray-600 uppercase">
-                    <a href="{% url 'master_products:shop' %}" class="text-gray-600 hover:text-indigo-600">Produk</a> &nbsp;&middot;&nbsp; 
-                    <span class="text-red-500 font-bold">HINGGA 60% OFF SEMUA PRODUK</span>
-                </div>
+{% block content %}
 
-                <div class="flex items-center gap-4 relative">
-                    {% if user.is_authenticated %}
-                        <div class="relative flex items-center gap-2">
-                            <i class="fas fa-user-circle text-2xl text-indigo-600 cursor-pointer" onclick="toggleProfileMenu(event)"></i>
-                            <div id="profileMenu" class="absolute top-10 right-0 bg-white border border-gray-100 rounded-xl shadow-lg min-width-[200px] z-50 hidden">
-                                <a href="{% url 'master_products:user_profile' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 transition-colors border-b border-gray-50">
-                                    <i class="fas fa-user mr-2 text-indigo-600"></i> Profil Saya
-                                </a>
-                                <a href="{% url 'master_products:order_list' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 transition-colors border-b border-gray-50">
-                                    <i class="fas fa-box mr-2 text-indigo-600"></i> Pesanan Saya
-                                </a>
-                                <a href="{% url 'master_products:logout' %}" class="block px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                                </a>
-                            </div>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'master_products:login' %}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Login</a>
-                    {% endif %}
-
-                    <a href="{% url 'master_products:view_cart' %}" class="relative p-2 text-gray-700 hover:text-indigo-600">
-                        <i class="fas fa-shopping-cart text-xl"></i>
-                        {% if cart_count > 0 %}
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ cart_count }}</span>
-                        {% endif %}
-                    </a>
-                </div>
-            </div>
-
-        </div>
-    </nav>
-
-    <section class="max-w-7xl mx-auto px-4 mt-8">
+<section class="max-w-7xl mx-auto px-4 mt-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <div class="lg:col-span-2 bg-[#1e3a8a] text-white rounded-3xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden shadow-md min-h-[340px]">
-                <div class="max-w-lg z-10">
+            <div class="clickable-card lg:col-span-2 bg-[#1e3a8a] text-white rounded-3xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden shadow-md min-h-[340px]">
+                <a href="{% url 'master_products:shop' %}" class="card-overlay-link" aria-label="Jelajahi katalog produk"></a>
+                <div class="card-content max-w-lg">
                     <span class="text-xs uppercase font-bold tracking-widest text-amber-400 flex items-center gap-1 mb-4">
                         ⚡ Audio &nbsp;&middot;&nbsp; Unggulan
                     </span>
                     <h1 class="text-3xl lg:text-5xl font-extrabold mb-4 leading-tight">Elektronik Premium Purwokerto</h1>
                     <p class="text-gray-200 text-sm lg:text-base mb-8 leading-relaxed">Koleksi lengkap elektronik berkualitas tinggi dari vendor lokal Purwokerto. Produk original, harga kompetitif.</p>
                 </div>
-                <div class="z-10">
-                    <a href="{% url 'master_products:shop' %}" class="bg-white text-indigo-900 font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2 text-sm">
+                <div class="card-content">
+                    <a href="{% url 'master_products:shop' %}" class="card-cta bg-white text-indigo-900 font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all text-sm">
                         Jelajahi Sekarang <i class="fas fa-arrow-right text-xs"></i>
                     </a>
                 </div>
@@ -158,21 +125,23 @@
             </div>
 
             <div class="flex flex-col gap-6">
-                <div class="bg-[#7c3aed] text-white rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1 min-h-[160px]">
-                    <div>
+                <div class="clickable-card bg-[#7c3aed] text-white rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1 min-h-[160px]">
+                    <a href="{% url 'master_products:shop' %}" class="card-overlay-link" aria-label="Jelajahi smartwatch"></a>
+                    <div class="card-content">
                         <span class="text-[10px] uppercase font-bold tracking-widest opacity-80 block mb-1">Wearables</span>
                         <h3 class="text-xl font-bold leading-snug">Jelajahi Smartwatch</h3>
                     </div>
-                    <a href="#" class="text-xs font-semibold underline underline-offset-4 flex items-center gap-1 hover:opacity-80">
+                    <a href="{% url 'master_products:shop' %}" class="card-cta text-xs font-semibold underline underline-offset-4 flex items-center gap-1 hover:opacity-80">
                         Lihat Sekarang &rarr;
                     </a>
                 </div>
-                <div class="bg-[#115e59] text-white rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1 min-h-[160px]">
-                    <div>
+                <div class="clickable-card bg-[#115e59] text-white rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1 min-h-[160px]">
+                    <a href="{% url 'master_products:shop' %}" class="card-overlay-link" aria-label="Jelajahi produk handphone terbaru"></a>
+                    <div class="card-content">
                         <span class="text-[10px] uppercase font-bold tracking-widest opacity-80 block mb-1">Handphone Terbaru</span>
                         <h3 class="text-xl font-bold leading-snug">Samsung Galaxy S24 Ultra &bull; 5G</h3>
                     </div>
-                    <a href="#" class="text-xs font-semibold underline underline-offset-4 flex items-center gap-1 hover:opacity-80">
+                    <a href="{% url 'master_products:shop' %}" class="card-cta text-xs font-semibold underline underline-offset-4 flex items-center gap-1 hover:opacity-80">
                         Lihat Sekarang &rarr;
                     </a>
                 </div>
@@ -186,30 +155,32 @@
         
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {% for category in categories %}
-                <div onclick="window.location.href='{% url 'master_products:shop' %}?category={{ category.category_id }}'" 
-                     class="cursor-pointer rounded-2xl p-6 text-white text-center shadow-sm hover:scale-[1.02] transition-transform flex flex-col items-center justify-center min-h-[140px]
-                     {% if forloop.counter == 1 %} bg-[#ea580c] 
-                     {% elif forloop.counter == 2 %} bg-[#16a34a] 
-                     {% elif forloop.counter == 3 %} bg-[#1e293b] 
-                     {% elif forloop.counter == 4 %} bg-[#0d9488] 
-                     {% else %} bg-[#7c3aed] {% endif %}">
-                    
-                    <div class="text-3xl mb-3">
-                        {% if 'Laptop' in category.category_name or 'Komputer' in category.category_name %}
-                            <i class="fas fa-laptop"></i>
-                        {% elif 'Handphone' in category.category_name %}
-                            <i class="fas fa-mobile-alt"></i>
-                        {% elif 'DSLR' in category.category_name or 'Kamera' in category.category_name %}
-                            <i class="fas fa-camera"></i>
-                        {% elif 'Elektronik Rumah' in category.category_name %}
-                            <i class="fas fa-tv"></i>
-                        {% else %}
-                            <i class="fas fa-microchip"></i>
-                        {% endif %}
+                <a href="{% url 'master_products:shop' %}?category={{ category.category_id }}"
+                   class="clickable-card block rounded-2xl p-6 text-white text-center shadow-sm hover:scale-[1.02] transition-transform flex flex-col items-center justify-center min-h-[140px]
+                   {% if forloop.counter == 1 %} bg-[#ea580c] 
+                   {% elif forloop.counter == 2 %} bg-[#16a34a] 
+                   {% elif forloop.counter == 3 %} bg-[#1e293b] 
+                   {% elif forloop.counter == 4 %} bg-[#0d9488] 
+                   {% else %} bg-[#7c3aed] {% endif %}">
+                    <span class="card-overlay-link" aria-hidden="true"></span>
+                    <div class="card-content flex flex-col items-center justify-center">
+                        <div class="text-3xl mb-3">
+                            {% if 'Laptop' in category.category_name or 'Komputer' in category.category_name %}
+                                <i class="fas fa-laptop"></i>
+                            {% elif 'Handphone' in category.category_name %}
+                                <i class="fas fa-mobile-alt"></i>
+                            {% elif 'DSLR' in category.category_name or 'Kamera' in category.category_name %}
+                                <i class="fas fa-camera"></i>
+                            {% elif 'Elektronik Rumah' in category.category_name %}
+                                <i class="fas fa-tv"></i>
+                            {% else %}
+                                <i class="fas fa-microchip"></i>
+                            {% endif %}
+                        </div>
+                        <div class="font-bold text-sm tracking-wide">{{ category.category_name }}</div>
+                        <div class="text-[11px] opacity-80 mt-1">Shop Now &rarr;</div>
                     </div>
-                    <div class="font-bold text-sm tracking-wide">{{ category.category_name }}</div>
-                    <div class="text-[11px] opacity-80 mt-1">Shop Now &rarr;</div>
-                </div>
+                </a>
             {% endfor %}
         </div>
     </section>
@@ -295,168 +266,33 @@
         </div>
     </section>
 
-    <div class="floating-chat" onclick="openChat()" title="Chat dengan penjual">
-        <i class="fas fa-comments text-white text-xl"></i>
-        <span class="chat-badge">?</span>
-    </div>
+{% endblock %}
 
-    <div id="chatModal" class="chat-modal" style="display: none;">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h3 class="font-semibold text-sm flex items-center gap-2">💬 Tanya Penjual</h3>
-                <button class="chat-close text-white text-xl focus:outline-none" onclick="closeChat()">&times;</button>
-            </div>
-            <div class="chat-body">
-                <div class="chat-message bot mb-3">
-                    <p>Halo! 👋 Ada yang bisa kami bantu?</p>
-                </div>
-                <div id="chatMessages" class="chat-messages"></div>
-            </div>
-            <div class="chat-footer">
-                <input type="text" id="chatInput" class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ketik pesan..." onkeypress="handleChatKeypress(event)">
-                <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors">Kirim</button>
-            </div>
-        </div>
-    </div>
+{% block extra_scripts %}
+<script>
+    function filterTrending(category) {
+        const cards = document.querySelectorAll('#products-container > div[data-category]');
+        const normalizedCategory = category.trim().toLowerCase();
 
-    <footer class="bg-white border-t border-gray-100 text-gray-500 py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="mb-8">
-                <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-store text-indigo-600"></i> Mitra Toko Elektronik Purwokerto
-                </h3>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
-                        <strong class="block text-gray-900">Banyumas Computer</strong>
-                        <span class="text-xs text-gray-400">Purwokerto Utara</span>
-                    </div>
-                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
-                        <strong class="block text-gray-900">Moro Elektronik</strong>
-                        <span class="text-xs text-gray-400">Purwokerto Selatan</span>
-                    </div>
-                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
-                        <strong class="block text-gray-900">Purwokerto Jaya Celular</strong>
-                        <span class="text-xs text-gray-400">Purwokerto Timur</span>
-                    </div>
-                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
-                        <strong class="block text-gray-900">Teknik Purwokerto</strong>
-                        <span class="text-xs text-gray-400">Purwokerto Barat</span>
-                    </div>
-                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
-                        <strong class="block text-gray-900">Foto & Elektronik</strong>
-                        <span class="text-xs text-gray-400">Purwokerto Pusat</span>
-                    </div>
-                    <div class="p-3 bg-indigo-50/50 rounded-xl text-gray-800 text-sm">
-                        <strong class="block text-gray-900">Service Elektronik Plus</strong>
-                        <span class="text-xs text-gray-400">Purwokerto Timur</span>
-                    </div>
-                </div>
-            </div>
-            
-            <hr class="border-gray-100 my-6">
-            
-            <p class="text-sm">
-                &copy; 2026 <strong class="text-gray-800">VOLTA E-Commerce</strong> Platform. 
-                Elektronik Berkualitas Dari Purwokerto.
-            </p>
-        </div>
-    </footer>
-
-    <script>
-        function toggleProfileMenu(event) {
-            event.stopPropagation();
-            const profileMenu = document.getElementById('profileMenu');
-            profileMenu.classList.toggle('hidden');
-        }
-
-        document.addEventListener('click', function(event) {
-            const profileMenu = document.getElementById('profileMenu');
-            if (profileMenu && !profileMenu.contains(event.target)) {
-                profileMenu.classList.add('hidden');
-            }
+        cards.forEach(card => {
+            const dataCategory = (card.getAttribute('data-category') || '').toLowerCase();
+            card.style.display = normalizedCategory === 'all' || dataCategory.includes(normalizedCategory) ? '' : 'none';
         });
 
-        function openChat() {
-            document.getElementById('chatModal').style.display = 'flex';
-            document.getElementById('chatInput').focus();
-        }
-
-        function closeChat() {
-            document.getElementById('chatModal').style.display = 'none';
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            const messagesDiv = document.getElementById('chatMessages');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-message user mb-2';
-            userMsg.innerHTML = `<p>${message}</p>`;
-            messagesDiv.appendChild(userMsg);
-            
-            input.value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
-            setTimeout(() => {
-                const botMsg = document.createElement('div');
-                botMsg.className = 'chat-message bot mb-2';
-                const responses = [
-                    'Terima kasih atas pertanyaan Anda! ',
-                    'Produk ini sangat populer dan berkualitas tinggi! 箝',
-                    'Kami siap membantu Anda kapan saja! 潮',
-                    'Jika ada pertanyaan lebih lanjut, silakan hubungi admin kami.',
-                    'Stok tersedia dan siap dikirim hari ini! 囹',
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                botMsg.innerHTML = `<p>${randomResponse}</p>`;
-                messagesDiv.appendChild(botMsg);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 500);
-        }
-
-        function handleChatKeypress(event) {
-            if (event.key === 'Enter') { sendChatMessage(); }
-        }
-
-        function filterByCategory(categoryId) {
-            window.location.href = `?category=${categoryId}`;
-        }
-
-        function filterTrending(category) {
-            const cards = document.querySelectorAll('#products-container > div[data-category]');
-            const normalizedCategory = category.trim().toLowerCase();
-            cards.forEach(card => {
-                const dataCategory = (card.getAttribute('data-category') || '').toLowerCase();
-                const shouldShow = normalizedCategory === 'all' || dataCategory.includes(normalizedCategory);
-                card.style.display = shouldShow ? '' : 'none';
-            });
-
-            const buttons = document.querySelectorAll('[data-trending-button]');
-            buttons.forEach(button => {
-                const buttonText = button.textContent.trim().toLowerCase();
-                if (normalizedCategory === 'all') {
-                    button.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
-                    button.classList.add('hover:text-gray-800');
-                } else if (buttonText === normalizedCategory) {
-                    button.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
-                    button.classList.remove('hover:text-gray-800');
-                } else {
-                    button.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
-                    button.classList.add('hover:text-gray-800');
-                }
-            });
-        }
-
-        document.addEventListener('click', function(event) {
-            const chatModal = document.getElementById('chatModal');
-            const floatingChat = document.querySelector('.floating-chat');
-            if (chatModal && !chatModal.contains(event.target) && !floatingChat.contains(event.target)) {
-                chatModal.style.display = 'none';
+        const buttons = document.querySelectorAll('[data-trending-button]');
+        buttons.forEach(button => {
+            const buttonText = button.textContent.trim().toLowerCase();
+            if (normalizedCategory === 'all') {
+                button.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
+                button.classList.add('hover:text-gray-800');
+            } else if (buttonText === normalizedCategory) {
+                button.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
+                button.classList.remove('hover:text-gray-800');
+            } else {
+                button.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600', 'font-semibold');
+                button.classList.add('hover:text-gray-800');
             }
         });
-    </script>
-
-</body>
-</html>
+    }
+</script>
+{% endblock %}
