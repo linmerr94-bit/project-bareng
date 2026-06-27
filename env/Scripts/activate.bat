@@ -8,11 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-<<<<<<< HEAD
-set "VIRTUAL_ENV=D:\Project UAS E-commerce\project-bareng\project-bareng\env"
-=======
 set "VIRTUAL_ENV=C:\UAS E-COMMERCE\project-bareng\env"
->>>>>>> 2e94da0 (fix: foto produk dan tambah 2 toko baru)
 
 if not defined PROMPT set PROMPT=$P$G
 

@@ -325,6 +325,8 @@ class Product(models.Model):
 
         name = self.image.name if hasattr(self.image, 'name') else str(self.image)
         if name.startswith(('http://', 'https://')):
+            if 'unsplash.com' in name and '?' not in name:
+                return name + '?w=400&q=80'
             return name
 
         return self.image.url
