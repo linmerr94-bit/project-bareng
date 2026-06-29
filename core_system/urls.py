@@ -19,8 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.http import JsonResponse
+
+def healthcheck(request):
+    """Healthcheck endpoint for Railway"""
+    return JsonResponse({'status': 'healthy'}, status=200)
 
 urlpatterns = [
+    path('health/', healthcheck),
     path('admin/', admin.site.urls),
     path('', include('master_products.urls')),
 ]
