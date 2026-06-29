@@ -1100,44 +1100,103 @@ def register_customer_view(request):
         return render(request, 'master_products/register_customer.html')
     
     if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
+        # Get all fields from form
+        first_name = request.POST.get('first_name', '').strip()
         email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        address = request.POST.get('address', '').strip()
+        username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         confirm_password = request.POST.get('confirm_password', '').strip()
+        agree_terms = request.POST.get('agree_terms', False)
         
-        if not all([name, email, password, confirm_password]):
+        # Validation: All fields required
+        if not all([first_name, email, phone, address, username, password, confirm_password]):
             messages.error(request, 'Semua field harus diisi!')
-            return render(request, 'master_products/register_customer.html', {'name': name, 'email': email})
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name, 
+                'email': email,
+                'phone': phone,
+                'address': address,
+                'username': username
+            })
         
+        # Validate terms
+        if not agree_terms:
+            messages.error(request, 'Anda harus setuju dengan Syarat & Ketentuan!')
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name,
+                'email': email,
+                'phone': phone,
+                'address': address,
+                'username': username
+            })
+        
+        # Validate password match
         if password != confirm_password:
             messages.error(request, 'Password dan Konfirmasi Password tidak cocok!')
-            return render(request, 'master_products/register_customer.html', {'name': name, 'email': email})
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name,
+                'email': email,
+                'phone': phone,
+                'address': address,
+                'username': username
+            })
         
+        # Validate password length
         if len(password) < 8:
             messages.error(request, 'Password minimal 8 karakter!')
-            return render(request, 'master_products/register_customer.html', {'name': name, 'email': email})
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name,
+                'email': email,
+                'phone': phone,
+                'address': address,
+                'username': username
+            })
         
+        # Check if email exists
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Email ini sudah terdaftar! Silakan gunakan email lain atau login.')
-            return render(request, 'master_products/register_customer.html', {'name': name})
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name,
+                'phone': phone,
+                'address': address,
+                'username': username
+            })
         
-        if User.objects.filter(username=email).exists():
-            messages.error(request, 'Username/Email ini sudah terdaftar!')
-            return render(request, 'master_products/register_customer.html', {'name': name})
+        # Check if username exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username ini sudah digunakan! Silakan pilih username lain.')
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name,
+                'email': email,
+                'phone': phone,
+                'address': address
+            })
         
         try:
+            # Create user with all fields
             user = User.objects.create_user(
-                username=email,
+                username=username,
                 email=email,
                 password=password,
-                first_name=name.split()[0] if name else '',
-                last_name=' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
+                first_name=first_name
             )
-            messages.success(request, 'Akun berhasil dibuat! Silakan login dengan email dan password Anda.')
+            
+            # Store additional info in user profile/session if needed
+            # For now, you can extend this with a UserProfile model if you have one
+            
+            messages.success(request, 'Akun berhasil dibuat! Silakan login dengan username dan password Anda.')
             return redirect('master_products:login')
         except Exception as e:
-            messages.error(request, f'Terjadi kesalahan: {str(e)}')
-            return render(request, 'master_products/register_customer.html', {'name': name, 'email': email})
+            messages.error(request, f'Terjadi kesalahan saat membuat akun: {str(e)}')
+            return render(request, 'master_products/register_customer.html', {
+                'first_name': first_name,
+                'email': email,
+                'phone': phone,
+                'address': address,
+                'username': username
+            })
 
 
 def register_vendor_view(request):
