@@ -163,16 +163,13 @@
                     <p class="text-sm text-slate-500">Percakapan aktif</p>
                 </div>
                 <div class="chat-thread-body">
-    {% for message in messages %}
-    <div class="chat-bubble-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
-        <div class="chat-bubble {% if message.sender == request.user %}mine{% else %}other{% endif %}">
-            {{ message.text }}
-        </div>
-    </div>
-{% endfor %}
-</div> <!-- Pastikan penutup div body ada di sini -->
-
-<!-- HAPUS BARIS 176 SAMPAI 178 KARENA ITU PENYEBAB ERROR-NYA -->
+                    {% for message in messages %}
+                        <div class="chat-bubble-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
+                            <div class="chat-bubble {% if message.sender == request.user %}mine{% else %}other{% endif %}">
+                                {{ message.text }}
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
                 <form class="chat-input-row" method="post" action="{% url 'master_products:chat_room_detail' active_room.brand.brand_id %}">
                     {% csrf_token %}

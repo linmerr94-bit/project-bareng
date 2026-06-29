@@ -575,7 +575,7 @@
                     <div class="product-card">
                         <div class="product-image-wrapper">
                             {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=No+Image';">
+                                <img src="{{ product.image_url }}" alt="{{ product.product_name }}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x300?text=No+Image';">
                             {% else %}
                                 <i class="fas fa-image" style="font-size:50px; color:#cbd5e1;"></i>
                             {% endif %}
