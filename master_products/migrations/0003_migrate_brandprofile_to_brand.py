@@ -16,7 +16,11 @@ def migrate_brandprofile_to_brand(apps, schema_editor):
     try:
         # Import BrandProfile from apps (will work even after table is deleted in reverse)
         BrandProfile = apps.get_model('master_brands', 'BrandProfile')
-        
+    except LookupError:
+        print("⚠️ Legacy BrandProfile model is unavailable; skipping migration data copy.")
+        return
+    
+    try:
         migrated_count = 0
         updated_count = 0
         error_count = 0
